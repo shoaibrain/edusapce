@@ -1,23 +1,25 @@
-# next-template
+# School Management System
 
-A Next.js 13 template for building apps with Radix UI and Tailwind CSS.
-
-## Usage
-
-```bash
-npx create-next-app -e https://github.com/shadcn/next-template
-```
+This is a School Management System built with Next.js. It provides a comprehensive solution for managing various aspects of a school, including student information, courses, attendance, grades, and more.
 
 ## Features
 
-- Radix UI Primitives
-- Tailwind CSS
-- Fonts with `next/font`
-- Icons from [Lucide](https://lucide.dev)
-- Dark mode with `next-themes`
-- Automatic import sorting with `@ianvs/prettier-plugin-sort-imports`
-- Tailwind CSS class sorting, merging and linting.
+- User authentication and authorization
+- Student management (add, edit, delete)
+- Course management (add, edit, delete)
+- Attendance tracking
+- Grade management
+- Teacher management
+- Parent portal
+- Admin dashboard
+- Reporting and analytics
 
-## License
+## Technologies Used
 
-Licensed under the [MIT license](https://github.com/shadcn/ui/blob/main/LICENSE.md).
+- Next.js
+- TypeScript
+- React
+- Tailwind CSS & shadcn/ui
+- PlanetScale
+
+## Getting Started
