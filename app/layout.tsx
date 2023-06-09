@@ -9,6 +9,7 @@ import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
 import Provider from "./context/AuthContext"
 import ToasterContext from "./context/ToasterContext"
+import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
   title: {
@@ -33,27 +34,23 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <>
-      <html lang="en" suppressHydrationWarning>
-        <head />
-        <body
-          className={cn(
-            "min-h-screen bg-background font-sans antialiased",
-            fontSans.variable
-          )}
-        >
-          <Provider>
-            <ToasterContext />
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <div className="relative flex min-h-screen flex-col">
-                <SiteHeader />
-                <div className="flex-1">{children}</div>
-              </div>
-              <TailwindIndicator />
-            </ThemeProvider>
-          </Provider>
-        </body>
-      </html>
-    </>
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        {/* <SiteHeader /> */}
+        <Provider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {children}
+            <Toaster />
+            <TailwindIndicator />
+          </ThemeProvider>
+        </Provider>
+      </body>
+    </html>
   )
 }

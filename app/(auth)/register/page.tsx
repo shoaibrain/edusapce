@@ -1,8 +1,8 @@
 "use client"
 import { useState } from "react"
 import axios from "axios"
-import { toast} from "react-hot-toast"
-
+import { toast } from "react-hot-toast"
+import { redirect } from "next/navigation"
 export default function Register() {
   const [data, setData] = useState({
     name: "",
@@ -14,7 +14,9 @@ export default function Register() {
     e.preventDefault()
     axios
       .post("/api/register", data)
-      .then(() => toast.success("User has been registered"))
+      .then(() => {
+        toast.success("User has been registered")
+      })
       .catch(() => toast.error("Something went wrong"))
   }
 
@@ -22,11 +24,6 @@ export default function Register() {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company"
-          />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Register for your account
           </h2>
@@ -119,12 +116,12 @@ export default function Register() {
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500">
-            Not a member?{" "}
+            Already Registered ?{" "}
             <a
-              href="#"
+              href="/login"
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
-              Start a 14 day free trial
+              Login here{" "}
             </a>
           </p>
         </div>
