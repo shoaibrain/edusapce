@@ -42,9 +42,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontSans.variable
         )}
       >
-        {/* <SiteHeader /> */}
         <Provider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {/* <SiteHeader /> */}
             {children}
             <Toaster />
             <TailwindIndicator />

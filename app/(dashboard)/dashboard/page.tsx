@@ -17,13 +17,15 @@ export default async function DashboardPage() {
     redirect(authOptions?.pages?.signIn || "/login")
   }
   const users = await prisma.user.findMany()
+  console.log(user.id)
   return (
     <DashboardShell>
       <DashboardHeader
-        heading="Admin"
-        text={`Welcome ${user.name}`}
+        heading={`Welcome ${user.name}. User ID: ${user.id}`}
+        text="Manage resources and settings"
       ></DashboardHeader>
       <div>
+        
         {users.map((user) => (
           <div key={user.id}>{user.name}</div>
         ))}

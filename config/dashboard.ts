@@ -5,6 +5,7 @@ export const dashboardConfig: DashboardConfig = {
     {
       title: "Documentation",
       href: "/docs",
+      disabled: true,
     },
     {
       title: "Support",
@@ -14,30 +15,35 @@ export const dashboardConfig: DashboardConfig = {
   ],
   sidebarNav: [
     {
-      title: "Billings",
-      href: "/admin/billings",
-      icon: "dollar-sign",
-    },
-    {
       title: "Analytics",
-      href: "/admin/analytics",
-      icon: "analytics",
+      href: "/dashboard/analytics",
+      icon: "student",
+      disabled: true,
     },
 
     {
       title: "Students",
-      href: "/admin/students",
+      href: "/dashboard/students",
       icon: "student",
+      disabled: true,
     },
     {
       title: "Staffs",
-      href: "/admin/staffs",
+      href: "/dashboard/staffs",
       icon: "people",
+      disabled: true,
+    },
+    {
+      title: "Billings",
+      href: "/dashboard/billings",
+      icon: "dollar-sign",
+      disabled: true,
     },
     {
       title: "Curriculum",
-      href: "/admin/curriculum",
+      href: "/dashboard/curriculum",
       icon: "book",
+      disabled: true,
     },
 
     {

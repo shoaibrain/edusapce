@@ -34,22 +34,25 @@ export const authOptions = {
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         })
-        // if no user found 
+        // if no user found
         if (!user || !user?.hashedPassword) {
           throw new Error("No user found")
         }
         // check password match
-          const passwordMatch = await bcrypt.compare(
-            credentials.password,
-            user.hashedPassword)
-        if (!passwordMatch) { // if password not match
+        const passwordMatch = await bcrypt.compare(
+          credentials.password,
+          user.hashedPassword
+        )
+        if (!passwordMatch) {
+          // if password not match
           throw new Error("Incorrect password")
         }
         return user
       },
     }),
   ],
-  secret: process.env.SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
+
   session: {
     strategy: "jwt",
   },
