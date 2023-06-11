@@ -1,5 +1,5 @@
 import NextAuth from "next-auth"
-import prisma from "@/lib/db"
+import { db }  from "@/lib/db"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GooglePriovider from "next-auth/providers/google"
 import GithubProvider from "next-auth/providers/github"
@@ -7,7 +7,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import bcrypt from "bcrypt"
 
 export const authOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(db),
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID,
@@ -31,7 +31,7 @@ export const authOptions = {
           throw new Error("Please enter your email and password")
         }
         //check user exists
-        const user = await prisma.user.findUnique({
+        const user = await db.user.findUnique({
           where: { email: credentials.email },
         })
         // if no user found

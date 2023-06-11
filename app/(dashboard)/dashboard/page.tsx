@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import { prisma } from "@/lib/db"
+import { db } from "@/lib/db"
 import { getCurrentUser } from "@/lib/session"
 import { DashboardShell } from "@/components/shell"
 import { DashboardHeader } from "@/components/header"
@@ -16,7 +16,7 @@ export default async function DashboardPage() {
   if (!user) {
     redirect(authOptions?.pages?.signIn || "/login")
   }
-  const users = await prisma.user.findMany()
+  const users = await db.user.findMany()
   console.log(user.id)
   return (
     <DashboardShell>
