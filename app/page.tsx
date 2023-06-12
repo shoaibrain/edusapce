@@ -1,10 +1,9 @@
-import { getServerSession } from "next-auth"
-import { authOptions } from "./api/auth/[...nextauth]/route"
 import { User } from "@/components/user"
 import Link from 'next/link'
 import { buttonVariants } from "@/components/ui/button"
-export default async function IndexPage() {
-  const session = await getServerSession(authOptions)
+
+
+export default function IndexPage() {
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       <div className="flex max-w-[980px] flex-col items-start gap-2">

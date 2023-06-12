@@ -3,6 +3,7 @@ import { useState } from "react"
 import axios from "axios"
 import { toast } from "react-hot-toast"
 import { redirect } from "next/navigation"
+
 export default function Register() {
   const [data, setData] = useState({
     name: "",

@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth/next"
 import { z } from "zod"
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import { db } from "@/lib/db"
+import { authOptions } from "@/lib/auth"
+import prisma from "@/lib/db"
 import { userNameSchema } from "@/lib/validations/user"
 
 const routeContextSchema = z.object({
@@ -18,7 +18,7 @@ export async function PATCH(
   try {
     // Validate the route context.
     const { params } = routeContextSchema.parse(context)
-      console.log(params)
+    console.log(params)
     // Ensure user is authentication and has access to this user.
     const session = await getServerSession(authOptions)
     if (!session?.user || params.userId !== session?.user.id) {
@@ -30,7 +30,7 @@ export async function PATCH(
     const payload = userNameSchema.parse(body)
 
     // Update the user.
-    await db.user.update({
+    await prisma.user.update({
       where: {
         id: session.user.id,
       },

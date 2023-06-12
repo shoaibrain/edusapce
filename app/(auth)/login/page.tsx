@@ -4,9 +4,7 @@ import axios from "axios"
 import { signIn, useSession } from "next-auth/react"
 import { toast } from "react-hot-toast"
 import { useRouter } from "next/navigation"
-import { Icons } from "@/components/icons"
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+
 export default function Login() {
   const session = useSession()
   const router = useRouter()
@@ -107,22 +105,19 @@ export default function Login() {
               </button>
             </div>
           </form>
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
-              </span>
-            </div>
-          </div>
+
+          <h1>Sign Into Github Below</h1>
           <button
-            type="button"
-            className={cn(buttonVariants({ variant: "outline" }))}
-            onClick={() => {
-              signIn("google")
-            }}
+            onClick={() => signIn("github")}
+            className="w-full bg-black text-white"
+          >
+            Github
+          </button>
+
+          <h1>Sign Into Google Below</h1>
+          <button
+            onClick={() => signIn("google")}
+            className="w-full bg-green-500 text-white"
           >
             Google
           </button>
@@ -130,10 +125,10 @@ export default function Login() {
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{" "}
             <a
-              href="/register"
+              href="#"
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
-              Register here
+              Start a 14 day free trial
             </a>
           </p>
         </div>

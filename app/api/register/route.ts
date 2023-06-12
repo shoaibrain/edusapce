@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt"
-import { db } from "@/lib/db"
+import prisma from "@/lib/db"
 import { NextResponse } from "next/server"
 
 export async function POST(request) {
@@ -10,7 +10,7 @@ export async function POST(request) {
     return new NextResponse("Missing Fields", { status: 400 })
   }
 
-  const exist = await db.user.findUnique({
+  const exist = await prisma.user.findUnique({
     where: {
       email,
     },
@@ -22,7 +22,7 @@ export async function POST(request) {
 
   const hashedPassword = await bcrypt.hash(password, 10)
 
-  const user = await db.user.create({
+  const user = await prisma.user.create({
     data: {
       name,
       email,
