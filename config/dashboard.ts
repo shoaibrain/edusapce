@@ -15,41 +15,47 @@ export const dashboardConfig: DashboardConfig = {
   ],
   sidebarNav: [
     {
-      title: "Analytics",
-      href: "/dashboard/analytics",
-      icon: "student",
-      disabled: true,
+      title: "Dashboard",
+      href: "/dashboard",
+      icon: "dashboard",
+      disabled: false,
     },
-
+    {
+      title: "Accountant",
+      href: "/dashboard/account",
+      icon: "account",
+      disabled: false,
+    },
+    {
+      title: "Admissions",
+      href: "/dashboard/admissions",
+      icon: "student",
+      disabled: false,
+    },
     {
       title: "Students",
       href: "/dashboard/students",
-      icon: "student",
-      disabled: true,
-    },
-    {
-      title: "Staffs",
-      href: "/dashboard/staffs",
       icon: "people",
-      disabled: true,
+      disabled: false,
     },
     {
-      title: "Billings",
-      href: "/dashboard/billings",
-      icon: "dollar-sign",
-      disabled: true,
+      title: "Teachers",
+      href: "/dashboard/teachers",
+      icon: "Teacher",
+      disabled: false,
     },
     {
-      title: "Curriculum",
-      href: "/dashboard/curriculum",
-      icon: "book",
-      disabled: true,
+      title: "Parents",
+      href: "/dashboard/parents",
+      icon: "parents",
+      disabled: false,
     },
 
     {
       title: "Settings",
       href: "/dashboard/settings",
       icon: "settings",
+      disabled: false,
     },
   ],
 }
