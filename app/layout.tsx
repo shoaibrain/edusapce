@@ -4,12 +4,11 @@ import { Metadata } from "next"
 import { siteConfig } from "@/config/site"
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
-import { SiteHeader } from "@/components/site-header"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
 import Provider from "./context/AuthContext"
-import ToasterContext from "./context/ToasterContext"
 import { Toaster } from "@/components/ui/toaster"
+import { MainNav } from "@/components/main-nav"
 
 export const metadata: Metadata = {
   title: {
@@ -44,7 +43,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
       >
         <Provider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {/* <SiteHeader /> */}
+            {/* <SiteHeader /> */} 
+            {/* BUG: Main nav doesn't get overriden by dashboard nav when navigating to /dashboard.
+                Expected behavior: Main nav should be hidden when navigating to /dashboard.
+                Actual behavior: Main nav is still visible when navigating to /dashboard resulting two navs being visible.
+            */}
             {children}
             <Toaster />
             <TailwindIndicator />

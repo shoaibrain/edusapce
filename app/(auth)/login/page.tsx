@@ -33,10 +33,10 @@ export default function LoginPage() {
     e.preventDefault()
     signIn("credentials", { ...data, redirect: false }).then((callback) => {
       if (callback?.error) {
-        alert(callback.error)
+        console.log(callback.error)
       }
       if (callback?.ok && !callback?.error) {
-        alert("Logged in successfully")
+        console.log("Logged in successfully")
       }
     })
   }

@@ -1,9 +1,9 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "User Dashboard",
+  name: "EduSpace",
   description:
-    "User Dashbaord for School management system. This is a demo project for the UI library.",
+    "School Management System",
   mainNav: [
     {
       title: "Home",

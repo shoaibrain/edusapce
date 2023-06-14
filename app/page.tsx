@@ -11,7 +11,7 @@ export default function IndexPage() {
          A school management system built with Next.js <br />PlanetScale and shadcn UI
         </h1>
         <p className="max-w-[700px] text-lg text-muted-foreground">
-          Easily manage school and educational organizations with this app. <br />Built with Next.js, PlanetScale and shadcn UI
+          Easily manage school and educational organizations with this app. <br />Built with Next.js, MySql on PlanetScale and shadcn UI with Tailwind
         </p>
       </div>
       <div className="flex gap-4">
