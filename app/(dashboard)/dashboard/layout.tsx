@@ -4,7 +4,7 @@ import { dashboardConfig } from "@/config/dashboard"
 import { getCurrentUser } from "@/lib/session"
 import { MainNav } from "@/components/main-nav"
 import { UserAccountNav } from "@/components/user-account-nav"
-import { DashboardNav } from "@/components/nav"
+import { DashboardNav } from "@/components/dashboard-nav"
 import { UserNav } from "@/components/user-nav"
 
 interface DashboardLayoutProps {

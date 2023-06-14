@@ -21,18 +21,6 @@ export const dashboardConfig: DashboardConfig = {
       disabled: false,
     },
     {
-      title: "Accountant",
-      href: "/dashboard/account",
-      icon: "account",
-      disabled: false,
-    },
-    {
-      title: "Admissions",
-      href: "/dashboard/admissions",
-      icon: "student",
-      disabled: false,
-    },
-    {
       title: "Students",
       href: "/dashboard/students",
       icon: "people",
@@ -41,20 +29,31 @@ export const dashboardConfig: DashboardConfig = {
     {
       title: "Teachers",
       href: "/dashboard/teachers",
-      icon: "Teacher",
+      icon: "organization",
       disabled: false,
     },
     {
       title: "Parents",
       href: "/dashboard/parents",
-      icon: "parents",
+      icon: "people",
       disabled: false,
     },
-
     {
-      title: "Settings",
-      href: "/dashboard/settings",
-      icon: "settings",
+      title: "Accounts",
+      href: "/dashboard/accounts",
+      icon: "Account",
+      disabled: false,
+    },
+    {
+      title: "Classes",
+      href: "/dashboard/classes",
+      icon: "class",
+      disabled: false,
+    },
+    {
+      title: "Exams",
+      href: "/dashboard/exams",
+      icon: "exam",
       disabled: false,
     },
   ],
