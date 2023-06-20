@@ -4,6 +4,7 @@ import { dashboardConfig } from "@/config/dashboard"
 import { getCurrentUser } from "@/lib/session"
 import { DashboardNav } from "@/components/dashboard-nav"
 import { UserAccountNav } from "@/components/user-account-nav"
+import Link from "next/link"
 
 interface DashboardLayoutProps {
   children?: React.ReactNode
@@ -22,6 +23,7 @@ export default async function DashboardLayout({
     <div className="flex min-h-screen flex-col space-y-6">
       <header className="sticky top-0 z-40 border-b bg-background">
         <div className="container flex h-16 items-center justify-between py-4">
+          <Link href="/"> Home </Link>
           <UserAccountNav 
             user={{
               name: user.name,
