@@ -1,12 +1,10 @@
-import NextAuth from "next-auth"
+import NextAuth, { NextAuthOptions } from "next-auth"
 import prisma from "@/lib/db"
 import CredentialsProvider from "next-auth/providers/credentials"
-import GooglePriovider from "next-auth/providers/google"
-import GithubProvider from "next-auth/providers/github"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import bcrypt from "bcrypt"
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
@@ -16,10 +14,6 @@ export const authOptions = {
   },
 
   providers: [
-    GooglePriovider({
-      clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
-    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -30,7 +24,7 @@ export const authOptions = {
 
       async authorize(credentials) {
         // check credential exists
-        if (!credentials.email || !credentials.password) {
+        if (!credentials || !credentials.email || !credentials.password) {
           throw new Error("Please enter your email and password")
         }
         //check user exists

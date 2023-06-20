@@ -1,8 +1,6 @@
 import { Metadata } from "next"
-import Image from "next/image"
 import { Activity, CreditCard, DollarSign, Download, Users } from "lucide-react"
 import { redirect } from "next/navigation"
-
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import prisma from "@/lib/db"
 import { getCurrentUser } from "@/lib/session"
@@ -20,8 +18,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CalendarDateRangePicker } from "@/components/date-range-picker"
 import { Overview } from "@/components/overview"
 import { RecentSales } from "@/components/recent-sales"
-import { UserNav } from "@/components/user-nav"
-import { MainNav } from "@/components/main-nav"
 
 export const metadata: Metadata = {
   title: "Dashboard",

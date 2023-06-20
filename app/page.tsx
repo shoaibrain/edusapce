@@ -1,4 +1,3 @@
-import { User } from "@/components/user"
 import Link from 'next/link'
 import { buttonVariants } from "@/components/ui/button"
 

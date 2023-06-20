@@ -8,7 +8,6 @@ import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
 import Provider from "./context/AuthContext"
 import { Toaster } from "@/components/ui/toaster"
-import { MainNav } from "@/components/main-nav"
 
 export const metadata: Metadata = {
   title: {
