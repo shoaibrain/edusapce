@@ -1,14 +1,12 @@
-import { FC } from 'react'
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-interface pageProps {
-  
+export default async function StudentPage(){
+    return (
+      <>
+        <p>Student Ledger Page</p>
+          <Link href="/dashbaord/students/admission" > Admission</Link>
+
+      </>
+    )
 }
-
-const page: FC<pageProps> = ({}) => {
-  return <div>
-   <h1>Students Module</h1>
-   <p>Module that simulates student ledger</p>
-  </div>
-}
-
-export default page
