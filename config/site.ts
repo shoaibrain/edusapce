@@ -1,9 +1,9 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "EduSpace",
-  description:
-    "School Management System",
+  name: "eduSpace",
+  description:"School Management System",
+  url: "https://sssebschool.com",
   mainNav: [
     {
       title: "Home",
@@ -12,7 +12,7 @@ export const siteConfig = {
   ],
   links: {
     twitter: "https://twitter.com/shoaib_rain",
-    github: "https://github.com/shoaibrain",
-    docs: "https://github.com/shoaibrain",
+    github: "https://github.com/shoaibrain/edusapce",
+    docs: "https://github.com/shoaibrain/edusapce",
   },
 }
