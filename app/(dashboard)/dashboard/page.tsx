@@ -2,7 +2,6 @@ import { Metadata } from "next"
 import { Activity, CreditCard, DollarSign, Download, Users } from "lucide-react"
 import { redirect } from "next/navigation"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import prisma from "@/lib/db"
 import { getCurrentUser } from "@/lib/session"
 import { DashboardShell } from "@/components/shell"
 import { DashboardHeader } from "@/components/header"
@@ -19,7 +18,7 @@ import { RecentSales } from "@/components/recent-sales"
 
 export const metadata: Metadata = {
   title: "Dashboard",
-  description: "School Management System Dashboard",
+  description: "eduSpace Dashboard",
 }
 
 export default async function DashboardPage() {
@@ -33,7 +32,7 @@ export default async function DashboardPage() {
     <>
       <DashboardShell>
         <DashboardHeader
-          text={`Welcome ${user.name}`}
+          text={`Welcome ${user.id}`}
         ></DashboardHeader>
         <div className="hidden flex-col md:flex">
           <div className="flex-1 space-y-4 p-8 pt-6">

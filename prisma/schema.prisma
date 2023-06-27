@@ -2,20 +2,20 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
   referentialIntegrity = "prisma"
 }
+
 enum Role {
   ADMIN
-  STUDENT
   TEACHER
-  USER
+  USER 
 }
 
 model Account {
@@ -41,76 +41,109 @@ model Account {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  firstName     String
-  middleName    String?
-  lastName      String
-  email         String?   @unique
-  phone         String?   
-  emailVerified DateTime?
-  phoneVerified DateTime?
+  id             String    @id @default(cuid())
+  firstName      String
+  middleName     String?
+  lastName       String
+  email          String   @unique
+  phone          String?
+  emailVerified  DateTime?
+  phoneVerified  DateTime?
   hashedPassword String?
-  role          Role    @default(USER)
-  image         String?
-  addres        String?
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @default(now()) @map(name: "updated_at")
-
-  student Student?
-  teacher Teacher?
+  role           Role      @default(USER)
+  image          String?
+  addres         String?
+  createdAt      DateTime  @default(now()) @map(name: "created_at")
+  updatedAt      DateTime  @default(now()) @map(name: "updated_at")
 
   accounts Account[]
   sessions Session[]
 
   @@map(name: "users")
-  
 }
 
 model Student {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  birthDate String
-  gender    String
-  enrolled  Boolean?
-  currentGrade String?
-  nationality String?
+  id             String     @id @default(cuid())
+  firstName      String
+  middleName     String?
+  lastName       String
+  birthDate      String
+  gender         String
+  enrolled       Boolean?
+  currentGrade   String?
+  nationality    String?
   nagriktaNumber String?
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @map(name: "updated_at")
-
-  guardians      Guardian[]
+  email          String?
+  phone          String?
+  createdAt      DateTime   @default(now()) @map(name: "created_at")
+  updatedAt      DateTime   @default(now()) @map(name: "updated_at")
+  guardians      Guardian[] @relation("GuardianStudent")
+  class          Class?     @relation(fields: [classId], references: [id])
+  classId        String?
 
   @@map(name: "students")
 }
 
 model Teacher {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  birthDate String?
-  gender   String
+  id             String    @id @default(cuid())
+  firstName      String
+  middleName     String?
+  lastName       String
+  phone          String
+  email          String?
+  address        String
+  birthDate      String?
+  gender         String
   nagriktaNumber String?
-  departent String?
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @map(name: "updated_at")
-  hiredAt DateTime? @map(name: "hired_at")
+  departent      String?
+  hiredAt        DateTime? @map(name: "hired_at")
+  createdAt      DateTime  @default(now()) @map(name: "created_at")
+  updatedAt      DateTime  @default(now()) @map(name: "updated_at")
+  subjects       Subject[] @relation("TeacherSubject")
+  classes        Class[]   @relation("TeacherClass")
 
   @@map(name: "teachers")
 }
 
 model Guardian {
-  id        String   @id @default(cuid())
-  guardianType String
+  id             String   @id @default(cuid())
+  firstName      String
+  lastName       String
+  phone          String
+  address        String
+  guardianType   String
   businesAddress String?
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @map(name: "updated_at")
+  createdAt      DateTime @default(now()) @map(name: "created_at")
+  updatedAt      DateTime @default(now()) @map(name: "updated_at")
 
-  students       Student[]
+  students Student[] @relation("GuardianStudent")
 
   @@map(name: "guardians")
 }
 
+model Class {
+  id        String    @id @default(cuid())
+  name      String
+  section   String
+  subjects  Subject[] @relation("ClassSubject")
+  teachers  Teacher[] @relation("TeacherClass")
+  createdAt DateTime  @default(now()) @map(name: "created_at")
+  updatedAt DateTime  @default(now()) @map(name: "updated_at")
+  Student   Student[]
+
+  @@map(name: "classes")
+}
+
+model Subject {
+  id        String    @id @default(cuid())
+  name      String
+  classes   Class[]   @relation("ClassSubject")
+  teachers  Teacher[] @relation("TeacherSubject")
+  createdAt DateTime  @default(now()) @map(name: "created_at")
+  updatedAt DateTime  @default(now()) @map(name: "updated_at")
+
+  @@map(name: "subjects")
+}
 
 model VerificationToken {
   identifier String

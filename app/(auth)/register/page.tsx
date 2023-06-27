@@ -42,15 +42,7 @@ export default function RegisterPage() {
               className="hover:text-brand underline underline-offset-4"
             >
               Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="/privacy"
-              className="hover:text-brand underline underline-offset-4"
-            >
-              Privacy Policy
             </Link>
-            
           </p>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { NextResponse } from "next/server"
 
 export async function POST(request) {
   const body = await request.json()
-  const { firstName, lastName, email, password } = body
+  const { firstName,lastName, email, password } = body
 
   if (!firstName || !lastName || !email || !password) {
     return new NextResponse("Missing Fields", { status: 400 })
@@ -16,7 +16,10 @@ export async function POST(request) {
   })
 
   if (exist) {
-    throw new Error("Email already exists")
+    return new NextResponse(
+      JSON.stringify({ message: 'Email already exists' }),
+      { status: 400 }
+    );
   }
 
   const hashedPassword = await bcrypt.hash(password, 10)

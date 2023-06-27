@@ -21,10 +21,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/components/ui/use-toast"
-import { Icons } from "@/components/icons"
 
 interface UserNameFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  user: Pick<User, "id" | "name">
+  user: Pick<User, "id" | "firstName">
 }
 
 type FormData = z.infer<typeof userNameSchema>
@@ -38,7 +37,7 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
   } = useForm<FormData>({
     resolver: zodResolver(userNameSchema),
     defaultValues: {
-      name: user?.name || "",
+      firstName: user?.firstName || "",
     },
   })
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
@@ -52,7 +51,9 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: data.name,
+        firstName: data.firstName,
+        lastName: data.lastName,
+
       }),
     })
 
@@ -61,13 +62,13 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
     if (!response?.ok) {
       return toast({
         title: "Something went wrong.",
-        description: "Your name was not updated. Please try again.",
+        description: "Your profile was not updated. Please try again.",
         variant: "destructive",
       })
     }
 
     toast({
-      description: "Your name has been updated.",
+      description: "Your profile has been updated.",
     })
 
     router.refresh()
@@ -88,17 +89,32 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
         </CardHeader>
         <CardContent>
           <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="name">
-              Name
+            <Label  htmlFor="firstName">
+              First Name
             </Label>
             <Input
-              id="name"
+              id="firstName"
               className="w-[400px]"
               size={32}
-              {...register("name")}
+              {...register("firstName")}
             />
-            {errors?.name && (
-              <p className="px-1 text-xs text-red-600">{errors.name.message}</p>
+            {errors?.firstName && (
+              <p className="px-1 text-xs text-red-600">{errors.firstName.message}</p>
+            )}
+          </div>
+
+          <div className="grid gap-1">
+            <Label className="sr-only" htmlFor="lastName">
+              Last Name
+            </Label>
+            <Input
+              id="lastName"
+              className="w-[400px]"
+              size={32}
+              {...register("lastName")}
+            />
+            {errors?.lastName && (
+              <p className="px-1 text-xs text-red-600">{errors.lastName.message}</p>
             )}
           </div>
         </CardContent>
