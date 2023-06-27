@@ -1,14 +1,20 @@
+"use client"
 import { Form, Formik, FormikConfig, FormikHelpers, FormikValues } from 'formik';
 import React, {useState} from 'react'
 import FormNavigation from './form-navigation';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
+import { studentAdmissionFormSchema } from '@/lib/validations/admission-form';
+import {ZodType, z} from "zod";
 
 interface Props extends FormikConfig<FormikValues>{
     children: React.ReactNode;
 
 }
+
+type FormData = z.infer<typeof studentAdmissionFormSchema>
+
 
 const MultiStepForm = ({children, initialValues, onSubmit}: Props) => {
 
