@@ -30,8 +30,8 @@ export const dashboardConfig: DashboardConfig = {
       disabled: false,
     },
     {
-      title: "Parents",
-      href: "/dashboard/parents",
+      title: "Guardians",
+      href: "/dashboard/guardians",
       disabled: false,
     },
     {

@@ -67,7 +67,7 @@ model Student {
   firstName      String
   middleName     String?
   lastName       String
-  birthDate      String
+  birthDate      DateTime
   gender         String
   enrolled       Boolean?
   currentGrade   String?
@@ -75,6 +75,7 @@ model Student {
   nagriktaNumber String?
   email          String?
   phone          String?
+  address        String // combined address
   createdAt      DateTime   @default(now()) @map(name: "created_at")
   updatedAt      DateTime   @default(now()) @map(name: "updated_at")
   guardians      Guardian[] @relation("GuardianStudent")
@@ -163,3 +164,4 @@ model Session {
 
   @@map(name: "sessions")
 }
+

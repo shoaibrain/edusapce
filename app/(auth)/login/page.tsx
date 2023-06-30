@@ -4,6 +4,12 @@ import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 import { UserLoginForm } from "@/components/user-login-form"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Login",
+  description: "Login to your account",
+}
 
 export default function LoginPage() {
   return (
@@ -27,7 +33,7 @@ export default function LoginPage() {
             Welcome back
           </h1>
           <p className="text-sm text-muted-foreground">
-            Enter your email to sign in to your account
+            Enter your credential to sign in to your account
           </p>
         </div>
         <UserLoginForm />

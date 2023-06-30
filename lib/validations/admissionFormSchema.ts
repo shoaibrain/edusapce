@@ -4,7 +4,7 @@ export const studentAdmissionFormSchema = z.object({
   firstName: z.string().min(2),
   middleName: z.string().min(2).optional(),
   lastName: z.string().min(2),
-  birthDate: z.date(),
+  birthDate: z.date().optional(),
   gender: z.string(),
   email: z.string().email().optional(),
   phone: z.string().optional(),
@@ -16,7 +16,6 @@ export const studentAdmissionFormSchema = z.object({
   }),
   guardian: z.object({
     firstName: z.string().min(2),
-    middleName: z.string().min(2).optional(),
     lastName: z.string().min(2),
     email: z.string().email().optional(),
     phone: z.string(),
@@ -29,7 +28,6 @@ export const studentAdmissionFormSchema = z.object({
   enrollment: z.object({
     gradeLevel: z.string().optional(),
     schoolYear: z.string().optional(),
-    section: z.string().optional(),
     previousSchool: z.string().optional(),
   })
 })

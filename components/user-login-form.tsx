@@ -1,11 +1,11 @@
 "use client"
 
 import * as React from "react"
+import * as z from "zod"
 import { useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { signIn } from "next-auth/react"
 import { useForm } from "react-hook-form"
-import * as z from "zod"
 
 import { cn } from "@/lib/utils"
 import { userAuthSchema } from "@/lib/validations/userAuthSchema"
@@ -20,45 +20,38 @@ interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 type FormData = z.infer<typeof userAuthSchema>
 
 export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(userAuthSchema),
-  })
+  const { register, handleSubmit, formState: { errors }} = useForm<FormData>({resolver: zodResolver(userAuthSchema),})
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const searchParams = useSearchParams()
 
-  async function onSubmit(data: FormData) {
+   async function loginUser(data: FormData) {
     setIsLoading(true)
-
-    const signInResult = await signIn("credentials", {
-      email: data.email.toLowerCase(),
-      password: data.password,
-      redirect: true,
-      callbackUrl: searchParams?.get("from") || "/dashboard",
-    })
-
-    setIsLoading(false)
-
-    // BUG: toast doesn't show up correctly
-    if (!signInResult?.ok) {
-      return toast({
-        title: "Something went wrong.",
-        description: "Your sign in request failed. Please try again.",
-        variant: "destructive",
-      })
+    try {
+        const signInResult = await signIn("credentials", {
+          email: data.email.toLowerCase(),
+          password: data.password,
+          redirect: true,
+          callbackUrl: searchParams?.get("from") || "/dashboard",
+        })
+        setIsLoading(false)
+        if (!signInResult?.ok) {
+           toast({
+            title: "Something went wrong.",
+            description: "Your sign in request failed. Please try again.",
+            variant: "destructive",
+          })
+        }
+         toast({
+          title: "Logged in successfully",
+        })  
+    } catch (error) {
+      console.log(error)
     }
-
-    return toast({
-      title: "Logged in successfully",
-    })
   }
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(loginUser)}>
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Label  htmlFor="email">
@@ -80,7 +73,6 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
               </p>
             )}
           </div>
-
           <div className="grid gap-1">
             <Label htmlFor="password">
               Password
@@ -109,9 +101,7 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
+          <span className="bg-background px-2 text-muted-foreground">or</span>
         </div>
       </div>
     </div>
