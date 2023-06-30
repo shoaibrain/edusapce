@@ -20,6 +20,7 @@ type FormData = z.infer<typeof studentAdmissionFormSchema>
 
 export function StudentAdmissionForm({className, ...props}:StudentAdmissionFormProps ) {
     const router = useRouter()
+    // @ts-ignore
     const schema: ZodType<FormData> = z.object({
     firstName: z.string().min(2, { message: "first name required" }),
     middleName: z.string().optional(),

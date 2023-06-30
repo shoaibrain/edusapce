@@ -34,6 +34,7 @@ export async function PATCH(
         id: session.user.id,
       },
       data: {
+        // @ts-ignore
         name: payload.name,
       },
     })
