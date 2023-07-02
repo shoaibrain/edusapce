@@ -24,18 +24,7 @@ type FormData = z.infer<typeof userRegisterSchema>
 export function UserRegisterForm({className, ...props}:UserRegisterFormProps ) {
   const router = useRouter()
   
-  const schema: ZodType<FormData> = z.object({
-    firstName: z.string().min(2, { message: "First name should contain atleast 2 character" }),
-    lastName: z.string().min(2, { message: "Last name should be 2 character or more" }),
-    email: z.string().email({ message: "Enter a valid email" }),
-    password: z.string().min(5, { message: "Password must be at least 5 characters" }).max(15),
-    confirmPassword: z.string().min(5).max(15),
-  }).refine(data => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  })
-
-  const {register, handleSubmit, formState:{errors}} = useForm<FormData>({resolver: zodResolver(schema)})
+  const {register, handleSubmit, formState:{errors}} = useForm<FormData>({resolver: zodResolver(userRegisterSchema)})
   
   async function registerUser(data: FormData) {
     try {
@@ -79,18 +68,11 @@ export function UserRegisterForm({className, ...props}:UserRegisterFormProps ) {
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="firstName">First Name</Label>
-              <Input id="firstName" type="text"  autoCapitalize="none" autoCorrect="off" {...register("firstName")}/>
-              {errors.firstName && <p className="text-red-500">{errors.firstName.message}</p>}
+              <Label htmlFor="name">Full Name</Label>
+              <Input id="name" type="text"  autoCapitalize="none" autoCorrect="off" placeholder="firstname lastname" {...register("name")}/>
+              {errors.name && <p className="text-red-500">{errors.name.message}</p>}
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input id="lastName" type="text" autoCapitalize="none" autoCorrect="off" {...register("lastName")}/>      
-              {errors.lastName && <p className="text-red-500">{errors.lastName.message}</p>}
-            </div>
-          </div>
 
           <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>

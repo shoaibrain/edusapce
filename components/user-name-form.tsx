@@ -23,7 +23,7 @@ import { Label } from "@/components/ui/label"
 import { toast } from "@/components/ui/use-toast"
 
 interface UserNameFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  user: Pick<User, "id" | "firstName">
+  user: Pick<User, "id" | "name">
 }
 
 type FormData = z.infer<typeof userNameSchema>
@@ -37,7 +37,7 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
   } = useForm<FormData>({
     resolver: zodResolver(userNameSchema),
     defaultValues: {
-      firstName: user?.firstName || "",
+      name: user?.name || "",
     },
   })
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
@@ -51,8 +51,7 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        firstName: data.firstName,
-        lastName: data.lastName,
+        name: data.name,
 
       }),
     })
@@ -89,32 +88,17 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
         </CardHeader>
         <CardContent>
           <div className="grid gap-1">
-            <Label  htmlFor="firstName">
-              First Name
+            <Label  htmlFor="name">
+              Full Name
             </Label>
             <Input
-              id="firstName"
+              id="name"
               className="w-[400px]"
               size={32}
-              {...register("firstName")}
+              {...register("name")}
             />
-            {errors?.firstName && (
-              <p className="px-1 text-xs text-red-600">{errors.firstName.message}</p>
-            )}
-          </div>
-
-          <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="lastName">
-              Last Name
-            </Label>
-            <Input
-              id="lastName"
-              className="w-[400px]"
-              size={32}
-              {...register("lastName")}
-            />
-            {errors?.lastName && (
-              <p className="px-1 text-xs text-red-600">{errors.lastName.message}</p>
+            {errors?.name && (
+              <p className="px-1 text-xs text-red-600">{errors.name.message}</p>
             )}
           </div>
         </CardContent>

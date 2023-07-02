@@ -27,8 +27,7 @@ export default async function SettingsPage() {
       <div className="grid gap-10">
         
         <UserNameForm user={
-          // @ts-ignore
-          { id: user.id, name: user.firstName || "" }} />
+          { id: user.id, name: user.name || "" }} />
       </div>
     </DashboardShell>
   )

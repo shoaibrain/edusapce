@@ -17,9 +17,8 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { label: "Email", type: "text", placeholder: "jsmith" },
+        email: { label: "Email", type: "text"},
         password: { label: "Password", type: "password" },
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
       },
 
       async authorize(credentials) {
@@ -62,7 +61,6 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       const dbUser = await prisma.user.findFirst({
         where: {
-          // @ts-ignore
           email: token.email,
         },
       })
@@ -76,7 +74,7 @@ export const authOptions: NextAuthOptions = {
 
       return {
         id: dbUser.id,
-        name: dbUser.firstName + " " + dbUser.lastName,
+        name: dbUser.name,
         email: dbUser.email,
         picture: dbUser.image,
       }

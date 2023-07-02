@@ -28,6 +28,7 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
     setIsLoading(true)
     try {
         const signInResult = await signIn("credentials", {
+          //Todo: if user not found, redirect to signup page
           email: data.email.toLowerCase(),
           password: data.password,
           redirect: true,

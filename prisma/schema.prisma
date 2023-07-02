@@ -15,7 +15,7 @@ datasource db {
 enum Role {
   ADMIN
   TEACHER
-  USER 
+  USER
 }
 
 model Account {
@@ -42,10 +42,8 @@ model Account {
 
 model User {
   id             String    @id @default(cuid())
-  firstName      String
-  middleName     String?
-  lastName       String
-  email          String   @unique
+  name           String
+  email          String    @unique
   phone          String?
   emailVerified  DateTime?
   phoneVerified  DateTime?
@@ -164,4 +162,3 @@ model Session {
 
   @@map(name: "sessions")
 }
-

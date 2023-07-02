@@ -20,23 +20,11 @@ type FormData = z.infer<typeof studentAdmissionFormSchema>
 
 export function StudentAdmissionForm({className, ...props}:StudentAdmissionFormProps ) {
     const router = useRouter()
-    // @ts-ignore
-    const schema: ZodType<FormData> = z.object({
-    firstName: z.string().min(2, { message: "first name required" }),
-    middleName: z.string().optional(),
-    lastName: z.string().min(2, { message: "last name required" }),
-    email: z.string().email({ message: "invalid email" }).optional(),
-    birthDate: z.date(),
-    gender: z.string(),
-    nationality: z.string(),
-    phone: z.string().min(10, { message: "invalid phone number" }),
-    address: z.string().min(10, { message: "Address required" }),
-})
-    const {register, handleSubmit, formState:{errors}} = useForm<FormData>({resolver: zodResolver(schema)})
+    
+    const {register, handleSubmit, formState:{errors}} = useForm<FormData>({resolver: zodResolver(studentAdmissionFormSchema)})
 
     async function registerStudent(data: FormData) {
         try {
-            // alert(JSON.stringify(data, null, 2))
             const response = await axios.post('/api/students', data);
             console.log(response);
             toast({
@@ -45,7 +33,6 @@ export function StudentAdmissionForm({className, ...props}:StudentAdmissionFormP
               });
               router.push('/login');
         } catch (error) {
-            // alert(JSON.stringify(error, null, 2))
             toast({
                 title: 'Error during registration',
                 variant: "destructive"
@@ -197,7 +184,7 @@ export function StudentAdmissionForm({className, ...props}:StudentAdmissionFormP
                                 autoComplete="address"
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
-                                {errors.address?.street &&  <p className="text-red-500">{errors.address.message}</p>}
+                                {errors.address &&  <p className="text-red-500">{errors.address.message}</p>}
                             </div>
                             </div>
                         </div>
