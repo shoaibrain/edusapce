@@ -27,27 +27,27 @@ export const dashboardConfig: DashboardConfig = {
     {
       title: "Teachers",
       href: "/dashboard/teachers",
-      disabled: false,
+      disabled: true,
     },
     {
       title: "Guardians",
       href: "/dashboard/guardians",
-      disabled: false,
+      disabled: true,
     },
     {
       title: "Accounts",
       href: "/dashboard/accounts",
-      disabled: false,
+      disabled: true,
     },
     {
       title: "Classes",
       href: "/dashboard/classes",
-      disabled: false,
+      disabled: true,
     },
     {
       title: "Exams",
       href: "/dashboard/exams",
-      disabled: false,
+      disabled: true,
     },
   ],
 }
