@@ -27,13 +27,18 @@ export default async function StudentPage({ params }: StudentPageProps) {
 
   return (
     <>
-      <div className=" bg-sky-500/100">
-          <p>{student.firstName + " " + student.lastName}</p>
-          <p>studnet id: {student.id}</p>
-          <p>email: {student.email}</p>
-          <p>phone: {student.phone}</p>
-          <p>address: {student.address}</p>
-          
+      <div className="grid grid-flow-col grid-rows-3 gap-4 bg-sky-500/100">
+         <div>
+          stud infero
+         </div>
+         
+         <div>
+          stu-guardin info
+         </div>
+
+         <div>
+          stu-performance
+         </div>
       </div>
 
     </>
