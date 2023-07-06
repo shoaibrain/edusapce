@@ -56,7 +56,7 @@ console.log(JSON.stringify(student, null, 2))
       variant: "default",
     });
   } catch (error) {
-  console.log(error.response.data || error.response)
+    console.error(error);
     toast({ 
       title: 'Error during registration',
       variant: "destructive"
