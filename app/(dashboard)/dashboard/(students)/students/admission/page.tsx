@@ -3,7 +3,7 @@ import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { Formik, FormikValues } from "formik"
+import { Formik, FormikValues, useField } from "formik"
 import * as yup from 'yup';
 import InputField from "@/components/ui/input-field"
 import MultiStepFormAdmission, { FormStep } from "@/components/multi-step-form-admission"
@@ -18,53 +18,84 @@ const admissionForm = {
     middleName: "",
     lastName: "",
     gender: "",
-    dob: "",
+    birthDate: "",
     currentGrade: "",
     nationality: "",
     nagriktaNumber: "",
-    phoneNumber: "",
+    phone: "",
     email: "",
     address: "",
   },
   guardianDetails: {
     firstName: "",
     lastName: "",
-    phoneNumber: "",
+    phone: "",
     address: "",
     guardianType: "",
     businessAddress: "",
   },
-  previousSchoolDetails: {
-    schoolName: "",
-    schoolAddress: "",
+  enrollmentDetails: {
+    admissionType: "",
+    enrollmentDate: "",
+    enrollmentGrade: "",
+    additionalInfo: "",
+
+    prevSchoolName: "",
+    prevSchoolAddress: "",
+    prevSchoolPhone: "",
+
   }
 }
 
 //student registration form
 const handleRegister = async (values: FormikValues) => {
-  console.log("final form submitted")
-  const student = values.studentDetails
-  const guardian = values.guardianDetails
-  const previousSchool = values.previousSchoolDetails
+  const student: JSON = values.studentDetails;
+  const guardian: JSON = values.guardianDetails;
+  const previousSchool: JSON = values.previousSchoolDetails;
 
-console.log(JSON.stringify(student, null, 2))
+  let studentId: string;
+  let guardianId: string;
+
   try {
-    const response = await axios.post('/api/students', student);
-    console.log(response);
+    const response = await axios.post('/api/students', studentDetails);
+    const studentId = response.data.id;
+
+    const guardianResponse = await axios.post('/api/guardians', guardianDetails);
+
     toast({
       title: 'Student Registered successfully',
-      variant: "default",
+      variant: 'default',
     });
+
+    // Create the guardian
+    const guardianResponse = await axios.post('/api/guardians', guardian);
+    console.log(guardianResponse);
+    guardianId = guardianResponse.data.id;
+    toast({
+      title: 'Guardian Registered successfully',
+      variant: 'default',
+    });
+
+    // Establish the relationship between student and guardian
+    await axios.post('/api/students/' + studentId + '/guardians', {
+      guardianId: guardianId,
+    });
+    toast({
+      title: 'Relationship Established successfully',
+      variant: 'default',
+    });
+
   } catch (error) {
     console.error(error);
-    toast({ 
+    toast({
       title: 'Error during registration',
-      variant: "destructive"
+      variant: 'destructive',
     });
   }
 }
 
 export default function AdmissionPage() {
+  
   return (
     <div className="space-y-12">
          <div className="border-b border-gray-900/10 pb-12">
@@ -84,11 +115,11 @@ export default function AdmissionPage() {
                         middleName: yup.string().optional(),
                         lastName: yup.string().required('last name is required'),
                         gender: yup.string().required('student gender required'),
-                        dob: yup.date().required('date of birth is required'),
+                        birthDate: yup.date().required('date of birth is required'),
                         currentGrade: yup.string().optional(),
                         nationality: yup.string().required('student nationality is required'),
                         nagriktaNumber: yup.string().optional(),
-                        phoneNumber: yup.string().optional(),
+                        phone: yup.string().optional(),
                         email: yup.string().email().optional(),
                         address: yup.string().required('address is required'),
                       })
@@ -121,7 +152,7 @@ export default function AdmissionPage() {
 
                     <div className="sm:col-span-3">
                       <Label>Birth Date</Label>
-                      <InputField name="studentDetails.dob" label="" type="date" />
+                      <InputField name="studentDetails.birthDate" label="" type="date" />
                     </div>
 
                     <div className="sm:col-span-3">
@@ -133,7 +164,7 @@ export default function AdmissionPage() {
                     </div>
 
                     <div className="sm:col-span-3">
-                      <InputField name="phoneNumber" label="Phone No"  />
+                      <InputField name="studentDetails.phone" label="Phone No"  />
                     </div>
 
                     <div className="sm:col-span-3">
@@ -158,7 +189,7 @@ export default function AdmissionPage() {
                       guardianDetails: yup.object({
                         firstName: yup.string().required('first name is required'),
                         lastName: yup.string().required('last name is required'),
-                        phoneNumber: yup.string().required('phone number is required'),
+                        phone: yup.string().required('phone number is required'),
                         address: yup.string().required('address is required'),
                         guardianType: yup.string().required('guardian type is required'),
                         businessAddress: yup.string().optional(),
@@ -176,7 +207,7 @@ export default function AdmissionPage() {
                     </div>
 
                     <div className="sm:col-span-3">
-                      <InputField name="guardianDetails.phoneNumber" label="Phone No"  />
+                      <InputField name="guardianDetails.phone" label="Phone No"  />
                     </div>
 
                     <div className="sm:col-span-3">
@@ -196,7 +227,7 @@ export default function AdmissionPage() {
                 </FormStep>
 
                 <FormStep
-                    stepName="Academic Details"
+                    stepName="Enrollment Details"
                     onSubmit= {(values)=> {
                       console.log("step 2 submitted")
                       console.log(values)
@@ -209,15 +240,36 @@ export default function AdmissionPage() {
                     })
                     }
                 >
-                <p className="mt-1 text-sm leading-6 text-gray-600">Student previous school</p>
+                <p className="mt-1 text-sm leading-6 text-gray-600">Student Enrollment Details</p>
                   <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                    
-                   <div className="sm:col-span-3">
-                      <InputField name="previousSchoolDetails.schoolName" label="Previous School"  />
+                    <div className="sm:col-span-3 ">
+                    <SelectField
+                        name="enrollmentDetails.admissionType"
+                        label=""
+                        options={[
+                          { value: 'Regular', label: 'Regular' },
+                          { value: 'Transfer', label: 'Transfer' },
+                        ]}
+                      />
                     </div>
+
+                        <div className="sm:col-span-3">
+                          <InputField
+                            type="text"
+                            name="enrollmentDetails.prevSchoolName"
+                            label="Previous School Name"
+                          />
+                          <InputField
+                            type="text"
+                            name="enrollmentDetails.prevSchoolAddress"
+                            label="Previous School Address"
+                          />
+                        </div>
+                      
                     <div className="sm:col-span-3">
-                      <InputField name="previousSchoolDetails.schoolAddress" label="Previous School Address"  />
+                      <InputField name="enrollmentDetails.enrollmentDate" label="Academic Year"  />
                     </div>
+
                   </div>
                 </FormStep>
             

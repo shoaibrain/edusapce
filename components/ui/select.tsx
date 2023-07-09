@@ -6,7 +6,7 @@ import { useField, FieldConfig } from 'formik';
 
 interface Props extends FieldConfig {
   label: string;
-  options: { value: string; label: string }[]; // Array of options with value and label
+  options: { value: string; label: string }[];
 }
 
 const SelectField = ({ label, options, ...props }: Props) => {

@@ -76,11 +76,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          
           {children}
           <Toaster />
           <TailwindIndicator />
-    
         </ThemeProvider>
       </body>
     </html>

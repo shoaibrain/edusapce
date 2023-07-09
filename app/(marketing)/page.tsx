@@ -14,17 +14,15 @@ export default async function IndexPage() {
           Streamline your schools administrative tasks
           </h1>
     
-          <div className="space-x-4">
+          <div className="space-x-4 space-y-4">
             <Link href="/login" className={cn(buttonVariants({ size: "lg" }))}>
               Get Started
             </Link>
             <Link
-              href={siteConfig.links.github}
-              target="_blank"
-              rel="noreferrer"
-              className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
+              href="/dashboard"
+              className={cn(buttonVariants({ size: "lg" }))}
             >
-              view source code
+              Dashboard
             </Link>
           </div>
         </div>

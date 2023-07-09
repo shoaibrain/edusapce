@@ -18,21 +18,25 @@ export const dashboardConfig: DashboardConfig = {
       title: "Dashboard",
       href: "/dashboard",
       disabled: false,
+      icon: "dashboard",
     },
     {
       title: "Students",
       href: "/dashboard/students",
       disabled: false,
+      icon: "users"
     },
     {
       title: "Teachers",
       href: "/dashboard/teachers",
       disabled: true,
+      icon: "users"
     },
     {
       title: "Guardians",
       href: "/dashboard/guardians",
       disabled: true,
+      icon: "users"
     },
     {
       title: "Accounts",

@@ -14,7 +14,7 @@ export async function GET (req: NextRequest) {
 
 export async function POST(request: Request){
   const body = await request.json()
-  const { firstName,
+  let { firstName,
           middleName, 
           lastName, 
           birthDate,
@@ -23,6 +23,9 @@ export async function POST(request: Request){
           email, 
           phone, 
           address } = body
+  
+    // meh meh meh meh
+    birthDate = new Date(birthDate);
 
   if (!firstName || !lastName || !birthDate || !gender || !address) {
     return new NextResponse("Missing Fields", { status: 400 })

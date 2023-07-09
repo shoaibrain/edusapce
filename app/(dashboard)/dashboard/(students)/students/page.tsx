@@ -1,14 +1,12 @@
 import React from 'react'
 import { notFound, redirect } from "next/navigation"
-import { Student, User } from "@prisma/client"
 
 import prisma from "@/lib/db"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Activity, CreditCard, Gauge, Users, AlertTriangle } from 'lucide-react'
-import { Search } from '@/components/search'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { GraduationCap, Gauge, Users, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button'
 
 async function getStudents() {
   // Fetch all students
@@ -65,7 +63,7 @@ export default async function StudentsPage() {
                 <CardTitle className="text-sm font-medium">
                   Academic Performance
                 </CardTitle>
-                <CreditCard className="h-4 w-4 text-muted-foreground" />
+                <GraduationCap className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">
@@ -98,11 +96,11 @@ export default async function StudentsPage() {
             </div>
             <div>
             <Link href="dashboard/students/bills" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
-              Pay Tuition Bill
+              Pay School Fees
             </Link>
             </div>
             <div>
-            <Link href="dashboard/students/bills" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
+            <Link  href="dashboard/students/bills" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
               Generate Transcript
             </Link>
             </div>

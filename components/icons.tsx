@@ -22,6 +22,8 @@ import {
   Trash,
   Twitter,
   User,
+  Users,
+  LayoutDashboard,
   X,
   type Icon as LucideIcon,
 } from "lucide-react"
@@ -47,6 +49,8 @@ export const Icons = {
   arrowRight: ArrowRight,
   help: HelpCircle,
   pizza: Pizza,
+  dashboard: LayoutDashboard, 
+  users: Users,
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
