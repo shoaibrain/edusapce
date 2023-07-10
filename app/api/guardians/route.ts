@@ -1,8 +1,20 @@
-
+//TODO: this is not working yet, wil throw type error
 import prisma from '@/lib/db';
 import { NextResponse, NextRequest } from "next/server"
+import * as yup from 'yup';
 
-// TODO: not tested yet
+const guardianSchema = yup.object().shape({
+  firstName: yup.string().required(),
+  lastName: yup.string().required(),
+  phone: yup.string().required(),
+  address: yup.string().required(),
+  email: yup.string().email().optional(),
+  profession: yup.string().required(),
+  annualIncome: yup.number().required(),
+  guardianType: yup.string().required(),
+  businessAddress: yup.string().optional(),
+});
+
 export async function GET (req: NextRequest) {
 
     try {
@@ -15,15 +27,10 @@ export async function GET (req: NextRequest) {
 
 export async function POST(request: Request){
   const body = await request.json()
-  let {   firstName,
-          lastName, 
-          phone, 
-          address, guardianType, businessAddress } = body
   
-
-  if (!firstName || !lastName || !phone || !address || !guardianType) {
-    return new NextResponse("Missing Fields", { status: 400 })
-  }
+  let {firstName,lastName,phone,address,email,profession,annualIncome,guardianType,businessAddress} = body
+  
+  annualIncome = BigInt(annualIncome)
   
   const guardian = await prisma.guardian.create({
     data: {
@@ -31,7 +38,11 @@ export async function POST(request: Request){
       lastName,
       phone,
       address,
+      email,
+      profession,
+      annualIncome,
       guardianType,
+      businessAddress,
     },
   })
 

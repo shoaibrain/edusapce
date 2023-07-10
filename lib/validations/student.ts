@@ -14,8 +14,6 @@ const studentPatchSchema = z.object({
   currentGrade: z.string().min(0).max(128).optional(),
   guardians: z.array(z.string()).optional(), // array of guardian ids
   class: z.string().min(0).max(128).optional(), // class id
-
-
 })
 
 export default studentPatchSchema;

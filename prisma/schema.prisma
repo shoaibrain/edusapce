@@ -77,11 +77,20 @@ model Student {
   createdAt      DateTime   @default(now()) @map(name: "created_at")
   updatedAt      DateTime   @default(now()) @map(name: "updated_at")
   guardians      Guardian[] @relation("GuardianStudent")
-  class          Class?     @relation(fields: [classId], references: [id])
-  classId        String?
+  enrollment     Enrollment?
 
   @@map(name: "students")
 }
+
+model Enrollment {
+  student      Student   @relation(fields: [studentId], references: [id])
+  studentId    String    @id
+  admissionType String
+  previousSchool String?
+
+  @@map(name: "enrollments")
+}
+
 
 model Teacher {
   id             String    @id @default(cuid())
@@ -110,8 +119,11 @@ model Guardian {
   lastName       String
   phone          String
   address        String
+  email          String?
+  profession     String
+  annualIncome   BigInt? // make it required? 
   guardianType   String
-  businesAddress String?
+  businessAddress String?
   createdAt      DateTime @default(now()) @map(name: "created_at")
   updatedAt      DateTime @default(now()) @map(name: "updated_at")
 
@@ -124,11 +136,12 @@ model Class {
   id        String    @id @default(cuid())
   name      String
   section   String
+  capacity  Int?
+  allocatedRoom String?
   subjects  Subject[] @relation("ClassSubject")
   teachers  Teacher[] @relation("TeacherClass")
   createdAt DateTime  @default(now()) @map(name: "created_at")
   updatedAt DateTime  @default(now()) @map(name: "updated_at")
-  Student   Student[]
 
   @@map(name: "classes")
 }

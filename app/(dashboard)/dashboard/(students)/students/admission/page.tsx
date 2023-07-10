@@ -11,6 +11,7 @@ import SelectField from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast"
+import { bigint, date } from "zod";
 
 const admissionForm = {
   studentDetails:{
@@ -18,8 +19,7 @@ const admissionForm = {
     middleName: "",
     lastName: "",
     gender: "",
-    birthDate: "",
-    currentGrade: "",
+    birthDate: date(),
     nationality: "",
     nagriktaNumber: "",
     phone: "",
@@ -30,20 +30,16 @@ const admissionForm = {
     firstName: "",
     lastName: "",
     phone: "",
-    address: "",
-    guardianType: "",
-    businessAddress: "",
+    address: "", // home address
+    email: "",
+    profession: "", // business, job, agriculture, other
+    annualIncome: bigint, // used to determine the fee discount, scholarship etc
+    guardianType: "", // father, mother, uncle, aunt, brother, sister, grand father, grand mother, other
+    businessAddress: "", // if guardian is a business owner
   },
   enrollmentDetails: {
     admissionType: "",
-    enrollmentDate: "",
-    enrollmentGrade: "",
-    additionalInfo: "",
-
-    prevSchoolName: "",
-    prevSchoolAddress: "",
-    prevSchoolPhone: "",
-
+    previousSchool: "",
   }
 }
 
@@ -51,48 +47,46 @@ const admissionForm = {
 const handleRegister = async (values: FormikValues) => {
   const student: JSON = values.studentDetails;
   const guardian: JSON = values.guardianDetails;
-  const previousSchool: JSON = values.previousSchoolDetails;
+  const enrollmentDetails: JSON = values.enrollmentDetails;
 
   let studentId: string;
   let guardianId: string;
 
   try {
-    const response = await axios.post('/api/students', studentDetails);
-    const studentId = response.data.id;
+    // Create the student
+    const studentResponse = await axios.post('/api/students', student);
+    console.log(studentResponse);
+    studentId = studentResponse.data.id;
 
-    const guardianResponse = await axios.post('/api/guardians', guardianDetails);
-
-    toast({
-      title: 'Student Registered successfully',
-      variant: 'default',
-    });
+    // create the enrollment
+    
+    // enrollmentDetails["studentId"] = studentId;//add student id to enrollmentDetails
+    // const enrollmentResponse = await axios.post(`/api/enrollments`, enrollmentDetails);
+    // console.log(enrollmentResponse);
 
     // Create the guardian
     const guardianResponse = await axios.post('/api/guardians', guardian);
     console.log(guardianResponse);
     guardianId = guardianResponse.data.id;
-    toast({
-      title: 'Guardian Registered successfully',
-      variant: 'default',
-    });
 
     // Establish the relationship between student and guardian
-    await axios.post('/api/students/' + studentId + '/guardians', {
-      guardianId: guardianId,
+    await axios.patch(`/api/students/${studentId}`, {
+      guardians: [guardianId],
     });
-    toast({
-      title: 'Relationship Established successfully',
-      variant: 'default',
+    await axios.patch(`/api/guardians/${guardianId}`, {
+      students: [studentId],
     });
 
   } catch (error) {
     console.error(error);
+    const errorMessage = error.message || 'Error during registration';
     toast({
-      title: 'Error during registration',
-      variant: 'destructive',
+      title: 'Error',
+      description: errorMessage,
     });
   }
-}
+  
+  }
 
 export default function AdmissionPage() {
   
@@ -116,7 +110,6 @@ export default function AdmissionPage() {
                         lastName: yup.string().required('last name is required'),
                         gender: yup.string().required('student gender required'),
                         birthDate: yup.date().required('date of birth is required'),
-                        currentGrade: yup.string().optional(),
                         nationality: yup.string().required('student nationality is required'),
                         nagriktaNumber: yup.string().optional(),
                         phone: yup.string().optional(),
@@ -141,7 +134,7 @@ export default function AdmissionPage() {
                     <Label>Gender</Label>
                     <SelectField
                         name="studentDetails.gender"
-                        label=""
+                        label="select student gender"
                         options={[
                           { value: 'male', label: 'Male' },
                           { value: 'female', label: 'Female' },
@@ -170,7 +163,7 @@ export default function AdmissionPage() {
                     <div className="sm:col-span-3">
                       <InputField name="studentDetails.email" label="Email"  />
                     </div>
-                    <div className="col-span-full">
+                    <div className="col-span-3">
                       <div className="mt-2">
                       <InputField name="studentDetails.address" label="Address"  />
                       </div>
@@ -182,7 +175,7 @@ export default function AdmissionPage() {
                 <FormStep
                     stepName="Guardian Details"
                     onSubmit= {(values)=> {
-                      console.log("step 2 submitted")
+                      console.log("Guardian details submitted")
                       console.log(values)
                     }}
                     validationSchema={ yup.object({
@@ -191,6 +184,9 @@ export default function AdmissionPage() {
                         lastName: yup.string().required('last name is required'),
                         phone: yup.string().required('phone number is required'),
                         address: yup.string().required('address is required'),
+                        email: yup.string().email().optional(),
+                        profession: yup.string().required('profession is required'),
+                        annualIncome: yup.number().required('annual income is required'),
                         guardianType: yup.string().required('guardian type is required'),
                         businessAddress: yup.string().optional(),
                       })
@@ -213,6 +209,16 @@ export default function AdmissionPage() {
                     <div className="sm:col-span-3">
                       <InputField name="guardianDetails.address" label="Address"  />
                     </div>
+                    <div className="sm:col-span-2">
+                      <InputField name="guardianDetails.email" label="Email"  />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <InputField name="guardianDetails.profession" label="Profession"  />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <InputField name="guardianDetails.annualIncome" label="Annual Income"  />
+                    </div>
 
                     <div className="sm:col-span-3">
                       <InputField name="guardianDetails.guardianType" label="Guardian Type"  />
@@ -221,55 +227,38 @@ export default function AdmissionPage() {
                     <div className="sm:col-span-3">
                       <InputField name="guardianDetails.businessAddress" label="Business Address"  />
                     </div>
-
-
                   </div>
                 </FormStep>
 
                 <FormStep
                     stepName="Enrollment Details"
                     onSubmit= {(values)=> {
-                      console.log("step 2 submitted")
+                      console.log("Enrollment Details submitted")
                       console.log(values)
                     }}
                     validationSchema={ yup.object({
-                      previousSchoolDetails: yup.object({
-                        schoolName: yup.string().optional(),
-                        schoolAddress: yup.string().optional(),
+                      enrollmentDetails: yup.object({
+                        admissionType: yup.string().required('admission type is required'),
+                        prevSchool: yup.string().optional(),
                       })
                     })
                     }
                 >
                 <p className="mt-1 text-sm leading-6 text-gray-600">Student Enrollment Details</p>
                   <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                    <div className="sm:col-span-3 ">
-                    <SelectField
-                        name="enrollmentDetails.admissionType"
-                        label=""
-                        options={[
-                          { value: 'Regular', label: 'Regular' },
-                          { value: 'Transfer', label: 'Transfer' },
-                        ]}
-                      />
+                    <div className="sm:col-span-2 ">
+                      <SelectField
+                          name="enrollmentDetails.admissionType"
+                          label=""
+                          options={[
+                            { value: 'Regular', label: 'Regular' },
+                            { value: 'Transfer', label: 'Transfer' },
+                          ]}
+                        />
                     </div>
-
-                        <div className="sm:col-span-3">
-                          <InputField
-                            type="text"
-                            name="enrollmentDetails.prevSchoolName"
-                            label="Previous School Name"
-                          />
-                          <InputField
-                            type="text"
-                            name="enrollmentDetails.prevSchoolAddress"
-                            label="Previous School Address"
-                          />
-                        </div>
-                      
-                    <div className="sm:col-span-3">
-                      <InputField name="enrollmentDetails.enrollmentDate" label="Academic Year"  />
+                    <div className="sm:col-span-2">
+                      <InputField name="enrollmentDetails.previousSchool" label="Previous School" type="text" />
                     </div>
-
                   </div>
                 </FormStep>
             
