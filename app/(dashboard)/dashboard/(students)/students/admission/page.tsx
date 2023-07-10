@@ -33,7 +33,7 @@ const admissionForm = {
     address: "", // home address
     email: "",
     profession: "", // business, job, agriculture, other
-    annualIncome: bigint, // used to determine the fee discount, scholarship etc
+    annualIncome: "", // used to determine the fee discount, scholarship etc
     guardianType: "", // father, mother, uncle, aunt, brother, sister, grand father, grand mother, other
     businessAddress: "", // if guardian is a business owner
   },
@@ -55,18 +55,11 @@ const handleRegister = async (values: FormikValues) => {
   try {
     // Create the student
     const studentResponse = await axios.post('/api/students', student);
-    console.log(studentResponse);
-    studentId = studentResponse.data.id;
 
-    // create the enrollment
-    
-    // enrollmentDetails["studentId"] = studentId;//add student id to enrollmentDetails
-    // const enrollmentResponse = await axios.post(`/api/enrollments`, enrollmentDetails);
-    // console.log(enrollmentResponse);
+    studentId = studentResponse.data.id;
 
     // Create the guardian
     const guardianResponse = await axios.post('/api/guardians', guardian);
-    console.log(guardianResponse);
     guardianId = guardianResponse.data.id;
 
     // Establish the relationship between student and guardian
@@ -84,9 +77,13 @@ const handleRegister = async (values: FormikValues) => {
       title: 'Error',
       description: errorMessage,
     });
+  } finally {
+    toast({
+      title: 'Success',
+      description: 'Student registered successfully',
+    });
   }
-  
-  }
+}
 
 export default function AdmissionPage() {
   
@@ -186,7 +183,7 @@ export default function AdmissionPage() {
                         address: yup.string().required('address is required'),
                         email: yup.string().email().optional(),
                         profession: yup.string().required('profession is required'),
-                        annualIncome: yup.number().required('annual income is required'),
+                        annualIncome: yup.string().required('annual income is required'),
                         guardianType: yup.string().required('guardian type is required'),
                         businessAddress: yup.string().optional(),
                       })

@@ -7,6 +7,8 @@ const guardianPatchSchema = z.object({
   email: z.string().min(3).max(128).optional(),
   phone: z.string().min(3).max(128).optional(),
   address: z.string().min(3).max(128).optional(),
+  profession: z.string().min(3).max(128).optional(),
+  annualIncome: z.string().min(3).max(128).optional(),
   students: z.array(z.string()).optional(), // array of student ids
 })
 

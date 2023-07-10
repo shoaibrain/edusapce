@@ -2,7 +2,6 @@ import * as z from "zod"
 import { Prisma } from "@prisma/client";
 import guardianPatchSchema from "@/lib/validations/guardian";
 import prisma from "@/lib/db";
-//TODO not tested yet
 const routeContextSchema = z.object({
     params: z.object({
       guardianId: z.string(),
@@ -77,6 +76,9 @@ const routeContextSchema = z.object({
       if (body.lastName) data.lastName = body.lastName;
       if (body.phone) data.phone = body.phone;
       if (body.address) data.address = body.address;
+      if (body.email) data.email = body.email;
+      if (body.profession) data.profession = body.profession;
+      if (body.annualIncome) data.annualIncome = body.annualIncome;
       if (body.students) data.students = {
         connect: body.students.map((studentId: string) => ({ id: studentId })),
       };

@@ -121,7 +121,7 @@ model Guardian {
   address        String
   email          String?
   profession     String
-  annualIncome   BigInt? // make it required? 
+  annualIncome   String? // make it required? 
   guardianType   String
   businessAddress String?
   createdAt      DateTime @default(now()) @map(name: "created_at")
