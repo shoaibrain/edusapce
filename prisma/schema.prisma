@@ -82,15 +82,14 @@ model Student {
   @@map(name: "students")
 }
 
-model Enrollment {
-  student      Student   @relation(fields: [studentId], references: [id])
+model Enrollment { 
   studentId    String    @id
   admissionType String
   previousSchool String?
+  student      Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@map(name: "enrollments")
 }
-
 
 model Teacher {
   id             String    @id @default(cuid())
@@ -155,6 +154,25 @@ model Subject {
   updatedAt DateTime  @default(now()) @map(name: "updated_at")
 
   @@map(name: "subjects")
+}
+
+model ClassFee {
+  classGrade      String  @id @unique
+  monthlyTuition  Float
+  admissionFee    Float
+  idCardFee       Float?
+  examFee         Float?
+  miscFee         Float?
+  libraryFee      Float?
+  computerLabFee  Float?
+  hostelFee       Float?
+  annualFee       Float?
+
+  academicYear    DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map(name: "class_fees")
 }
 
 model VerificationToken {

@@ -16,14 +16,17 @@ import {
   Moon,
   MoreVertical,
   Pizza,
+  Landmark,
   Plus,
   Settings,
   SunMedium,
   Trash,
   Twitter,
   User,
+  Backpack,
   Users,
   LayoutDashboard,
+  Award,
   X,
   type Icon as LucideIcon,
 } from "lucide-react"
@@ -53,6 +56,9 @@ export const Icons = {
   users: Users,
   sun: SunMedium,
   moon: Moon,
+  account: Landmark,
+  class: Backpack,
+  exam: Award,
   laptop: Laptop,
   gitHub: ({ ...props }: LucideProps) => (
     <svg

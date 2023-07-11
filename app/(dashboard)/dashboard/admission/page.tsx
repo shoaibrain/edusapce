@@ -1,9 +1,5 @@
 "use client"
-import Link from "next/link"
-
-import { cn } from "@/lib/utils"
-import { Button, buttonVariants } from "@/components/ui/button"
-import { Formik, FormikValues, useField } from "formik"
+import {  FormikValues } from "formik"
 import * as yup from 'yup';
 import InputField from "@/components/ui/input-field"
 import MultiStepFormAdmission, { FormStep } from "@/components/multi-step-form-admission"
@@ -11,7 +7,9 @@ import SelectField from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast"
-import { bigint, date } from "zod";
+import {  date } from "zod";
+
+//TODO : do this elegantly?
 
 const admissionForm = {
   studentDetails:{
@@ -44,7 +42,7 @@ const admissionForm = {
 }
 
 //student registration form
-const handleRegister = async (values: FormikValues) => {
+const handleAdmission = async (values: FormikValues) => {
   const student: JSON = values.studentDetails;
   const guardian: JSON = values.guardianDetails;
   const enrollmentDetails: JSON = values.enrollmentDetails;
@@ -70,6 +68,10 @@ const handleRegister = async (values: FormikValues) => {
       students: [studentId],
     });
 
+    // Create the enrollment
+    const enrollmentResponse  = await axios.post(`/api/enrollments/${studentId}`, enrollmentDetails);
+    console.log(enrollmentResponse.status)
+
   } catch (error) {
     console.error(error);
     const errorMessage = error.message || 'Error during registration';
@@ -89,10 +91,10 @@ export default function AdmissionPage() {
   
   return (
     <div className="space-y-12">
-         <div className="border-b border-gray-900/10 pb-12">
+         <div className="border-b border-gray-900/10 pb-10">
             <MultiStepFormAdmission
               initialValues={admissionForm}
-              onSubmit = {(values)=> handleRegister(values)}
+              onSubmit = {(values)=> handleAdmission(values)}
               >
                 <FormStep 
                     stepName="Student Details" 
@@ -128,16 +130,16 @@ export default function AdmissionPage() {
                     </div>
 
                     <div className="sm:col-span-3">
-                    <Label>Gender</Label>
-                    <SelectField
-                        name="studentDetails.gender"
-                        label="select student gender"
-                        options={[
-                          { value: 'male', label: 'Male' },
-                          { value: 'female', label: 'Female' },
-                          { value: 'other', label: 'Other' },
-                        ]}
-                      />
+                      <Label>Gender</Label>
+                      <SelectField
+                          name="studentDetails.gender"
+                          label="select student gender"
+                          options={[
+                            { value: 'male', label: 'Male' },
+                            { value: 'female', label: 'Female' },
+                            { value: 'other', label: 'Other' },
+                          ]}
+                        />
                     </div>
 
                     <div className="sm:col-span-3">

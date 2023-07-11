@@ -2,6 +2,7 @@ import * as z from "zod"
 import { Prisma } from "@prisma/client";
 import guardianPatchSchema from "@/lib/validations/guardian";
 import prisma from "@/lib/db";
+
 const routeContextSchema = z.object({
     params: z.object({
       guardianId: z.string(),
@@ -108,4 +109,3 @@ const routeContextSchema = z.object({
       return new Response(null, { status: 500 });
     }
   }
-  

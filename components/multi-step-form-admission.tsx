@@ -49,7 +49,7 @@ const MultiStepFormAdmission = ({
         }
     }
     return (
-        <div className="divide-dashed border border-red-500 p-3">
+        <div className=" border border-red-500 p-3">
             <p className="text-center text-lg font-semibold leading-loose">Student Admission Form</p>
             <Formik
                 initialValues={snapshot}
