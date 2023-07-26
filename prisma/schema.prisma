@@ -1,195 +1,211 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+provider = "prisma-client-js"
+previewFeatures = ["referentialIntegrity"]
 }
+
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+provider = "mysql"
+url = env("DATABASE_URL")
+referentialIntegrity = "prisma"
 }
+
 
 enum Role {
-  ADMIN
-  TEACHER
-  USER
+ADMIN
+TEACHER
+USER
 }
+
 
 model Account {
-  id                String   @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?  @db.Text
-  access_token      String?  @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?  @db.Text
-  session_state     String?
-  createdAt         DateTime @default(now()) @map(name: "created_at")
-  updatedAt         DateTime @default(now()) @map(name: "updated_at")
+id String @id @default(cuid())
+userId String
+type String
+provider String
+providerAccountId String
+refresh_token String? @db.Text
+access_token String? @db.Text
+expires_at Int?
+token_type String?
+scope String?
+id_token String? @db.Text
+session_state String?
+createdAt DateTime @default(now()) @map(name: "created_at")
+updatedAt DateTime @default(now()) @map(name: "updated_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
-  @@map(name: "accounts")
+user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+
+@@unique([provider, providerAccountId])
+@@map(name: "accounts")
 }
+
 
 model User {
-  id             String    @id @default(cuid())
-  name           String
-  email          String    @unique
-  phone          String?
-  emailVerified  DateTime?
-  phoneVerified  DateTime?
-  hashedPassword String?
-  role           Role      @default(USER)
-  image          String?
-  addres         String?
-  createdAt      DateTime  @default(now()) @map(name: "created_at")
-  updatedAt      DateTime  @default(now()) @map(name: "updated_at")
+id String @id @default(cuid())
+name String
+email String @unique
+phone String?
+emailVerified DateTime?
+phoneVerified DateTime?
+hashedPassword String?
+role Role @default(USER)
+image String?
+addres String?
+createdAt DateTime @default(now()) @map(name: "created_at")
+updatedAt DateTime @default(now()) @map(name: "updated_at")
 
-  accounts Account[]
-  sessions Session[]
 
-  @@map(name: "users")
+accounts Account[]
+sessions Session[]
+
+
+@@map(name: "users")
 }
 
-model Student {
-  id             String     @id @default(cuid())
-  firstName      String
-  middleName     String?
-  lastName       String
-  birthDate      DateTime
-  gender         String
-  enrolled       Boolean?
-  currentGrade   String?
-  nationality    String?
-  nagriktaNumber String?
-  email          String?
-  phone          String?
-  address        String // combined address
-  createdAt      DateTime   @default(now()) @map(name: "created_at")
-  updatedAt      DateTime   @default(now()) @map(name: "updated_at")
-  guardians      Guardian[] @relation("GuardianStudent")
-  enrollment     Enrollment?
-
-  @@map(name: "students")
-}
-
-model Enrollment { 
-  studentId    String    @id
-  admissionType String
-  previousSchool String?
-  student      Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  @@map(name: "enrollments")
-}
-
-model Teacher {
-  id             String    @id @default(cuid())
-  firstName      String
-  middleName     String?
-  lastName       String
-  phone          String
-  email          String?
-  address        String
-  birthDate      String?
-  gender         String
-  nagriktaNumber String?
-  departent      String?
-  hiredAt        DateTime? @map(name: "hired_at")
-  createdAt      DateTime  @default(now()) @map(name: "created_at")
-  updatedAt      DateTime  @default(now()) @map(name: "updated_at")
-  subjects       Subject[] @relation("TeacherSubject")
-  classes        Class[]   @relation("TeacherClass")
-
-  @@map(name: "teachers")
-}
 
 model Guardian {
-  id             String   @id @default(cuid())
-  firstName      String
-  lastName       String
-  phone          String
-  address        String
-  email          String?
-  profession     String
-  annualIncome   String? // make it required? 
-  guardianType   String
-  businessAddress String?
-  createdAt      DateTime @default(now()) @map(name: "created_at")
-  updatedAt      DateTime @default(now()) @map(name: "updated_at")
+id String @id @default(cuid())
+firstName String
+lastName String
+phone String
+address String
+email String?
+profession String
+annualIncome String? // make it required?
+guardianType String
+businessAddress String?
+createdAt DateTime @default(now()) @map(name: "created_at")
+updatedAt DateTime @default(now()) @map(name: "updated_at")
 
-  students Student[] @relation("GuardianStudent")
 
-  @@map(name: "guardians")
+students Student[] @relation("GuardianStudent")
+
+
+@@map(name: "guardians")
 }
+
+
+model Student {
+id String @id @default(cuid())
+firstName String
+middleName String?
+lastName String
+birthDate DateTime
+gender String
+enrolled Boolean?
+currentGrade String? // current class of student
+nationality String?
+nagriktaNumber String?
+email String?
+phone String?
+address String // general address
+createdAt DateTime @default(now()) @map(name: "created_at")
+updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+guardians Guardian[] @relation("GuardianStudent")
+enrollment Enrollment? @relation("EnrollmentStudent")
+
+
+@@map(name: "students")
+}
+
 
 model Class {
-  id        String    @id @default(cuid())
-  name      String
-  section   String
-  capacity  Int?
-  allocatedRoom String?
-  subjects  Subject[] @relation("ClassSubject")
-  teachers  Teacher[] @relation("TeacherClass")
-  createdAt DateTime  @default(now()) @map(name: "created_at")
-  updatedAt DateTime  @default(now()) @map(name: "updated_at")
+name String @id @unique
+section String?
+capacity Int?
+allocatedRoom String?
 
-  @@map(name: "classes")
+
+monthlyTuition Float?
+admissionFee Float?
+idCardFee Float?
+examFee Float?
+miscFee Float?
+libraryFee Float?
+computerLabFee Float?
+hostelFee Float?
+annualFee Float?
+
+
+teachers Teacher[] @relation("TeacherClass")
+
+
+createdAt DateTime @default(now()) @map(name: "created_at")
+updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+
+@@map(name: "classes")
 }
 
-model Subject {
-  id        String    @id @default(cuid())
-  name      String
-  classes   Class[]   @relation("ClassSubject")
-  teachers  Teacher[] @relation("TeacherSubject")
-  createdAt DateTime  @default(now()) @map(name: "created_at")
-  updatedAt DateTime  @default(now()) @map(name: "updated_at")
 
-  @@map(name: "subjects")
+
+
+model Teacher {
+id String @id @default(cuid())
+firstName String
+middleName String?
+lastName String
+phone String
+email String?
+address String
+birthDate String?
+gender String
+nagriktaNumber String?
+departent String?
+hiredAt DateTime? @map(name: "hired_at")
+
+
+classes Class[] @relation("TeacherClass")
+
+
+createdAt DateTime @default(now()) @map(name: "created_at")
+updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+
+@@map(name: "teachers")
 }
 
-model ClassFee {
-  classGrade      String  @id @unique
-  monthlyTuition  Float
-  admissionFee    Float
-  idCardFee       Float?
-  examFee         Float?
-  miscFee         Float?
-  libraryFee      Float?
-  computerLabFee  Float?
-  hostelFee       Float?
-  annualFee       Float?
 
-  academicYear    DateTime @default(now())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+model Enrollment {
+studentId String @id
+classId String
+admissionType String
+previousSchool String?
 
-  @@map(name: "class_fees")
+
+student Student @relation("EnrollmentStudent", fields: [studentId], references: [id])
+
+
+@@map(name: "enrollments")
 }
+
 
 model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+identifier String
+token String @unique
+expires DateTime
 
-  @@unique([identifier, token])
-  @@map(name: "verification_tokens")
+
+@@unique([identifier, token])
+@@map(name: "verification_tokens")
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map(name: "sessions")
+model Session {
+id String @id @default(cuid())
+sessionToken String @unique
+userId String
+expires DateTime
+user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+
+@@map(name: "sessions")
 }

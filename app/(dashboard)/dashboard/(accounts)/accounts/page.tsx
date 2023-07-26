@@ -7,13 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { GraduationCap, Gauge, Users, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
-import { getFeeChart, getFeeChartById } from '@/services/serviceBilling'
 
 
 
 export default async function AccountsPage() {
-  const classFees = await getFeeChart();
-  console.log(classFees)
   
   return (
     <>
