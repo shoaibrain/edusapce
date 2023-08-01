@@ -13,7 +13,8 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
           <Icons.logo />
           <p className="text-center text-sm leading-loose md:text-left">
     
-            The source code is available on{" "}
+            This project is under construction 🦺
+            View source code & work progress on {" "}
             <a
               href={siteConfig.links.github}
               target="_blank"

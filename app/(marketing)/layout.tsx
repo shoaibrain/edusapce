@@ -31,7 +31,9 @@ export default async function MarketingLayout({
           </nav>
         </div>
       </header>
-      <main className="flex-1">{children}</main>
+      <main className="flex-1">
+        {children}
+      </main>
       <SiteFooter className="border-t" />
     </div>
   )
