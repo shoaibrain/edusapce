@@ -3,29 +3,23 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { User } from "@prisma/client"
+import { Student } from "@prisma/client"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-  } from "@/components/ui/dialog"
+
 import { cn } from "@/lib/utils"
 import { studentSchema } from "@/lib/validations/user"
 import { toast } from "@/components/ui/use-toast"
+import { Label } from "./ui/label"
+import { Input } from "./ui/input"
 
 interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
-    // do better here
-  user: Pick<User, "id" | "name">
+  student: Pick<Student, "id" | "firstName">
 }
 
 type FormData = z.infer<typeof studentSchema>
 
-export function StudentInfoForm({ user, className, ...props }: StudentEditFormProps) {
+export function StudentInfoForm({ student, className, ...props }: StudentEditFormProps) {
   const router = useRouter()
   const {
     handleSubmit,
@@ -34,7 +28,7 @@ export function StudentInfoForm({ user, className, ...props }: StudentEditFormPr
   } = useForm<FormData>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
-      firstName: user?.name || "",
+      firstName: student?.firstName || "",
     },
   })
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
@@ -42,7 +36,7 @@ export function StudentInfoForm({ user, className, ...props }: StudentEditFormPr
   async function onSubmit(data: FormData) {
     setIsSaving(true)
 
-    const response = await fetch(`/api/students/${user.id}`, {
+    const response = await fetch(`/api/students/${student.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -76,7 +70,52 @@ export function StudentInfoForm({ user, className, ...props }: StudentEditFormPr
       onSubmit={handleSubmit(onSubmit)}
       {...props}
     >
-        
+        <div className="grid gap-4 py-4">
+
+          <div className="grid gap-1">
+            <Label  htmlFor="firstName">
+              First Name
+            </Label>
+            <Input
+              id="firstName"
+              className="w-[400px]"
+              size={32}
+              {...register("firstName")}
+            />
+            {errors?.firstName && (
+              <p className="px-1 text-xs text-red-600">{errors.firstName.message}</p>
+            )}
+
+            <Label  htmlFor="firstName">
+              Middle Name
+            </Label>
+            <Input
+              id="middleName"
+              className="w-[400px]"
+              size={32}
+              {...register("middleName")}
+            />
+            {errors?.middleName && (
+              <p className="px-1 text-xs text-red-600">{errors.middleName.message}</p>
+            )}
+
+            <Label  htmlFor="lastName">
+              Last Name
+            </Label>
+            <Input
+              id="lastName"
+              className="w-[400px]"
+              size={32}
+              {...register("lastName")}
+            />
+            {errors?.lastName && (
+              <p className="px-1 text-xs text-red-600">{errors.lastName.message}</p>
+            )}
+
+          </div>
+
+
+          </div>
     </form>
   )
 }

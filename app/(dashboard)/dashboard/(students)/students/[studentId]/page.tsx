@@ -2,7 +2,6 @@ import { notFound, redirect } from "next/navigation";
 import { Student, User } from "@prisma/client";
 import prisma from "@/lib/db";
 import Image from 'next/image'
-import { stringify } from "querystring";
 import { Button } from "@/components/ui/button";
  
 import {
@@ -14,8 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { StudentInfoForm } from "@/components/form-student-edit";
 
 
 async function getStudent(studentId: Student["id"]) {
@@ -46,43 +44,27 @@ export default async function StudentPage({ params }: StudentPageProps) {
     <div>
       <div className="grid grid-cols-2 justify-between gap-4 p-2 px-5 sm:px-0 ">
         <div className="p-4">
-        <h2 className="text-base font-semibold leading-7 text-gray-900"> {`${firstName} ${lastName}`}</h2>
-        <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">{`student id: ${id}`}</p>
+          <h2 className="text-base font-semibold leading-7 text-gray-900"> {`${firstName} ${lastName}`}</h2>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">{`student id: ${id}`}</p>
         </div>
         <div className="p-4">
-          <div className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
           <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline">Update Student Info</Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[800px] mx-auto">
                   <DialogHeader>
                     <DialogTitle>Update Student Information</DialogTitle>
                     <DialogDescription>
-                      Make changes to your profile here. Click save when you are done.
+                      Make changes to student Information here. Click save when you are done.
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="name" className="text-right">
-                            Name
-                          </Label>
-                          <Input id="name" value="Pedro Duarte" className="col-span-3" />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="username" className="text-right">
-                            Username
-                          </Label>
-                          <Input id="username" value="@peduarte" className="col-span-3" />
-                    </div>
-                  </div>
+                    <StudentInfoForm student={student}/>
                   <DialogFooter>
                     <Button type="submit">Save changes</Button>
                   </DialogFooter>
                 </DialogContent>
           </Dialog>
-
-          </div>
         </div>
       </div>
       <div className="mt-6 border-t border-gray-100">
