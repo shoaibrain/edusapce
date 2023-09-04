@@ -12,9 +12,10 @@ import { studentSchema } from "@/lib/validations/user"
 import { toast } from "@/components/ui/use-toast"
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
+import {  buttonVariants } from "./ui/button"
 
 interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  student: Pick<Student, "id" | "firstName">
+  student: Pick<Student, "id" | "firstName" | "middleName" | "lastName">
 }
 
 type FormData = z.infer<typeof studentSchema>
@@ -29,11 +30,14 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
     resolver: zodResolver(studentSchema),
     defaultValues: {
       firstName: student?.firstName || "",
+      middleName: student?.middleName || "",
+      lastName: student?.lastName || "",
     },
   })
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
 
   async function onSubmit(data: FormData) {
+    console.log("Inside OnSubmit")
     setIsSaving(true)
 
     const response = await fetch(`/api/students/${student.id}`, {
@@ -42,8 +46,9 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: data.firstName,
-
+        firstName: data.firstName,
+        middleName: data.middleName,
+        lastName: data.lastName,
       }),
     })
 
@@ -86,7 +91,7 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
               <p className="px-1 text-xs text-red-600">{errors.firstName.message}</p>
             )}
 
-            <Label  htmlFor="firstName">
+            <Label  htmlFor="middleName">
               Middle Name
             </Label>
             <Input
@@ -113,9 +118,17 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
             )}
 
           </div>
-
-
           </div>
+          <button
+            type="submit"
+            className={cn(buttonVariants(), className)}
+            disabled={isSaving}
+          >
+            {/* {isSaving && (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            )} */}
+            <span>Save Changes</span>
+          </button>
     </form>
   )
 }

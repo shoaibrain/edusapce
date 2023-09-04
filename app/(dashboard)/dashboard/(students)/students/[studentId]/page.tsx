@@ -52,7 +52,7 @@ export default async function StudentPage({ params }: StudentPageProps) {
                 <DialogTrigger asChild>
                   <Button variant="outline">Update Student Info</Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[800px] mx-auto">
+                <DialogContent className="mx-auto sm:max-w-[800px]">
                   <DialogHeader>
                     <DialogTitle>Update Student Information</DialogTitle>
                     <DialogDescription>
@@ -60,9 +60,6 @@ export default async function StudentPage({ params }: StudentPageProps) {
                     </DialogDescription>
                   </DialogHeader>
                     <StudentInfoForm student={student}/>
-                  <DialogFooter>
-                    <Button type="submit">Save changes</Button>
-                  </DialogFooter>
                 </DialogContent>
           </Dialog>
         </div>
@@ -71,9 +68,9 @@ export default async function StudentPage({ params }: StudentPageProps) {
         <dl className="divide-y divide-gray-100">
            {/* Student Info */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <div className="flex-shrink-0 w-40 h-40 items-start">
+              <div className="h-40 w-40 shrink-0 items-start">
                 <Image
-                  className="w-40 h-40"
+                  className="h-40 w-40"
                   src="/public/user.jpeg"
                   alt="student Image"
                   width={80}
@@ -128,7 +125,7 @@ export default async function StudentPage({ params }: StudentPageProps) {
           <h2 className="text-base font-semibold leading-7 text-gray-900"> Guardians</h2>
           {/* parent one */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <div className="flex-shrink-0 w-40 h-40 items-start">
+              <div className="h-40 w-40 shrink-0 items-start">
                 <div>
                   <h3>Parent name</h3>
                   <p>relation to student</p>
@@ -162,7 +159,7 @@ export default async function StudentPage({ params }: StudentPageProps) {
           </div>
           {/* parent two */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <div className="flex-shrink-0 w-40 h-40 items-start">
+              <div className="h-40 w-40 shrink-0 items-start">
                 <div>
                   <h3>Parent name</h3>
                   <p>relation to student</p>

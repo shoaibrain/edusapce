@@ -52,7 +52,6 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
       },
       body: JSON.stringify({
         name: data.name,
-
       }),
     })
 

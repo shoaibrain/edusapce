@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { GraduationCap, Gauge, Users, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
+import { getTotalAdmissions } from '@/services/admission-service'
 
 async function getStudents() {
   // Fetch all students
@@ -29,6 +30,8 @@ export default async function StudentsPage() {
     notFound()
   }
 
+  const admissionRate = await getTotalAdmissions();
+
   return (
     <>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -41,7 +44,7 @@ export default async function StudentsPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">
-                  +12.1% from last month
+                  {`${admissionRate} new admissions`}
                 </p>
               </CardContent>
             </Card>

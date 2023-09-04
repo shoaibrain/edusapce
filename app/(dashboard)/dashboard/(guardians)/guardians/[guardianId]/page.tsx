@@ -1,15 +1,15 @@
 import { notFound, redirect } from "next/navigation";
-import { Student, User } from "@prisma/client";
+import { Guardian, User } from "@prisma/client";
 import prisma from "@/lib/db";
 import Image from 'next/image'
  
-async function getGuardian(studentId: Student["id"]) {
-  return await prisma.student.findFirst({
+async function getGuardian(guardianId: Guardian["id"]) {
+  return await prisma.guardian.findFirst({
     where: {
-      id: studentId,
+      id: guardianId,
     },
     include: {
-      guardians: true,
+      students: true,
     },
   });
 }
@@ -21,25 +21,57 @@ interface GuardianPageProps {
 
 export default async function GuardianPage({ params }: GuardianPageProps) {
   const guardian = await getGuardian(params.guardianId);
+  console.log(guardian)
   if (!guardian) {
     notFound();
   }
   const { firstName, lastName, email, phone, address } = guardian;
   
   return (
-    <div className="grid grid-cols-1 grid-rows-4">
-      <div className="grid grid-cols-1 bg-gray-200 p-2 md:grid-cols-2">
-        <div className="md:row-span-2">
-            <div>
-            <p>{`firstName:${firstName}`}</p>
-            <p>{`lastName:${lastName}`}</p>
-            </div>
+    <div>
+      <div className="grid grid-cols-2 justify-between gap-4 p-2 px-5 sm:px-0 ">
+        <div className="p-4">
+          <h2 className="text-base font-semibold leading-7 text-gray-900"> {`${firstName} ${lastName}`}</h2>
         </div>
-        <div className="md:row-span-2">
-            <p>{`email:${email}`}</p>
-            <p>{`phone:${phone}`}</p>
-            <p>{`address:${address}`}</p>
-        </div>
+      </div>
+      <div className="mt-6 border-t border-gray-100">
+        <dl className="divide-y divide-gray-100">
+           {/* Guardian Info */}
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <div className="h-40 w-40 shrink-0 items-start">
+                <Image
+                  className="h-40 w-40"
+                  src="/public/user.jpeg"
+                  alt="Guardian Image"
+                  width={80}
+                  height={80}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
+                <div>
+                  <dt className="text-sm font-medium leading-6 text-gray-900">First Name</dt>
+                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{firstName}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium leading-6 text-gray-900">Last Name</dt>
+                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{lastName}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium leading-6 text-gray-900">Address</dt>
+                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{address}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium leading-6 text-gray-900">email</dt>
+                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{email}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium leading-6 text-gray-900">phone</dt>
+                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{phone}</dd>
+                </div>
+              </div>
+
+          </div>
+        </dl>
       </div>
     </div>
   );
