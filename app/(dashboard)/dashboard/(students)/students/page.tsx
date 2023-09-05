@@ -93,7 +93,7 @@ export default async function StudentsPage() {
               <Search />
             </div> */}
             <div>
-              <Link href="dashboard/admission" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
+            <Link href="dashboard/admission" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
               Add Student
             </Link>
             </div>

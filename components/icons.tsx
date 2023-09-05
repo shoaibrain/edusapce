@@ -7,6 +7,7 @@ import {
   Command,
   CreditCard,
   File,
+  Trees,
   FileText,
   HelpCircle,
   Image,
@@ -34,7 +35,7 @@ import {
 export type Icon = LucideIcon
 
 export const Icons = {
-  logo: Command,
+  logo: Trees,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,

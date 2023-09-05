@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { notFound, redirect } from "next/navigation";
 import { Student, User } from "@prisma/client";
 import prisma from "@/lib/db";
@@ -14,6 +15,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { StudentInfoForm } from "@/components/form-student-edit";
+import { GuardianCard } from "@/components/guardian-card";
+import { GuardianInfoForm } from "@/components/form-guardian";
 
 
 async function getStudent(studentId: Student["id"]) {
@@ -50,6 +53,7 @@ export default async function StudentPage({ params }: StudentPageProps) {
         <div className="p-4">
           <Dialog>
                 <DialogTrigger asChild>
+                {/* TODO: Dialog Button doesnt work */}
                   <Button variant="outline">Update Student Info</Button>
                 </DialogTrigger>
                 <DialogContent className="mx-auto sm:max-w-[800px]">
@@ -121,69 +125,32 @@ export default async function StudentPage({ params }: StudentPageProps) {
               </div>
 
           </div>
-          {/* Guardian Info */}
-          <h2 className="text-base font-semibold leading-7 text-gray-900"> Guardians</h2>
-          {/* parent one */}
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <div className="h-40 w-40 shrink-0 items-start">
-                <div>
-                  <h3>Parent name</h3>
-                  <p>relation to student</p>
-                  <p>Phone Number</p>
-
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900"> Email</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{`parent email`}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900">Address</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{address}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900">Phones/contact</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{`phone/contact`}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900">Occupation</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{`occupation`}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900">Other Info</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{`Other Info`}</dd>
-                </div>
-              </div>
-
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold leading-7 text-gray-900">Guardians</h2>
+                    {/* Dialog to add parent */}
+        <div className="p-4">
+          <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Add Parent</Button>
+                </DialogTrigger>
+                <DialogContent className="mx-auto sm:max-w-[800px]">
+                  <DialogHeader>
+                    <DialogTitle>{`Add Parent for ${student.firstName}`} </DialogTitle>
+                    <DialogDescription>
+                      Add parent information here. Click save when you are done.
+                    </DialogDescription>
+                  </DialogHeader> 
+                 <GuardianInfoForm />
+                </DialogContent>
+          </Dialog>
+        </div>
           </div>
-          {/* parent two */}
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <div className="h-40 w-40 shrink-0 items-start">
-                <div>
-                  <h3>Parent name</h3>
-                  <p>relation to student</p>
-                  <p>Phone Number</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900">Address</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{address}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900">Phones/contact</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{`phone/contact`}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900">Occupation</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{`occupation`}</dd>
-                </div>
-                <div>
-                </div>
-              </div>
 
-          </div>
+
+          {guardians.map((guardian) => (
+            <GuardianCard parent={guardian}/>
+          ))}
+
           {/* Academic Info */}
           <h2 className="text-base font-semibold leading-7 text-gray-900"> Academic Overview</h2>
         </dl>

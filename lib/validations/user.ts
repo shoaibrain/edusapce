@@ -14,3 +14,8 @@ export const studentSchema = z.object({
   email: z.string().email(),
 
 })
+
+export const guardianSchema = z.object({
+  firstName: z.string().min(3).max(32),
+  lastName: z.string().min(3).max(32),
+})

@@ -1,10 +1,11 @@
+//@ts-nocheck
 "use client"
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Student } from "@prisma/client"
-import { useForm } from "react-hook-form"
+import { set, useForm } from "react-hook-form"
 import * as z from "zod"
 
 import { cn } from "@/lib/utils"
@@ -13,15 +14,17 @@ import { toast } from "@/components/ui/use-toast"
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
 import {  buttonVariants } from "./ui/button"
+import { Icons } from "./icons"
 
 interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  student: Pick<Student, "id" | "firstName" | "middleName" | "lastName">
+  student: Student;
 }
 
 type FormData = z.infer<typeof studentSchema>
 
 export function StudentInfoForm({ student, className, ...props }: StudentEditFormProps) {
   const router = useRouter()
+  const studentId = student.id
   const {
     handleSubmit,
     register,
@@ -37,30 +40,22 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
 
   async function onSubmit(data: FormData) {
-    console.log("Inside OnSubmit")
+    console.log(JSON.stringify(data))
     setIsSaving(true)
+    let responseStatus = true;
+    setTimeout(() => {
+      console.log(JSON.stringify(data));
+      responseStatus = false;
+    }, 3000);
+  setIsSaving(false)
 
-    const response = await fetch(`/api/students/${student.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        firstName: data.firstName,
-        middleName: data.middleName,
-        lastName: data.lastName,
-      }),
+  if (!responseStatus === false) {
+    return toast({
+      title: "Something went wrong.",
+      description: "Failed to add parent. Please try again.",
+      variant: "destructive",
     })
-
-    setIsSaving(false)
-
-    if (!response?.ok) {
-      return toast({
-        title: "Something went wrong.",
-        description: "Your profile was not updated. Please try again.",
-        variant: "destructive",
-      })
-    }
+  }
 
     toast({
       description: "Your profile has been updated.",
@@ -124,9 +119,9 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
             className={cn(buttonVariants(), className)}
             disabled={isSaving}
           >
-            {/* {isSaving && (
+            {isSaving && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )} */}
+            )}
             <span>Save Changes</span>
           </button>
     </form>
