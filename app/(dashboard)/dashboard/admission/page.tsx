@@ -3,7 +3,6 @@ import {  FormikValues } from "formik"
 import * as yup from 'yup';
 import InputField from "@/components/ui/input-field"
 import MultiStepFormAdmission, { FormStep } from "@/components/multi-step-form-admission"
-import SelectField from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast"
@@ -131,7 +130,7 @@ export default function AdmissionPage() {
 
                     <div className="sm:col-span-3">
                       <Label>Gender</Label>
-                      <SelectField
+                      {/* <SelectField
                           name="studentDetails.gender"
                           label="select student gender"
                           options={[
@@ -139,7 +138,7 @@ export default function AdmissionPage() {
                             { value: 'female', label: 'Female' },
                             { value: 'other', label: 'Other' },
                           ]}
-                        />
+                        /> */}
                     </div>
 
                     <div className="sm:col-span-3">
@@ -246,14 +245,14 @@ export default function AdmissionPage() {
                 <p className="mt-1 text-sm leading-6 text-gray-600">Student Enrollment Details</p>
                   <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                     <div className="sm:col-span-2 ">
-                      <SelectField
+                      {/* <SelectField
                           name="enrollmentDetails.admissionType"
                           label=""
                           options={[
                             { value: 'Regular', label: 'Regular' },
                             { value: 'Transfer', label: 'Transfer' },
                           ]}
-                        />
+                        /> */}
                     </div>
                     <div className="sm:col-span-2">
                       <InputField name="enrollmentDetails.previousSchool" label="Previous School" type="text" />
