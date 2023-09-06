@@ -140,7 +140,7 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
             </div>
             <div className="sm:col-span-3">
             <Label  htmlFor="email">
-                email
+                Email
                 </Label>
                 <Input
                 id= "email"

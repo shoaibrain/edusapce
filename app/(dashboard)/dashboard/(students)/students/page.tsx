@@ -1,32 +1,146 @@
 import React from 'react'
 import { notFound, redirect } from "next/navigation"
-
-import prisma from "@/lib/db"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { GraduationCap, Gauge, Users, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { getTotalAdmissions } from '@/services/admission-service'
+import { Student, columns } from '@/components/columns'
+import { DataTable } from '@/components/data-table'
 
-async function getStudents() {
-  // Fetch all students
-  return await prisma.student.findMany({
-    select: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      email: true,
-      phone: true,
-      address: true,
+
+async function getData(): Promise<Student[]> {
+  // Fetch data from your API here.
+  return [
+    {
+      id: "1",
+      firstName: "John",
+      lastName: "Doe",
+      gender: "Male",
+      status: "enrolled",
+      email: "John@gmail.com ",
+      classGrade:"JSS 1",
+      feeOwed: 50000
     },
-  })
+    {
+      id: "2",
+      firstName: "Jane",
+      lastName: "Smith",
+      gender: "Female",
+      status: "enrolled",
+      email: "jane@example.com",
+      classGrade: "SS 2",
+      feeOwed: 60000
+      },
+      {
+        id: "3",
+        firstName: "Michael",
+        lastName: "Johnson",
+        gender: "Male",
+        status: "enrolled",
+        email: "michael@example.com",
+        classGrade: "JSS 3",
+        feeOwed: 55000
+        },
+        {
+          id: "4",
+          firstName: "Emily",
+          lastName: "Williams",
+          gender: "Female",
+          status: "enrolled",
+          email: "emily@example.com",
+          classGrade: "SS 1",
+          feeOwed: 62000
+          },
+          {
+            id: "5",
+            firstName: "David",
+            lastName: "Brown",
+            gender: "Male",
+            status: "enrolled",
+            email: "david@example.com",
+            classGrade: "JSS 2",
+            feeOwed: 59000
+            },
+            {
+              id: "6",
+              firstName: "Sophia",
+              lastName: "Lee",
+              gender: "Female",
+              status: "enrolled",
+              email: "sophia@example.com",
+              classGrade: "SS 3",
+              feeOwed: 64000
+              },
+              {
+                id: "7",
+                firstName: "Daniel",
+                lastName: "Martin",
+                gender: "Male",
+                status: "enrolled",
+                email: "daniel@example.com",
+                classGrade: "JSS 1",
+                feeOwed: 58000
+                },
+                {
+                  id: "8",
+                  firstName: "Olivia",
+                  lastName: "Davis",
+                  gender: "Female",
+                  status: "enrolled",
+                  email: "olivia@example.com",
+                  classGrade: "SS 2",
+                  feeOwed: 61000
+                  },
+                  {
+                    id: "9",
+                    firstName: "Taylor",
+                    lastName: "Swift",
+                    gender: "Female",
+                    status: "graduated",
+                    email: "taylor@example.com",
+                    classGrade: "UKG",
+                    feeOwed: 61000
+                    },
+                    {
+                      id: "10",
+                      firstName: "Olivia",
+                      lastName: "Rudrige",
+                      gender: "Female",
+                      status: "transferred",
+                      email: "olivia@example.com",
+                      classGrade: "SS 2",
+                      feeOwed: 61000
+                      },
+                      {
+                        id: "11",
+                        firstName: "Shoaib",
+                        lastName: "Davis",
+                        gender: "Male",
+                        status: "enrolled",
+                        email: "olivia@example.com",
+                        classGrade: "SS 2",
+                        feeOwed: 61000
+                        },
+                        {
+                          id: "12",
+                          firstName: "Saleena",
+                          lastName: "Davis",
+                          gender: "Female",
+                          status: "enrolled",
+                          email: "olivia@example.com",
+                          classGrade: "SS 2",
+                          feeOwed: 61000
+                          },
+
+  ]
 }
 
-export default async function StudentsPage() {
-  const students = await getStudents()
 
-  if (!students) {
+export default async function StudentsPage() {
+  const data = await getData();
+  if (!data) {
     notFound()
   }
 
@@ -89,9 +203,6 @@ export default async function StudentsPage() {
             </Card>
           </div>
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3'>
-            {/* <div>
-              <Search />
-            </div> */}
             <div>
             <Link href="dashboard/admission" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
               Add Student
@@ -108,33 +219,9 @@ export default async function StudentsPage() {
             </Link>
             </div>
           </div>
-          
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Address</th>
-              </tr>
-            </thead>
-            <tbody>
-              {students.map((student) => (
-                <tr key={student.id}>
-                  <Link href={`/dashboard/students/${student.id}`}>
-                  <td>{student.id}</td>
-                  </Link>
-                  <td>{student.firstName}</td>
-                  <td>{student.lastName}</td>
-                  <td>{student.email}</td>
-                  <td>{student.phone}</td>
-                  <td>{student.address}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="container mx-auto  py-10">
+            <DataTable columns={columns} data={data} />
+          </div>
     </>
   )
 }
