@@ -5,35 +5,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { GraduationCap, Gauge, Users, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
-import { DataTableGuardian } from '@/components/data-table-guardians'
+import { Student, columns } from '@/components/columns'
+import { DataTable } from '@/components/data-table'
 import prisma from '@/lib/db'
-import {  columns } from '@/components/columns-guardian'
-async function getGuardians() {
-    try {
-      const guardians =  await prisma.guardian.findMany({
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-          phone: true,
-          address: true,
-        },
-      })
-      return guardians;
-    } catch (error) {
-      console.error('Error fetching guardians:', error);
-      throw error;
-    }
-  }
-  
 
-export default async function GuardiansPage() {// guardians aka parents
-   const guardians = await getGuardians();
-    if (!guardians) {
-      notFound()
-    }
-    
+// async function getEmployees(): Promise<Employee[]> {
+//     try {
+//         const employees = await prisma.employee.findMany();
+//         return employees;
+//     } catch (error) {
+//         console.error('Error fetching employees:', error);
+//         throw error;
+//     }
+// }
+export default async function EmployeesPage() {
   return (
     <>
                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -79,24 +64,24 @@ export default async function GuardiansPage() {// guardians aka parents
           </div>
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3'>
             <div>
-            <Link href="dashboard/guardians" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
-                Human Resource
+            <Link href="dashboard/employees" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
+              Add New Employee
             </Link>
             </div>
             <div>
-            <Link href="dashboard/guardians" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
+            <Link href="dashboard/employees" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
               Human Resource
             </Link>
             </div>
             <div>
-            <Link  href="dashboard/guardians" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
+            <Link  href="dashboard/employees" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
               Some Button
             </Link>
             </div>
           </div>
-          {/* Guardians Table */}
+          {/* Employee Table */}
           <div className='container mx-auto py-10'>
-          <DataTableGuardian columns={columns} data={guardians} />
+          <DataTable columns={columns} data={[]} />
           </div>
 
     </>

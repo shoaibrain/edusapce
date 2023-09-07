@@ -13,18 +13,17 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 
-export type Student = {
+export type Guardian = {
   id: string
   firstName: string
   lastName: string
-  classGrade: string
-  gender: string
-  feeOwed: number 
-  status: "enrolled" | "dropped" | "graduated" | "transferred"
   email: string
+  phone: string
+  address: string
 }
-// TODO: make columns accpet param for column type, so we can use the same columns for guardians and students
-export const columns: ColumnDef<Student>[] = [
+
+
+export const columns: ColumnDef<Guardian>[] = [
   {
     accessorKey: "firstName",
     header: ({ column }) => {
@@ -54,8 +53,12 @@ export const columns: ColumnDef<Student>[] = [
       },
   },
   {
-    accessorKey: "gender",
-    header: "Gender",
+    accessorKey: "phone",
+    header: "Phone",
+  },
+  {
+    accessorKey: "address",
+    header: "Address",
   },
   {
     accessorKey: "email",
@@ -74,7 +77,7 @@ export const columns: ColumnDef<Student>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const student = row.original
+      const guardian = row.original
  
       return (
         <DropdownMenu>
@@ -87,14 +90,14 @@ export const columns: ColumnDef<Student>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>
-              <Link href={`/dashboard/students/${student.id}`}>View Profile</Link>
+              <Link href={`/dashboard/guardians/${guardian.id}`}>View Details</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`/dashboard/students/${student.id}`}>Academic Records</Link>
+              <Link href={`/dashboard/guardians/${guardian.id}`}>Fees payment</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Link href={`/dashboard/students/${student.id}`}>Billing Records</Link>
+              <Link href={`/dashboard/guardians/${guardian.id}`}>Contact</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -18,6 +18,7 @@ import { StudentInfoForm } from "@/components/form-student-edit";
 import { GuardianCard } from "@/components/guardian-card";
 import { GuardianInfoForm } from "@/components/form-guardian";
 import { StudentCard } from "@/components/student-card";
+
 async function getStudent(studentId: Student["id"]) {
   return await prisma.student.findFirst({
     where: {

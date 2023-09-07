@@ -19,7 +19,7 @@ const studentSchema = yup.object().shape({
 export async function GET (req: NextRequest) {
 
     try {
-        const students = await prisma.student.findMany();
+        const students =await prisma.student.findMany();
         return new NextResponse(JSON.stringify(students))
       } catch (error) {
         return new NextResponse(null, { status: 500 })

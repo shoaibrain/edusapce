@@ -27,8 +27,8 @@ export const dashboardConfig: DashboardConfig = {
       icon: "users"
     },
     {
-      title: "Teachers",
-      href: "/dashboard/teachers",
+      title: "Employees",
+      href: "/dashboard/employees",
       disabled: false,
       icon: "users"
     },
