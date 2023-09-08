@@ -1,5 +1,6 @@
+//@ts-nocheck
 import React from 'react'
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { GraduationCap, Gauge, Users, AlertTriangle } from 'lucide-react'
@@ -20,7 +21,6 @@ async function getStudents(): Promise<Student[]> {
 }
 export default async function StudentsPage() {
   const students = await getStudents();
-  console.log(students)
   if (!students) {
     notFound()
   }

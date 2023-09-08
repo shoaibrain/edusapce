@@ -41,7 +41,6 @@ export async function POST(request: Request){
       profession: body.profession,
       annualIncome: body.annualIncome,
       guardianType: body.guardianType,
-      businessAddress: body.businessAddress,
     },
   })
   return new Response(JSON.stringify(guardian))

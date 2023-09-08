@@ -1,67 +1,56 @@
+import { getServerSession } from "next-auth/next"
+import * as z from "zod"
+import prisma from "@/lib/db"
+import { authOptions } from "@/lib/auth"
+import { getStudents } from "@/services/service-student"
 
-import prisma from '@/lib/db';
-import { NextResponse, NextRequest } from "next/server"
-
-import * as yup from 'yup';
-
-const studentSchema = yup.object().shape({
-  firstName: yup.string().required(),
-  middleName: yup.string().optional(),
-  lastName: yup.string().required(),
-  birthDate: yup.date().required(),
-  gender: yup.string().required(),
-  nationality: yup.string().optional(),
-  email: yup.string().email().optional(),
-  phone: yup.string().optional(),
-  address: yup.string().required(),
-});
-
-export async function GET (req: NextRequest) {
-
-    try {
-        const students =await prisma.student.findMany();
-        return new NextResponse(JSON.stringify(students))
-      } catch (error) {
-        return new NextResponse(null, { status: 500 })
-      }
-}
-
-export async function POST(request: Request) {
+const studentCreateSchema = z.object({
+  firstName: z.string().min(2).max(20),
+  middleName: z.string().optional(),
+  lastName: z.string().min(2).max(20),
+  birthDate: z.string(),
+  gender: z.string(),
+  address: z.string(),
+  phone: z.string().optional(),
+  email: z.string().email().optional(),
+})
+export async function GET(){
   try {
-    const body = await request.json();
-    // Validate the request body against the schema
-    const validatedData = studentSchema.validate(body);
-    
-    let {
-      firstName,
-      middleName,
-      lastName,
-      birthDate,
-      gender,
-      nationality,
-      email,
-      phone,
-      address,
-    } = body;
-    birthDate = new Date(birthDate);
-    
-    const student = await prisma.student.create({
-      data: {
-        firstName,
-        middleName,
-        lastName,
-        birthDate,
-        gender,
-        nationality,
-        email,
-        phone,
-        address,
-      },
-    });
+    const session = await getServerSession(authOptions)
 
-    return new NextResponse(JSON.stringify(student));
-  } catch (error) {
-    console.error("Error creating student:", error);
-    return new NextResponse("Invalid request data", { status: 400 });
+    // if (!session) {
+    //   return new Response("Unauthorized", { status: 403 })
+    // }
+    const students = await getStudents();
+    return new Response(JSON.stringify(students), { status: 200 })
+  
+  } catch(error) {
+    return new Response(error.message, { status: 500 })
   }
+}
+export async function POST(request: Request) {
+    try {
+      const json = await request.json();
+      const body = studentCreateSchema.parse(json);
+      let dob = new Date(body.birthDate);
+      const newStudent = await prisma.student.create({
+        data: {
+            firstName: body.firstName,
+            middleName: body.middleName,
+            lastName: body.lastName,
+            birthDate: dob,
+            gender: body.gender,
+            address: body.address,
+            phone: body.phone,
+            email: body.email,
+        },
+      })
+      return new Response(JSON.stringify(newStudent))
+
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return new Response(JSON.stringify(error.issues), { status: 422 })
+      }
+      return new Response(null, { status: 500 })
+    }
 }

@@ -18,6 +18,8 @@ referentialIntegrity = "prisma"
 enum Role {
 ADMIN
 TEACHER
+STAFF
+STUDENT
 USER
 }
 
@@ -61,7 +63,6 @@ addres String?
 createdAt DateTime @default(now()) @map(name: "created_at")
 updatedAt DateTime @default(now()) @map(name: "updated_at")
 
-
 accounts Account[]
 sessions Session[]
 
@@ -77,20 +78,17 @@ lastName String
 phone String
 address String
 email String?
-profession String
-annualIncome String? // make it required?
-guardianType String
-businessAddress String?
+profession String?
+annualIncome String?
+guardianType String?
+role Role @default(USER)
 createdAt DateTime @default(now()) @map(name: "created_at")
 updatedAt DateTime @default(now()) @map(name: "updated_at")
 
-
 students Student[] @relation("GuardianStudent")
-
 
 @@map(name: "guardians")
 }
-
 
 model Student {
 id String @id @default(cuid())
@@ -99,56 +97,23 @@ middleName String?
 lastName String
 birthDate DateTime
 gender String
-enrolled Boolean?
-currentGrade String? // current class of student
+enrollmentStatus String?
+currentGrade String? // current enrolled class
 nationality String?
 nagriktaNumber String?
 email String?
 phone String?
-address String // general address
+address String
+role Role @default(STUDENT)
 createdAt DateTime @default(now()) @map(name: "created_at")
 updatedAt DateTime @default(now()) @map(name: "updated_at")
 
 guardians Guardian[] @relation("GuardianStudent")
-enrollment Enrollment? @relation("EnrollmentStudent")
-
 
 @@map(name: "students")
 }
 
-
-model Class {
-name String @id @unique
-section String?
-capacity Int?
-allocatedRoom String?
-
-
-monthlyTuition Float?
-admissionFee Float?
-idCardFee Float?
-examFee Float?
-miscFee Float?
-libraryFee Float?
-computerLabFee Float?
-hostelFee Float?
-annualFee Float?
-
-
-teachers Teacher[] @relation("TeacherClass")
-
-
-createdAt DateTime @default(now()) @map(name: "created_at")
-updatedAt DateTime @default(now()) @map(name: "updated_at")
-
-
-@@map(name: "classes")
-}
-
-
-
-
-model Teacher {
+model Employee {
 id String @id @default(cuid())
 firstName String
 middleName String?
@@ -156,37 +121,19 @@ lastName String
 phone String
 email String?
 address String
+role Role @default(STAFF)
 birthDate String?
 gender String
 nagriktaNumber String?
 departent String?
-hiredAt DateTime? @map(name: "hired_at")
-
-
-classes Class[] @relation("TeacherClass")
-
+hiredDate DateTime? @map(name: "hired_date")
 
 createdAt DateTime @default(now()) @map(name: "created_at")
 updatedAt DateTime @default(now()) @map(name: "updated_at")
 
 
-@@map(name: "teachers")
+@@map(name: "employees")
 }
-
-
-model Enrollment {
-studentId String @id
-classId String
-admissionType String
-previousSchool String?
-
-
-student Student @relation("EnrollmentStudent", fields: [studentId], references: [id])
-
-
-@@map(name: "enrollments")
-}
-
 
 model VerificationToken {
 identifier String
@@ -197,7 +144,6 @@ expires DateTime
 @@unique([identifier, token])
 @@map(name: "verification_tokens")
 }
-
 
 model Session {
 id String @id @default(cuid())

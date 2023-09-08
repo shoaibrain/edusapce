@@ -30,7 +30,6 @@ async function getStudent(studentId: Student["id"]) {
   });
 }
 
-
 interface StudentPageProps {
   params: { studentId: string };
 }
@@ -51,7 +50,6 @@ export default async function StudentPage({ params }: StudentPageProps) {
         <div className="p-4">
           <Dialog>
                 <DialogTrigger asChild>
-                {/* TODO: Dialog Button doesnt work */}
                   <Button variant="outline">Update Profile</Button>
                 </DialogTrigger>
                 <DialogContent className="mx-auto sm:max-w-[800px]">
@@ -71,7 +69,6 @@ export default async function StudentPage({ params }: StudentPageProps) {
           <StudentCard student={student}/>
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold leading-7 text-gray-900">Guardians</h2>
-            {/* Dialog to add parent */}
             <div className="p-4">
               <Dialog>
                     <DialogTrigger asChild>
@@ -79,7 +76,7 @@ export default async function StudentPage({ params }: StudentPageProps) {
                     </DialogTrigger>
                     <DialogContent className="mx-auto sm:max-w-[800px]">
                       <DialogHeader>
-                        <DialogTitle>{`Add Parent for ${student.firstName}`} </DialogTitle>
+                        <DialogTitle>{`Add Parent for ${student.firstName} ${student.lastName}`} </DialogTitle>
                         <DialogDescription>
                           Add parent information here. Click save when you are done.
                         </DialogDescription>
