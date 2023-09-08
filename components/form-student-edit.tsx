@@ -2,11 +2,10 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { Student } from "@prisma/client"
-import { set, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import * as z from "zod"
-
+import axois from "axios"
 import { cn } from "@/lib/utils"
 import { studentSchema } from "@/lib/validations/user"
 import { toast } from "@/components/ui/use-toast"
@@ -21,6 +20,8 @@ interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
 }
 
 type FormData = z.infer<typeof studentSchema>
+const apiUrl = 'http://localhost:3000';
+
 
 export function StudentInfoForm({ student, className, ...props }: StudentEditFormProps) {
   const router = useRouter()
@@ -34,36 +35,38 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
       middleName: student.middleName || "",
       lastName: student.lastName,
       email: student.email || "",
-      //@ts-ignore
-      dob: student.birthDate.toDateString(),
+      birthDate: student.birthDate,
       gender: student.gender,
     },
   })
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
 
   async function onSubmit(data: FormData) {
-    console.log(JSON.stringify(data))
+    console.log(`INSIDE SUBMIT: ${JSON.stringify(data)}`)
     setIsSaving(true)
-    let responseStatus = true;
-    setTimeout(() => {
-      console.log(JSON.stringify(data));
-      responseStatus = false;
-    }, 3000);
-  setIsSaving(false)
-
-  if (!responseStatus) {
-    return toast({
-      title: "Something went wrong.",
-      description: "Failed to edit Student Profile. Please try again.",
-      variant: "destructive",
-    })
-  }
-
-    toast({
-      title: "Success",
-      description: `You profile has been updated.\n ${JSON.stringify(data)}`,
-      variant: "default",
-    })
+    axois.patch(`${apiUrl}/api/students/${student.id}`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((response) => {
+      //handle success
+      toast({
+        title: "Success",
+        description: `You profile has been updated.\n ${JSON.stringify(data)}`,
+        variant: "default",
+      })
+      console.log('Data updated:', response.data);
+      
+    }).catch((error) => {
+      //handle error
+      return toast({
+        title: "Something went wrong.",
+        description: "Failed to edit Student Profile. Please try again.",
+        variant: "destructive",
+      })
+    }
+    );
+    setIsSaving(false)
 
     router.refresh()
   }
@@ -110,14 +113,14 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
                 />
             </div>
             <div className="sm:col-span-3">
-            <Label  htmlFor="dob">
+            <Label  htmlFor="birthDate">
             Date of Birth
                 </Label>
                 <Input
-                id= "dob"
+                id= "birthDate"
                 className="w-[350px]"
                 size={32}
-                {...register("dob")}
+                {...register("birthDate")}
                 />
             </div>
             <div className="sm:col-span-3">
@@ -154,6 +157,7 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
           type="submit"
           className={cn(buttonVariants(), className)}
           disabled={isSaving}
+
         >
           {isSaving && (
             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

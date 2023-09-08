@@ -4,14 +4,16 @@ import prisma from "@/lib/db";
 import Image from 'next/image'
  
 async function getGuardian(guardianId: Guardian["id"]) {
-  return await prisma.guardian.findFirst({
-    where: {
-      id: guardianId,
-    },
-    include: {
-      students: true,
-    },
-  });
+  try {
+    const res =  await fetch(`http://localhost:3000/api/guardians/${guardianId}`);
+    if (!res.ok) {
+      throw new Error('Failed to fetch guardian data')
+    }
+    return res.json();
+  } catch (error) {
+    console.error('Error fetching guardians:', error);
+    throw error;
+ }
 }
 
 

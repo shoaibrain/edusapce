@@ -1,4 +1,4 @@
-//@ts-nocheck
+
 import React from 'react'
 import { notFound } from "next/navigation"
 import Link from "next/link"
@@ -12,8 +12,12 @@ import prisma from '@/lib/db'
 
 async function getStudents(): Promise<Student[]> {
   try {
-    const students = await prisma.student.findMany();
-    return students;
+    const res = await fetch('http://localhost:3000/api/students');
+    
+    if (!res.ok) {
+      throw new Error('Failed to fetch student data')
+    }
+    return res.json();
   } catch (error) {
     console.error('Error fetching students:', error);
     throw error;

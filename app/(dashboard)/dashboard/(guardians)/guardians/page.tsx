@@ -1,27 +1,22 @@
 //@ts-nocheck
 import React from 'react'
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { GraduationCap, Gauge, Users, AlertTriangle } from 'lucide-react'
+import { GraduationCap, Gauge, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { DataTableGuardian } from '@/components/data-table-guardians'
-import prisma from '@/lib/db'
+
 import {  columns } from '@/components/columns-guardian'
+
 async function getGuardians() {
     try {
-      const guardians =  await prisma.guardian.findMany({
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-          phone: true,
-          address: true,
-        },
-      })
-      return guardians;
+      const res = await fetch('http://localhost:3000/api/guardians');
+      if (!res.ok) {
+        throw new Error('Failed to fetch guardian data')
+      }
+      return res.json();
     } catch (error) {
       console.error('Error fetching guardians:', error);
       throw error;

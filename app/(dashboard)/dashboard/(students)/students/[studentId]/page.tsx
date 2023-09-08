@@ -1,7 +1,6 @@
 //@ts-nocheck
-import { notFound, redirect } from "next/navigation";
-import { Student, User } from "@prisma/client";
-import prisma from "@/lib/db";
+import { notFound } from "next/navigation";
+import { Student } from "@prisma/client";
 import Image from 'next/image'
 import { Button } from "@/components/ui/button";
  
@@ -20,14 +19,17 @@ import { GuardianInfoForm } from "@/components/form-guardian";
 import { StudentCard } from "@/components/student-card";
 
 async function getStudent(studentId: Student["id"]) {
-  return await prisma.student.findFirst({
-    where: {
-      id: studentId,
-    },
-    include: {
-      guardians: true,
-    },
-  });
+  try {
+    const res = await fetch(`http://localhost:3000/api/students/${studentId}`);
+    
+    if (!res.ok) {
+      throw new Error('Failed to fetch student data')
+    }
+    return res.json();
+  } catch(error) {
+    console.error('Error fetching students:', error);
+    throw error;
+  }
 }
 
 interface StudentPageProps {
@@ -39,8 +41,7 @@ export default async function StudentPage({ params }: StudentPageProps) {
   if (!student) {
     notFound();
   }
-  const {id, firstName,middleName, lastName,birthDate,currentGrade, gender,nationality,  email, phone, address, guardians } = student;
-  let dob = birthDate.toDateString();
+  const { guardians } = student;
   
   return (
     <div>

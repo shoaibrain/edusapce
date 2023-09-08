@@ -8,8 +8,9 @@ export const studentSchema = z.object({
   firstName: z.string().min(3).max(32),
   middleName: z.string().min(3).max(32),
   lastName: z.string().min(3).max(32),
-  dob: z.number().min(18).max(100),
+  birthDate: z.date(),
   email: z.string().email(),
+  phone: z.string().min(3).max(32),
   gender: z.string().min(3).max(32),
 
 })
