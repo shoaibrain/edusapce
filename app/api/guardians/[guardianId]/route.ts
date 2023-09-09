@@ -1,7 +1,7 @@
 import * as z from "zod"
 import { Prisma } from "@prisma/client";
-import guardianPatchSchema from "@/lib/validations/guardian";
 import prisma from "@/lib/db";
+import { guardianPatchSchema } from "@/lib/validations/guardian";
 
 const routeContextSchema = z.object({
     params: z.object({

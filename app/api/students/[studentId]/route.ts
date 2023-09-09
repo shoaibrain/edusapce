@@ -1,7 +1,8 @@
 import * as z from "zod"
 import studentPatchSchema from "@/lib/validations/student";
 import { Prisma } from "@prisma/client";
-import { deleteStudent, getStudent, patchStudent } from "@/services/service-student";
+import { addGuardianForStudent, deleteStudent, getStudent, patchStudent } from "@/services/service-student";
+import { guardianCreateSchema } from "@/lib/validations/guardian";
 
 const routeContextSchema = z.object({
     params: z.object({
@@ -15,15 +16,12 @@ const routeContextSchema = z.object({
   ){
     try {
       const { params } = routeContextSchema.parse(context)
-      const student = await getStudent(params.studentId as string)
-
+      const student = await getStudent(params.studentId as string);
       return new Response(JSON.stringify(student), { status: 200})
-
     } catch (error) {
       if (error instanceof z.ZodError) {
         return new Response(JSON.stringify(error.issues), { status: 422 })
       }
-  
       return new Response(null, { status: 500 })
     }
   }
@@ -33,11 +31,8 @@ const routeContextSchema = z.object({
   ) {
     try {
       const { params } = routeContextSchema.parse(context)
-      
       await deleteStudent(params.studentId as string);
-
       return new Response(null, { status: 204, statusText: "Student deleted" })
-
     } catch (error) {
       if (error instanceof z.ZodError) {
         return new Response(JSON.stringify(error.issues), { status: 422 })
@@ -52,10 +47,8 @@ const routeContextSchema = z.object({
   ) {
     try {
       const { params } = routeContextSchema.parse(context);
-  
       const json = await req.json();
       const body = studentPatchSchema.parse(json);
-  
       // Construct the data object for partial updates.
       const data: Prisma.StudentUpdateInput = {};
   
@@ -82,12 +75,28 @@ const routeContextSchema = z.object({
             message: issue.message,
           };
         });
-  
         return new Response(JSON.stringify(validationErrors), { status: 422 });
       }
-  
       console.error(error);
       return new Response(null, { status: 500 });
     }
   }
-  
+  export async function POST(
+    request: Request,
+    context: z.infer<typeof routeContextSchema>
+  ){
+    try {
+      const { params } = routeContextSchema.parse(context)
+      const json = await request.json();
+      const body = guardianCreateSchema.parse(json);
+      const studentId = params.studentId; 
+      const newGuardian = await addGuardianForStudent(studentId, body);
+      
+      return new Response(JSON.stringify(newGuardian), { status: 201 })
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return new Response(JSON.stringify(error.issues), { status: 422 })
+      }
+      return new Response(null, { status: 500 })
+    }
+  }

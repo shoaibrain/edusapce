@@ -1,27 +1,23 @@
 //TODO: this is not working yet, wil throw type error
+import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/db';
+import { guardianCreateSchema } from '@/lib/validations/guardian';
+import { getGuardians } from '@/services/service-guardian';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
-import * as z from "zod"
-
-const guardianCreateSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  phone: z.string(),
-  address: z.string(),
-  email: z.string().email().optional(),
-  profession: z.string(),
-  annualIncome: z.string().optional(),
-  guardianType: z.string(),
-  businessAddress: z.string().optional(),
-});
+import * as z from "zod";
 
 export async function GET (req: Request) {
 
     try {
-        const guardians = await prisma.guardian.findMany();
-        return new NextResponse(JSON.stringify(guardians))
+      const session = await getServerSession(authOptions)
+
+      // if (!session) {
+      //   return new Response("Unauthorized", { status: 403 })
+      // }
+        const guardians = await getGuardians();
+        return new NextResponse(JSON.stringify(guardians),{status:200})
       } catch (error) {
-        console.log(error)
         return new NextResponse(null, { status: 500 })
       }
 }
@@ -31,7 +27,7 @@ export async function POST(request: Request){
   try{
   const json = await request.json()
   const body = guardianCreateSchema.parse(json)
-  const guardian = await prisma.guardian.create({
+  const newGuardian = await prisma.guardian.create({
     data: {
       firstName: body.firstName,
       lastName: body.lastName,
@@ -43,12 +39,11 @@ export async function POST(request: Request){
       guardianType: body.guardianType,
     },
   })
-  return new Response(JSON.stringify(guardian))
+  return new Response(JSON.stringify(newGuardian))
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }
-
      return new Response(null, { status: 500 })
   }
 }

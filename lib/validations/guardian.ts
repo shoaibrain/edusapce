@@ -1,6 +1,6 @@
 import * as z from "zod"
 
-const guardianPatchSchema = z.object({
+export const guardianPatchSchema = z.object({
   firstName: z.string().min(3).max(128).optional(),
   lastName: z.string().min(3).max(128).optional(),
   nationality: z.string().min(3).max(128).optional(),
@@ -12,4 +12,15 @@ const guardianPatchSchema = z.object({
   students: z.array(z.string()).optional(), // array of student ids
 })
 
-export default guardianPatchSchema;
+export const guardianCreateSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  phone: z.string(),
+  address: z.string(),
+  email: z.string().email().optional(),
+  profession: z.string(),
+  annualIncome: z.string().optional(),
+  guardianType: z.string(),
+  studentId:z.string().optional(),
+});
+

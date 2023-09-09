@@ -1,7 +1,6 @@
 //@ts-nocheck
 import { notFound } from "next/navigation";
 import { Student } from "@prisma/client";
-import Image from 'next/image'
 import { Button } from "@/components/ui/button";
  
 import {
@@ -18,9 +17,17 @@ import { GuardianCard } from "@/components/guardian-card";
 import { GuardianInfoForm } from "@/components/form-guardian";
 import { StudentCard } from "@/components/student-card";
 
+interface StudentPageProps {
+  params: { studentId: string };
+}
 async function getStudent(studentId: Student["id"]) {
   try {
-    const res = await fetch(`http://localhost:3000/api/students/${studentId}`);
+    const res = await fetch(`http://localhost:3000/api/students/${studentId}`,{
+      method : 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
     
     if (!res.ok) {
       throw new Error('Failed to fetch student data')
@@ -31,11 +38,6 @@ async function getStudent(studentId: Student["id"]) {
     throw error;
   }
 }
-
-interface StudentPageProps {
-  params: { studentId: string };
-}
-
 export default async function StudentPage({ params }: StudentPageProps) {
   const student = await getStudent(params.studentId);
   if (!student) {
@@ -82,7 +84,16 @@ export default async function StudentPage({ params }: StudentPageProps) {
                           Add parent information here. Click save when you are done.
                         </DialogDescription>
                       </DialogHeader> 
-                    <GuardianInfoForm />
+                    <GuardianInfoForm guardian={{
+                          firstName: undefined,
+                          lastName: undefined,
+                          phone: undefined,
+                          address: undefined,
+                          email: undefined,
+                          profession: undefined,
+                          annualIncome: undefined,
+                          guardianType: undefined,
+                        }} studentId = {params.studentId}/>
                     </DialogContent>
               </Dialog>
             </div>

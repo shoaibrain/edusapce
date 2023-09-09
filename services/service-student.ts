@@ -1,5 +1,5 @@
 import prisma from "@/lib/db"
-import { Student } from "@prisma/client";
+import { Guardian } from "@prisma/client";
 
 export const getStudents = async () => {
     try {
@@ -81,3 +81,27 @@ export const patchStudent = async (studentId: string, studentUpdates) => {
       throw new Error(`Error updating student: ${error.message}`);
     }
   };
+export const addGuardianForStudent = async (studentId: string, guardian:any) => {
+    try {
+        const newGuardian = await prisma.guardian.create({
+            data: {
+                firstName: guardian.firstName,
+                lastName: guardian.lastName,
+                address: guardian.address,
+                phone: guardian.phone,
+                email: guardian.email,
+                profession: guardian.profession,
+                annualIncome: guardian.annualIncome,
+                guardianType: guardian.guardianType,
+                students: {
+                    connect: {
+                        id: studentId,
+                    },
+                },
+            },
+        })
+        console.log('New guardian created:', newGuardian);
+    } catch(error) {
+        throw new Error(`Error adding guardian: ${error.message}`);
+    }
+}

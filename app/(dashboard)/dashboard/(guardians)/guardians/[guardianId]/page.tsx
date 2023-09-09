@@ -5,7 +5,12 @@ import Image from 'next/image'
  
 async function getGuardian(guardianId: Guardian["id"]) {
   try {
-    const res =  await fetch(`http://localhost:3000/api/guardians/${guardianId}`);
+    const res =  await fetch(`http://localhost:3000/api/guardians/${guardianId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    });
     if (!res.ok) {
       throw new Error('Failed to fetch guardian data')
     }
@@ -27,7 +32,7 @@ export default async function GuardianPage({ params }: GuardianPageProps) {
   if (!guardian) {
     notFound();
   }
-  const { firstName, lastName, email, phone, address } = guardian;
+  const { firstName, lastName, phone, address, email, professoin,annualIncome, guardianType } = guardian;
   
   return (
     <div>

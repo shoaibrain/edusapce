@@ -45,7 +45,7 @@ export async function POST(request: Request) {
             email: body.email,
         },
       })
-      return new Response(JSON.stringify(newStudent))
+      return new Response(JSON.stringify(newStudent), { status: 201 })
 
     } catch (error) {
       if (error instanceof z.ZodError) {

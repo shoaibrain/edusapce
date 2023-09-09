@@ -12,7 +12,12 @@ import {  columns } from '@/components/columns-guardian'
 
 async function getGuardians() {
     try {
-      const res = await fetch('http://localhost:3000/api/guardians');
+      const res = await fetch('http://localhost:3000/api/guardians', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
       if (!res.ok) {
         throw new Error('Failed to fetch guardian data')
       }
@@ -23,7 +28,6 @@ async function getGuardians() {
     }
   }
   
-
 export default async function GuardiansPage() {// guardians aka parents
    const guardians = await getGuardians();
     if (!guardians) {

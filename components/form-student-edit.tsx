@@ -5,9 +5,8 @@ import { useRouter } from "next/navigation"
 import { Student } from "@prisma/client"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import axois from "axios"
 import { cn } from "@/lib/utils"
-import { studentSchema } from "@/lib/validations/user"
+import { studentCreateSchema } from "@/lib/validations/user"
 import { toast } from "@/components/ui/use-toast"
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
@@ -19,8 +18,7 @@ interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   student: Student;
 }
 
-type FormData = z.infer<typeof studentSchema>
-const apiUrl = 'http://localhost:3000';
+type FormData = z.infer<typeof studentCreateSchema>
 
 
 export function StudentInfoForm({ student, className, ...props }: StudentEditFormProps) {
@@ -37,36 +35,34 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
       email: student.email || "",
       birthDate: student.birthDate,
       gender: student.gender,
+      address: student.address,
+      enrollmentStatus: student.enrollmentStatus || "",
+      currentGrade: student.currentGrade || "",
+      phone: student.phone || "",
     },
   })
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
 
   async function onSubmit(data: FormData) {
-    console.log(`INSIDE SUBMIT: ${JSON.stringify(data)}`)
     setIsSaving(true)
-    axois.patch(`${apiUrl}/api/students/${student.id}`, data, {
+    const response = await fetch(`http://localhost:3000/api/students/${student.id}`,{
+      method : 'PATCH',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-    }).then((response) => {
-      //handle success
-      toast({
-        title: "Success",
-        description: `You profile has been updated.\n ${JSON.stringify(data)}`,
-        variant: "default",
-      })
-      console.log('Data updated:', response.data);
-      
-    }).catch((error) => {
-      //handle error
+      body: JSON.stringify(data)
+    })
+    setIsSaving(false)
+    if (!response.ok) {
       return toast({
         title: "Something went wrong.",
-        description: "Failed to edit Student Profile. Please try again.",
+        description: "Failed to update student. Please try again.",
         variant: "destructive",
       })
     }
-    );
-    setIsSaving(false)
+    toast({
+      description: "Your profile has been updated.",
+    })
 
     router.refresh()
   }
@@ -79,7 +75,7 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
     >
         <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
-        <div className="sm:col-span-2">
+            <div className="sm:col-span-2">
                 <Label  htmlFor="firstName">
                   FirstName
                 </Label>
@@ -113,9 +109,9 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
                 />
             </div>
             <div className="sm:col-span-3">
-            <Label  htmlFor="birthDate">
-            Date of Birth
-                </Label>
+              <Label  htmlFor="birthDate">
+                Date of Birth
+              </Label>
                 <Input
                 id= "birthDate"
                 className="w-[350px]"
@@ -129,7 +125,7 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
                 </Label>
                 <Select>
                 <SelectTrigger className="w-[350px]">
-                    <SelectValue placeholder="Select gender" />
+                    <SelectValue placeholder= { student.gender? `${student.gender}`: `Select gender`} />
                 </SelectTrigger>
                 <SelectContent {...register("gender")}>
                     <SelectGroup>
@@ -150,6 +146,39 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
                 className="w-[350px]"
                 size={32}
                 {...register("email")}
+                />
+            </div>
+            <div className="sm:col-span-3">
+            <Label  htmlFor="phone">
+                Phone
+                </Label>
+                <Input
+                id= "phone"
+                className="w-[350px]"
+                size={32}
+                {...register("phone")}
+                />
+            </div>
+            <div className="sm:col-span-2">
+                <Label  htmlFor="enrollmentStatus">
+                enrollmentStatus
+                </Label>
+                <Input
+                id="enrollmentStatus"
+                className="w-[250px]"
+                size={32}
+                {...register("enrollmentStatus")}
+                />
+            </div>
+            <div className="sm:col-span-2">
+            <Label  htmlFor="currentGrade">
+            currentGrade
+                </Label>
+                <Input
+                id= "currentGrade"
+                className="w-[250px]"
+                size={32}
+                {...register("currentGrade")}
                 />
             </div>
         </div>
