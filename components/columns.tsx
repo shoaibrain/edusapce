@@ -1,7 +1,6 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "./data-table-column-header"
 import { DataTableRowActions } from "./data-table-row-actions"
@@ -36,7 +35,7 @@ export const columns: ColumnDef<Student>[] = [
     ),
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("firstName")}</div>,
     enableSorting: true,
-    enableHiding: true,
+    enableHiding: false,
   },
   {
     accessorKey: "lastName",
@@ -45,7 +44,7 @@ export const columns: ColumnDef<Student>[] = [
     ),
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("lastName")}</div>,
     enableSorting: true,
-    enableHiding: true,
+    enableHiding: false,
   },
   {
     accessorKey: "gender",
@@ -88,6 +87,6 @@ export const columns: ColumnDef<Student>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    cell: ({ row }) => <DataTableRowActions row={row} dataId={row.original.id}/>,
   },
 ]

@@ -11,14 +11,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import Link from "next/link"
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
+  dataId: string
 }
 
 export function DataTableRowActions<TData>({
   row,
+  dataId,
 }: DataTableRowActionsProps<TData>) {
+  console.log(`row: ${JSON.stringify(row)}`)
+  const studentId = dataId;
+  console.log(`studentId: ${studentId}`)
 
   return (
     <DropdownMenu>
@@ -32,9 +38,21 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>View profile</DropdownMenuItem>
-        <DropdownMenuItem>View Billings</DropdownMenuItem>
-        <DropdownMenuItem>View Academics</DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href={`/dashboard/students/${studentId}`}>
+              View profile
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href={`/dashboard/students/${studentId}`}>
+              View Billings
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href={`/dashboard/students/${studentId}`}>
+              Academic Records
+          </Link>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

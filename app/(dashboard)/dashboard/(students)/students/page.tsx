@@ -9,8 +9,9 @@ import { buttonVariants } from '@/components/ui/button'
 import { columns } from '@/components/columns'
 import { DataTable } from '@/components/data-table'
 
+const URL = 'https://project-eduspace.vercel.app/';
+
 async function getStudents() {
-  const URL = 'https://project-eduspace.vercel.app/';
   try {
     const res = await fetch(`${URL}/api/students`, {
       method: 'GET',
@@ -31,11 +32,9 @@ async function getStudents() {
 
 export default async function StudentsPage() {
   const students = await getStudents();
-  console.log(JSON.stringify(students));
   if (!students) {
     notFound()
   }
-
   const admissionRate = students.length;
 
   return (

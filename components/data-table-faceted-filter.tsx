@@ -18,8 +18,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator"
-import { Button } from "./ui/button"
-import { Badge } from "./ui/badge"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 interface DataTableFacetedFilter<TData, TValue> {
   column?: Column<TData, TValue>
