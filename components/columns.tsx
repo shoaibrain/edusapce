@@ -2,11 +2,9 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 
-import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Task } from "@/lib/data/schema"
 import { DataTableColumnHeader } from "./data-table-column-header"
-import { labels, priorities, statuses } from "@/lib/data/data"
 import { DataTableRowActions } from "./data-table-row-actions"
 
 export const columns: ColumnDef<Task>[] = [
@@ -32,82 +30,58 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
+    accessorKey: "firstName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Task" />
+      <DataTableColumnHeader column={column} title="First Name" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("firstName")}</div>,
+    enableSorting: true,
+    enableHiding: true,
+  },
+  {
+    accessorKey: "lastName",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Last Name" />
+    ),
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("lastName")}</div>,
+    enableSorting: true,
+    enableHiding: true,
+  },
+  {
+    accessorKey: "gender",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Gender" />
+    ),
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("gender")}</div>,
     enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "title",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Title" />
-    ),
-    cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.label)
+    enableHiding: true,
 
-      return (
-        <div className="flex space-x-2">
-          {label && <Badge variant="outline">{label.label}</Badge>}
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("title")}
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: "status",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
-    ),
-    cell: ({ row }) => {
-      const status = statuses.find(
-        (status) => status.value === row.getValue("status")
-      )
-
-      if (!status) {
-        return null
-      }
-
-      return (
-        <div className="flex w-[100px] items-center">
-          {status.icon && (
-            <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{status.label}</span>
-        </div>
-      )
-    },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
   },
   {
-    accessorKey: "priority",
+    accessorKey: "enrollmentStatus",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Priority" />
+      <DataTableColumnHeader column={column} title="Enrollment Status" />
     ),
-    cell: ({ row }) => {
-      const priority = priorities.find(
-        (priority) => priority.value === row.getValue("priority")
-      )
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("enrollmentStatus")}</div>,
+    enableSorting: true,
+    enableHiding: true,
 
-      if (!priority) {
-        return null
-      }
-
-      return (
-        <div className="flex items-center">
-          {priority.icon && (
-            <priority.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{priority.label}</span>
-        </div>
-      )
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
     },
+  },
+  {
+    accessorKey: "currentGrade",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Current Grade" />
+    ),
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("currentGrade")}</div>,
+    enableSorting: false,
+    enableHiding: true,
+
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },

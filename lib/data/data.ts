@@ -9,63 +9,64 @@ import {
     StopwatchIcon,
   } from "@radix-ui/react-icons"
   
-  export const labels = [
+  export const class_grades = [
     {
-      value: "bug",
-      label: "Bug",
+      value: "ONE",
+      label: "ONE",
     },
     {
-      value: "feature",
-      label: "Feature",
+      value: "TWO",
+      label: "TWO",
     },
     {
-      value: "documentation",
-      label: "Documentation",
+      value: "THREE",
+      label: "THREE",
     },
+    {
+      value: "Four",
+      label: "Four",
+    },
+    {
+      value: "Five",
+      label: "Five",
+    },
+    {
+      value: "Six",
+      label: "Six",
+    },
+    {
+      value: "Seven",
+      label: "Seven",
+    },
+    {
+      value: "Eight",
+      label: "Eight",
+    },
+    {
+      value: "Nine",
+      label: "Nine",
+    },
+    {
+      value: "Ten",
+      label: "Ten",
+    }
   ]
   
-  export const statuses = [
+  export const enrollment_status = [
     {
-      value: "backlog",
-      label: "Backlog",
-      icon: QuestionMarkCircledIcon,
+      label: "Enrolled",
+      value: "Enrolled",
     },
     {
-      value: "todo",
-      label: "Todo",
-      icon: CircleIcon,
+      label: "Graduated",
+      value: "Graduated",
     },
     {
-      value: "in progress",
-      label: "In Progress",
-      icon: StopwatchIcon,
+      label: "Dropout",
+      value: "Dropout",
     },
     {
-      value: "done",
-      label: "Done",
-      icon: CheckCircledIcon,
-    },
-    {
-      value: "canceled",
-      label: "Canceled",
-      icon: CrossCircledIcon,
-    },
-  ]
-  
-  export const priorities = [
-    {
-      label: "Low",
-      value: "low",
-      icon: ArrowDownIcon,
-    },
-    {
-      label: "Medium",
-      value: "medium",
-      icon: ArrowRightIcon,
-    },
-    {
-      label: "High",
-      value: "high",
-      icon: ArrowUpIcon,
+      label: "Transferred",
+      value: "Transferred",
     },
   ]
