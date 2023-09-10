@@ -1,54 +1,43 @@
-import {
-    ArrowDownIcon,
-    ArrowRightIcon,
-    ArrowUpIcon,
-    CheckCircledIcon,
-    CircleIcon,
-    CrossCircledIcon,
-    QuestionMarkCircledIcon,
-    StopwatchIcon,
-  } from "@radix-ui/react-icons"
-  
-  export const class_grades = [
+    export const class_grades = [
     {
-      value: "ONE",
+      value: "One",
       label: "ONE",
     },
     {
-      value: "TWO",
+      value: "Two",
       label: "TWO",
     },
     {
-      value: "THREE",
+      value: "Three",
       label: "THREE",
     },
     {
       value: "Four",
-      label: "Four",
+      label: "FOUR",
     },
     {
       value: "Five",
-      label: "Five",
+      label: "FIVE",
     },
     {
       value: "Six",
-      label: "Six",
+      label: "SIX",
     },
     {
       value: "Seven",
-      label: "Seven",
+      label: "SEVEN",
     },
     {
       value: "Eight",
-      label: "Eight",
+      label: "EIGHT",
     },
     {
       value: "Nine",
-      label: "Nine",
+      label: "NINE",
     },
     {
       value: "Ten",
-      label: "Ten",
+      label: "TEN",
     }
   ]
   

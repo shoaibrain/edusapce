@@ -1,5 +1,4 @@
 import prisma from "@/lib/db"
-import { Guardian } from "@prisma/client";
 
 export const getStudents = async () => {
     try {
@@ -13,6 +12,7 @@ export const getStudents = async () => {
                 birthDate: true,
                 gender: true,
                 enrollmentStatus: true,
+                currentGrade: true,
                 nationality: true,
                 nagriktaNumber: true,
                 email: true,

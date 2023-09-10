@@ -12,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
 }
@@ -33,12 +32,9 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>
-          View profile
-        </DropdownMenuItem>
+        <DropdownMenuItem>View profile</DropdownMenuItem>
         <DropdownMenuItem>View Billings</DropdownMenuItem>
         <DropdownMenuItem>View Academics</DropdownMenuItem>
-        <DropdownMenuItem>Delete</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

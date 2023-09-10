@@ -29,158 +29,14 @@ async function getStudents() {
   }
 }
 
-// Simulate a database read for tasks.
-async function getTasks() {
-  return [
-    {
-      "firstName": "John",
-      "lastName": "Doe",
-      "birthDate": "34567",
-      "gender": "Male",
-      "email": "johndoe@example.com",
-      "enrollmentStatus": "Admitted",
-      "currentGrade": "ONE"
-    },
-    {
-      "firstName": "Alice",
-      "lastName": "Smith",
-      "birthDate": "45678",
-      "gender": "Female",
-      "email": "alicesmith@example.com",
-      "enrollmentStatus": "Enrolled",
-      "currentGrade": "TWO"
-    },
-    {
-      "firstName": "Bob",
-      "lastName": "Johnson",
-      "birthDate": "56789",
-      "gender": "Male",
-      "email": "bobjohnson@example.com",
-      "enrollmentStatus": "Transferred",
-      "currentGrade": "THREE"
-    },
-    {
-      "firstName": "Eva",
-      "lastName": "Brown",
-      "birthDate": "67890",
-      "gender": "Female",
-      "email": "evabrown@example.com",
-      "enrollmentStatus": "Graduated",
-      "currentGrade": "FOUR"
-    },
-    {
-      "firstName": "Michael",
-      "lastName": "Williams",
-      "birthDate": "78901",
-      "gender": "Male",
-      "email": "michaelwilliams@example.com",
-      "enrollmentStatus": "Dropped",
-      "currentGrade": "FIVE"
-    },
-    {
-      "firstName": "Sophia",
-      "lastName": "Davis",
-      "birthDate": "89012",
-      "gender": "Female",
-      "email": "sophiadavis@example.com",
-      "enrollmentStatus": "Admitted",
-      "currentGrade": "SIX"
-    },
-    {
-      "firstName": "David",
-      "lastName": "Lee",
-      "birthDate": "90123",
-      "gender": "Male",
-      "email": "davidlee@example.com",
-      "enrollmentStatus": "Enrolled",
-      "currentGrade": "SEVEN"
-    },
-    {
-      "firstName": "Olivia",
-      "lastName": "Clark",
-      "birthDate": "12345",
-      "gender": "Female",
-      "email": "oliviaclark@example.com",
-      "enrollmentStatus": "Transferred",
-      "currentGrade": "EIGHT"
-    },
-    {
-      "firstName": "Liam",
-      "lastName": "Anderson",
-      "birthDate": "23456",
-      "gender": "Male",
-      "email": "liamanderson@example.com",
-      "enrollmentStatus": "Graduated",
-      "currentGrade": "NINE"
-    },
-    {
-      "firstName": "Emma",
-      "lastName": "Martinez",
-      "birthDate": "34567",
-      "gender": "Female",
-      "email": "emmartinez@example.com",
-      "enrollmentStatus": "Dropped",
-      "currentGrade": "TEN"
-    },
-    {
-      "firstName": "Noah",
-      "lastName": "Harris",
-      "birthDate": "45678",
-      "gender": "Male",
-      "email": "noahharris@example.com",
-      "enrollmentStatus": "Admitted",
-      "currentGrade": "ONE"
-    },
-    {
-      "firstName": "Ava",
-      "lastName": "Wilson",
-      "birthDate": "56789",
-      "gender": "Female",
-      "email": "avawilson@example.com",
-      "enrollmentStatus": "Enrolled",
-      "currentGrade": "TWO"
-    },
-    {
-      "firstName": "William",
-      "lastName": "White",
-      "birthDate": "67890",
-      "gender": "Male",
-      "email": "williamwhite@example.com",
-      "enrollmentStatus": "Transferred",
-      "currentGrade": "THREE"
-    },
-    {
-      "firstName": "Mia",
-      "lastName": "Turner",
-      "birthDate": "78901",
-      "gender": "Female",
-      "email": "miaturner@example.com",
-      "enrollmentStatus": "Graduated",
-      "currentGrade": "FOUR"
-    },
-    {
-      "firstName": "James",
-      "lastName": "Moore",
-      "birthDate": "89012",
-      "gender": "Male",
-      "email": "jamesmoore@example.com",
-      "enrollmentStatus": "Dropped",
-      "currentGrade": "FIVE"
-    }
-  ]
-  
-  
-}
-
 export default async function StudentsPage() {
-  // const students = await getStudents();
-
-  const tasks = await getTasks()
-  if (!tasks) {
+  const students = await getStudents();
+  console.log(JSON.stringify(students));
+  if (!students) {
     notFound()
   }
 
-  const admissionRate = tasks.length;
+  const admissionRate = students.length;
 
   return (
     <>
@@ -256,7 +112,7 @@ export default async function StudentsPage() {
             </div>
           </div>
           <div className="container mx-auto  py-10">
-            <DataTable columns={columns} data={tasks} />
+            <DataTable columns={columns} data={students} />
           </div>
     </>
   )

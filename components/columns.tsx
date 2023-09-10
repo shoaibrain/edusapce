@@ -3,11 +3,11 @@
 import { ColumnDef } from "@tanstack/react-table"
 
 import { Checkbox } from "@/components/ui/checkbox"
-import { Task } from "@/lib/data/schema"
 import { DataTableColumnHeader } from "./data-table-column-header"
 import { DataTableRowActions } from "./data-table-row-actions"
+import { Student } from "@prisma/client"
 
-export const columns: ColumnDef<Task>[] = [
+export const columns: ColumnDef<Student>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -63,7 +63,7 @@ export const columns: ColumnDef<Task>[] = [
   {
     accessorKey: "enrollmentStatus",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Enrollment Status" />
+      <DataTableColumnHeader column={column} title=" Status" />
     ),
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("enrollmentStatus")}</div>,
     enableSorting: true,
@@ -76,7 +76,7 @@ export const columns: ColumnDef<Task>[] = [
   {
     accessorKey: "currentGrade",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Current Grade" />
+      <DataTableColumnHeader column={column} title="Class Grade" />
     ),
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("currentGrade")}</div>,
     enableSorting: false,
