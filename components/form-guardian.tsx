@@ -73,19 +73,9 @@ export function GuardianInfoForm({
           variant: "destructive",
         });
       }
-      const guardian = await response.json();
-      // update student guardian with new guardian
-      const studentResponse = await fetch(`http://localhost:3000/api/students/${studentId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ guardianId: guardian.id }),
-      });
-      if (!studentResponse.ok) {
-        console.log(`Error connecting newly created guardian to student ${studentId}`)
-      }
-      // Show success toast
+      
+      // TODO: establish relationship between student and guardian 
+      
       toast({
         title: "Success",
         description: "A parent has been added.",

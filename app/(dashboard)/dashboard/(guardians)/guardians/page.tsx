@@ -9,10 +9,10 @@ import { buttonVariants } from '@/components/ui/button'
 import { DataTableGuardian } from '@/components/data-table-guardians'
 
 import {  columns } from '@/components/columns-guardian'
-
+const URL = 'https://project-eduspace.vercel.app';
 async function getGuardians() {
     try {
-      const res = await fetch('http://localhost:3000/api/guardians', {
+      const res = await fetch(`${URL}/api/guardians`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

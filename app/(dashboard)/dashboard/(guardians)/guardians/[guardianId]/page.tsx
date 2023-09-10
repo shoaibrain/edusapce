@@ -2,10 +2,12 @@ import { notFound, redirect } from "next/navigation";
 import { Guardian, User } from "@prisma/client";
 import prisma from "@/lib/db";
 import Image from 'next/image'
- 
+
+const URL = 'https://project-eduspace.vercel.app';
+
 async function getGuardian(guardianId: Guardian["id"]) {
   try {
-    const res =  await fetch(`http://localhost:3000/api/guardians/${guardianId}`, {
+    const res =  await fetch(`${URL}/api/guardians/${guardianId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

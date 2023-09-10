@@ -20,9 +20,11 @@ import { StudentCard } from "@/components/student-card";
 interface StudentPageProps {
   params: { studentId: string };
 }
+const URL = 'https://project-eduspace.vercel.app';
 async function getStudent(studentId: Student["id"]) {
+  
   try {
-    const res = await fetch(`http://localhost:3000/api/students/${studentId}`,{
+    const res = await fetch(`${URL}/api/students/${studentId}`,{
       method : 'GET',
       headers: {
         'Content-Type': 'application/json'
