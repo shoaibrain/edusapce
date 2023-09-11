@@ -25,7 +25,6 @@ export const getStudents = async () => {
       } catch (error) {
        throw new Error(`Error getting all students: ${error.message}`);
       }
-
 }
 
 export const getStudent = async(studentId : string) => {
@@ -38,8 +37,7 @@ export const getStudent = async(studentId : string) => {
             guardians: true,
         }
       })
-      console.log(JSON.stringify(student));
-        return student;
+    return student;
     } catch (error) {
         throw new Error(`Error getting student: ${error.message}`);
     }

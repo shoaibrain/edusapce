@@ -23,8 +23,6 @@ export function DataTableRowActions<TData>({
   dataId,
 }: DataTableRowActionsProps<TData>) {
   console.log(`row: ${JSON.stringify(row)}`)
-  const studentId = dataId;
-  console.log(`studentId: ${studentId}`)
 
   return (
     <DropdownMenu>
@@ -39,17 +37,17 @@ export function DataTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem>
-          <Link href={`/dashboard/students/${studentId}`}>
+          <Link href={`/dashboard/students/${dataId}`}>
               View profile
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link href={`/dashboard/students/${studentId}`}>
+          <Link href={`/dashboard/billings/${dataId}`}>
               View Billings
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link href={`/dashboard/students/${studentId}`}>
+          <Link href={`/dashboard/academics/${dataId}`}>
               Academic Records
           </Link>
         </DropdownMenuItem>

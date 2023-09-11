@@ -42,6 +42,7 @@ async function getStudent(studentId: Student["id"]) {
 }
 export default async function StudentPage({ params }: StudentPageProps) {
   const student = await getStudent(params.studentId);
+  console.log(JSON.stringify(student));
   if (!student) {
     notFound();
   }

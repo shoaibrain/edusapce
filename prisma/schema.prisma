@@ -1,157 +1,146 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-
 generator client {
-provider = "prisma-client-js"
-previewFeatures = ["referentialIntegrity"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
-
 
 datasource db {
-provider = "mysql"
-url = env("DATABASE_URL")
-referentialIntegrity = "prisma"
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
-
-
-enum Role {
-ADMIN
-TEACHER
-STAFF
-STUDENT
-USER
-}
-
 
 model Account {
-id String @id @default(cuid())
-userId String
-type String
-provider String
-providerAccountId String
-refresh_token String? @db.Text
-access_token String? @db.Text
-expires_at Int?
-token_type String?
-scope String?
-id_token String? @db.Text
-session_state String?
-createdAt DateTime @default(now()) @map(name: "created_at")
-updatedAt DateTime @default(now()) @map(name: "updated_at")
+  id                String   @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.Text
+  session_state     String?
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @map("updated_at")
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-
-user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-
-@@unique([provider, providerAccountId])
-@@map(name: "accounts")
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
-
 
 model User {
-id String @id @default(cuid())
-name String
-email String @unique
-phone String?
-emailVerified DateTime?
-phoneVerified DateTime?
-hashedPassword String?
-role Role @default(USER)
-image String?
-addres String?
-createdAt DateTime @default(now()) @map(name: "created_at")
-updatedAt DateTime @default(now()) @map(name: "updated_at")
+  id             String    @id @default(cuid())
+  name           String
+  email          String    @unique
+  phone          String?
+  emailVerified  DateTime?
+  phoneVerified  DateTime?
+  hashedPassword String?
+  role           Role      @default(USER)
+  image          String?
+  addres         String?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @map("updated_at")
+  accounts       Account[]
+  sessions       Session[]
 
-accounts Account[]
-sessions Session[]
-
-
-@@map(name: "users")
+  @@map("users")
 }
 
-
 model Guardian {
-id String @id @default(cuid())
-firstName String
-lastName String
-phone String
-address String
-email String?
-profession String?
-annualIncome String?
-guardianType String?
-role Role @default(USER)
-createdAt DateTime @default(now()) @map(name: "created_at")
-updatedAt DateTime @default(now()) @map(name: "updated_at")
+  id           String    @id @default(cuid())
+  firstName    String
+  lastName     String
+  phone        String
+  address      String
+  email        String?
+  profession   String?
+  annualIncome String?
+  guardianType String?
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @default(now()) @map("updated_at")
+  role         Role      @default(USER)
+  students     Student[] @relation("GuardianStudent")
 
-students Student[] @relation("GuardianStudent")
-
-@@map(name: "guardians")
+  @@map("guardians")
 }
 
 model Student {
-id String @id @default(cuid())
-firstName String
-middleName String?
-lastName String
-birthDate DateTime
-gender String
-enrollmentStatus String?
-currentGrade String? // current enrolled class
-nationality String?
-nagriktaNumber String?
-email String?
-phone String?
-address String
-role Role @default(STUDENT)
-createdAt DateTime @default(now()) @map(name: "created_at")
-updatedAt DateTime @default(now()) @map(name: "updated_at")
+  id               String     @id @default(cuid())
+  firstName        String
+  middleName       String?
+  lastName         String
+  birthDate        DateTime
+  gender           String
+  currentGrade     String?
+  nationality      String?
+  nagriktaNumber   String?
+  email            String?
+  phone            String?
+  address          String
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @default(now()) @map("updated_at")
+  role             Role       @default(STUDENT)
+  enrollmentStatus String?
+  guardians        Guardian[] @relation("GuardianStudent")
 
-guardians Guardian[] @relation("GuardianStudent")
-
-@@map(name: "students")
+  @@map("students")
 }
 
 model Employee {
-id String @id @default(cuid())
-firstName String
-middleName String?
-lastName String
-phone String
-email String?
-address String
-role Role @default(STAFF)
-birthDate String?
-gender String
-nagriktaNumber String?
-departent String?
-hiredDate DateTime? @map(name: "hired_date")
+  id             String    @id @default(cuid())
+  firstName      String
+  middleName     String?
+  lastName       String
+  phone          String
+  email          String?
+  address        String
+  role           Role      @default(STAFF)
+  birthDate      String?
+  gender         String
+  nagriktaNumber String?
+  departent      String?
+  hiredDate      DateTime? @map("hired_date")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @map("updated_at")
 
-createdAt DateTime @default(now()) @map(name: "created_at")
-updatedAt DateTime @default(now()) @map(name: "updated_at")
-
-
-@@map(name: "employees")
+  @@map("employees")
 }
 
 model VerificationToken {
-identifier String
-token String @unique
-expires DateTime
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-
-@@unique([identifier, token])
-@@map(name: "verification_tokens")
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }
 
 model Session {
-id String @id @default(cuid())
-sessionToken String @unique
-userId String
-expires DateTime
-user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@map("sessions")
+}
 
-@@map(name: "sessions")
+model GuardianStudent {
+  A String
+  B String
+
+  @@unique([A, B], map: "_GuardianStudent_AB_unique")
+  @@index([B], map: "_GuardianStudent_B_index")
+  @@map("_GuardianStudent")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STAFF
+  STUDENT
+  USER
 }
