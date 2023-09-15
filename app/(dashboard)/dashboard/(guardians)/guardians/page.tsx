@@ -1,4 +1,3 @@
-//@ts-nocheck
 import React from 'react'
 import { notFound } from "next/navigation"
 import Link from "next/link"
@@ -10,6 +9,7 @@ import { DataTableGuardian } from '@/components/data-table-guardians'
 
 import {  columns } from '@/components/columns-guardian'
 const URL = 'https://project-eduspace.vercel.app';
+
 async function getGuardians() {
     try {
       const res = await fetch(`${URL}/api/guardians`, {
@@ -28,7 +28,7 @@ async function getGuardians() {
     }
   }
   
-export default async function GuardiansPage() {// guardians aka parents
+export default async function GuardiansPage() {
    const guardians = await getGuardians();
     if (!guardians) {
       notFound()
@@ -36,7 +36,7 @@ export default async function GuardiansPage() {// guardians aka parents
     
   return (
     <>
-                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
@@ -97,7 +97,7 @@ export default async function GuardiansPage() {// guardians aka parents
           {/* Guardians Table */}
           <div className='container mx-auto py-10'>
           <DataTableGuardian columns={columns} data={guardians} />
-          </div>
+        </div>
 
     </>
   )

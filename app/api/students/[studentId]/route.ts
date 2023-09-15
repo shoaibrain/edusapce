@@ -1,5 +1,5 @@
 import * as z from "zod"
-import studentPatchSchema from "@/lib/validations/student";
+import { studentPatchSchema} from "@/lib/validations/student";
 import { Prisma } from "@prisma/client";
 import { addGuardianForStudent, deleteStudent, getStudent, patchStudent } from "@/services/service-student";
 import { guardianCreateSchema } from "@/lib/validations/guardian";
@@ -49,6 +49,7 @@ const routeContextSchema = z.object({
       const { params } = routeContextSchema.parse(context);
       const json = await req.json();
       const body = studentPatchSchema.parse(json);
+      console.log(`Parsed body: ${JSON.stringify(body)}`)
       // Construct the data object for partial updates.
       const data: Prisma.StudentUpdateInput = {};
   
@@ -69,6 +70,7 @@ const routeContextSchema = z.object({
       return new Response(null, { status: 200 });
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.log(error.issues)
         const validationErrors = error.issues.map((issue) => {
           return {
             field: issue.path.join('.'),

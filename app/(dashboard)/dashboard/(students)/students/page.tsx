@@ -9,15 +9,17 @@ import { buttonVariants } from '@/components/ui/button'
 import { columns } from '@/components/columns'
 import { DataTable } from '@/components/data-table'
 
-const URL = 'https://project-eduspace.vercel.app/';
+const URL = 'https://project-eduspace.vercel.app';
 
 async function getStudents() {
   try {
+    console.log(`The URL is ${URL}/api/students`)
     const res = await fetch(`${URL}/api/students`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       },
+      next: { revalidate: 10 },
     });
     
     if (!res.ok) {

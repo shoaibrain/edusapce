@@ -6,7 +6,7 @@ import { Student } from "@prisma/client"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
-import { studentCreateSchema } from "@/lib/validations/user"
+import { studentPatchSchema } from "@/lib/validations/student"
 import { toast } from "@/components/ui/use-toast"
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
@@ -17,10 +17,10 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   student: Student;
 }
+type FormData = z.infer<typeof studentPatchSchema>
+const URL = 'http://localhost:3000';
 
-type FormData = z.infer<typeof studentCreateSchema>
-
-
+//TODO: patch through webUI is not working, works with postman
 export function StudentInfoForm({ student, className, ...props }: StudentEditFormProps) {
   const router = useRouter()
   const {
@@ -30,30 +30,32 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
   } = useForm<FormData>({
     defaultValues: {
       firstName: student.firstName,
-      middleName: student.middleName || "",
+      middleName: student.middleName || "", //todo: fix this later
       lastName: student.lastName,
-      email: student.email || "",
-      birthDate: student.birthDate,
+      birthDate: student.birthDate || "",
       gender: student.gender,
-      address: student.address,
-      enrollmentStatus: student.enrollmentStatus || "",
-      currentGrade: student.currentGrade || "",
+      email: student.email || "",
       phone: student.phone || "",
-    },
+      enrollmentStatus: student.enrollmentStatus || "",
+      currentGrade: student.currentGrade || ""
+    }
   })
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
-    const response = await fetch(`http://localhost:3000/api/students/${student.id}`,{
+    console.log(`data on submit: ${JSON.stringify(data)}`)
+
+    const response = await fetch(`${URL}/api/students/${student.id}`,{
       method : 'PATCH',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(data)
     })
     setIsSaving(false)
-    if (!response.ok) {
+    console.log(JSON.stringify(response.statusText));
+    if (!response?.ok) {
       return toast({
         title: "Something went wrong.",
         description: "Failed to update student. Please try again.",
@@ -63,11 +65,11 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
     toast({
       description: "Your profile has been updated.",
     })
-
     router.refresh()
   }
 
   return (
+    // TODO: validate forms and inputs
     <form
       className={cn(className)}
       onSubmit={handleSubmit(onSubmit)}

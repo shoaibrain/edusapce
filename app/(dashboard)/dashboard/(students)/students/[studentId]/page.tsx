@@ -21,15 +21,15 @@ interface StudentPageProps {
   params: { studentId: string };
 }
 const URL = 'https://project-eduspace.vercel.app';
-async function getStudent(studentId: Student["id"]) {
-  
+
+async function getStudent(studentId: Student["id"]) {  
   try {
     const res = await fetch(`${URL}/api/students/${studentId}`,{
       method : 'GET',
       headers: {
         'Content-Type': 'application/json'
       }
-    });
+    }, { cache: 'no-store' });
     
     if (!res.ok) {
       throw new Error('Failed to fetch student data')
@@ -65,6 +65,8 @@ export default async function StudentPage({ params }: StudentPageProps) {
                       Make changes to student Information here. Click save when you are done.
                     </DialogDescription>
                   </DialogHeader>
+                  {/* Patch with Form is not working as expected */}
+                  
                     <StudentInfoForm student={student}/>
                 </DialogContent>
           </Dialog>
