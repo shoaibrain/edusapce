@@ -12,15 +12,14 @@ export const guardianPatchSchema = z.object({
   students: z.array(z.string()).optional(), // array of student ids
 })
 
-export const guardianCreateSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  phone: z.string(),
-  address: z.string(),
-  email: z.string().email().optional(),
-  profession: z.string(),
-  annualIncome: z.string().optional(),
-  guardianType: z.string(),
-  studentId:z.string().optional(),
-});
 
+export const guardianCreateSchema = z.object({
+  firstName: z.string().min(3).max(32),
+  lastName: z.string().min(3).max(32),
+  phone: z.string().min(3).max(32),
+  address: z.string().min(3).max(32),
+  email: z.string().email().optional(),
+  profession: z.string().min(3).max(32),
+  annualIncome: z.string().optional(),
+  guardianType: z.string().min(3).max(10),
+})

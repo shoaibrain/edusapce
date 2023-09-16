@@ -2,6 +2,12 @@ import { notFound, redirect } from "next/navigation";
 import { Guardian, User } from "@prisma/client";
 import prisma from "@/lib/db";
 import Image from 'next/image'
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Guardian Details",
+  description: "Guardian Dashboard",
+}
 
 const URL = 'https://project-eduspace.vercel.app';
 
@@ -35,7 +41,7 @@ export default async function GuardianPage({ params }: GuardianPageProps) {
     notFound();
   }
   const { firstName, lastName, phone, address, email, professoin,annualIncome, guardianType } = guardian;
-  
+
   return (
     <div>
       <div className="grid grid-cols-2 justify-between gap-4 p-2 px-5 sm:px-0 ">
@@ -84,5 +90,5 @@ export default async function GuardianPage({ params }: GuardianPageProps) {
       </div>
     </div>
   );
-  
+
 }

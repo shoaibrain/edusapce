@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 import { guardianCreateSchema } from "@/lib/validations/guardian";
 
 interface GuardianFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  guardian: Guardian;
+  guardian?: Guardian;
   studentId?: string;
 }
 
@@ -39,24 +39,13 @@ export function GuardianInfoForm({
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<FormData>({
-    defaultValues: {
-      firstName: guardian.firstName,
-      lastName: guardian.lastName,
-      email: guardian.email || "",
-      phone: guardian.phone || "",
-      address: guardian.address || "",
-      guardianType: guardian.guardianType || "",
-      profession: guardian.profession || "",
-      annualIncome: guardian.annualIncome || "",
-    },
-  });
+  } = useForm<FormData>({});
 
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
   async function onSubmit(data: FormData) {
       setIsSaving(true);
-      const response = await fetch(`http://localhost:3000/api/guardians`, {
+      const response = await fetch(`/api/guardians`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,9 +62,9 @@ export function GuardianInfoForm({
           variant: "destructive",
         });
       }
-      
-      // TODO: establish relationship between student and guardian 
-      
+
+      // TODO: establish relationship between student and guardian
+
       toast({
         title: "Success",
         description: "A parent has been added.",

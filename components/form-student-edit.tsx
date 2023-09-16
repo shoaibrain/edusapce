@@ -12,16 +12,23 @@ import { Label } from "./ui/label"
 import { Input } from "./ui/input"
 import {  buttonVariants } from "./ui/button"
 import { Icons } from "./icons"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue } from "./ui/select"
 
 interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   student: Student;
 }
 type FormData = z.infer<typeof studentPatchSchema>
-const URL = 'http://localhost:3000';
+const URL = 'https://project-eduspace.vercel.app';
 
 //TODO: patch through webUI is not working, works with postman
-export function StudentInfoForm({ student, className, ...props }: StudentEditFormProps) {
+export function StudentEditForm({ student, className, ...props }: StudentEditFormProps) {
   const router = useRouter()
   const {
     handleSubmit,
@@ -32,20 +39,16 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
       firstName: student.firstName,
       middleName: student.middleName || "", //todo: fix this later
       lastName: student.lastName,
-      birthDate: student.birthDate || "",
       gender: student.gender,
       email: student.email || "",
       phone: student.phone || "",
-      enrollmentStatus: student.enrollmentStatus || "",
-      currentGrade: student.currentGrade || ""
+      currentGrade: student.currentGrade || "",
     }
   })
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
-    console.log(`data on submit: ${JSON.stringify(data)}`)
-
     const response = await fetch(`${URL}/api/students/${student.id}`,{
       method : 'PATCH',
       headers: {
@@ -54,7 +57,6 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
       body: JSON.stringify(data)
     })
     setIsSaving(false)
-    console.log(JSON.stringify(response.statusText));
     if (!response?.ok) {
       return toast({
         title: "Something went wrong.",
@@ -67,16 +69,13 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
     })
     router.refresh()
   }
-
-  return (
-    // TODO: validate forms and inputs
-    <form
+    return (
+      <form
       className={cn(className)}
       onSubmit={handleSubmit(onSubmit)}
       {...props}
     >
         <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-
             <div className="sm:col-span-2">
                 <Label  htmlFor="firstName">
                   FirstName
@@ -127,7 +126,9 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
                 </Label>
                 <Select>
                 <SelectTrigger className="w-[350px]">
-                    <SelectValue placeholder= { student.gender? `${student.gender}`: `Select gender`} />
+                    <SelectValue
+                     placeholder= { student.gender? `${student.gender}`: `Select gender`}
+                     />
                 </SelectTrigger>
                 <SelectContent {...register("gender")}>
                     <SelectGroup>
@@ -175,12 +176,12 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
             <div className="sm:col-span-2">
             <Label  htmlFor="currentGrade">
             currentGrade
-                </Label>
+            </Label>
                 <Input
-                id= "currentGrade"
-                className="w-[250px]"
-                size={32}
-                {...register("currentGrade")}
+                  id= "currentGrade"
+                  className="w-[250px]"
+                  size={32}
+                  {...register("currentGrade")}
                 />
             </div>
         </div>
@@ -188,7 +189,6 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
           type="submit"
           className={cn(buttonVariants(), className)}
           disabled={isSaving}
-
         >
           {isSaving && (
             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -196,5 +196,5 @@ export function StudentInfoForm({ student, className, ...props }: StudentEditFor
           <span>Save Changes</span>
         </button>
     </form>
-  )
+    )
 }

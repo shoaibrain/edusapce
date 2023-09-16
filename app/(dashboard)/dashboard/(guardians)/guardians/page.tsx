@@ -6,8 +6,13 @@ import { GraduationCap, Gauge, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { DataTableGuardian } from '@/components/data-table-guardians'
-
 import {  columns } from '@/components/columns-guardian'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Guardians",
+  description: "Guardians Dashboard",
+}
 const URL = 'https://project-eduspace.vercel.app';
 
 async function getGuardians() {
@@ -27,13 +32,13 @@ async function getGuardians() {
       throw error;
     }
   }
-  
+
 export default async function GuardiansPage() {
    const guardians = await getGuardians();
     if (!guardians) {
       notFound()
     }
-    
+
   return (
     <>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

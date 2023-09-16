@@ -8,20 +8,25 @@ import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { columns } from '@/components/columns'
 import { DataTable } from '@/components/data-table'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Students",
+  description: "Students Dashboard",
+}
 
 const URL = 'https://project-eduspace.vercel.app';
 
 async function getStudents() {
   try {
-    console.log(`The URL is ${URL}/api/students`)
     const res = await fetch(`${URL}/api/students`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       },
-      next: { revalidate: 10 },
+      next: { revalidate: 5 },
     });
-    
+
     if (!res.ok) {
       throw new Error('Failed to fetch student data')
     }
@@ -90,7 +95,7 @@ export default async function StudentsPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">
-                 +9 new Alerts  
+                 +9 new Alerts
                 </p>
               </CardContent>
             </Card>

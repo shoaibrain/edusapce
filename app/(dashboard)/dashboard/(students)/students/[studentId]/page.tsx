@@ -1,8 +1,7 @@
-//@ts-nocheck
 import { notFound } from "next/navigation";
 import { Student } from "@prisma/client";
 import { Button } from "@/components/ui/button";
- 
+
 import {
   Dialog,
   DialogContent,
@@ -12,25 +11,31 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { StudentInfoForm } from "@/components/form-student-edit";
+import { StudentEditForm } from "@/components/form-student-edit";
 import { GuardianCard } from "@/components/guardian-card";
 import { GuardianInfoForm } from "@/components/form-guardian";
 import { StudentCard } from "@/components/student-card";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Student Details",
+  description: "Student Dashboard",
+}
 interface StudentPageProps {
   params: { studentId: string };
 }
 const URL = 'https://project-eduspace.vercel.app';
 
-async function getStudent(studentId: Student["id"]) {  
+async function getStudent(studentId: Student["id"]) {
   try {
     const res = await fetch(`${URL}/api/students/${studentId}`,{
       method : 'GET',
       headers: {
         'Content-Type': 'application/json'
-      }
-    }, { cache: 'no-store' });
-    
+      },
+      next: { revalidate: 5 },
+    });
+
     if (!res.ok) {
       throw new Error('Failed to fetch student data')
     }
@@ -42,32 +47,31 @@ async function getStudent(studentId: Student["id"]) {
 }
 export default async function StudentPage({ params }: StudentPageProps) {
   const student = await getStudent(params.studentId);
-  console.log(JSON.stringify(student));
   if (!student) {
     notFound();
   }
   const { guardians } = student;
-  
+
   return (
     <div>
       <div className="flex items-center justify-between">
-      <h2 className="text-base font-semibold leading-7 text-gray-900">{`${student.firstName} ${student.lastName}`}</h2>
+      <h2 className="text-base font-semibold leading-7 text-gray-900">
+        {`${student.firstName} ${student.lastName}`}
+      </h2>
       <p className="text-base leading-7 text-gray-700">{`id: ${student.id}`}</p>
         <div className="p-4">
           <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline">Update Profile</Button>
+                  <Button variant="outline">Update Student Profile</Button>
                 </DialogTrigger>
                 <DialogContent className="mx-auto sm:max-w-[800px]">
                   <DialogHeader>
                     <DialogTitle>Update Student Information</DialogTitle>
                     <DialogDescription>
-                      Make changes to student Information here. Click save when you are done.
+                      Edit student information here. Click save when you are done.
                     </DialogDescription>
                   </DialogHeader>
-                  {/* Patch with Form is not working as expected */}
-                  
-                    <StudentInfoForm student={student}/>
+                    <StudentEditForm student={student}/>
                 </DialogContent>
           </Dialog>
         </div>
@@ -84,21 +88,12 @@ export default async function StudentPage({ params }: StudentPageProps) {
                     </DialogTrigger>
                     <DialogContent className="mx-auto sm:max-w-[800px]">
                       <DialogHeader>
-                        <DialogTitle>{`Add Parent for ${student.firstName} ${student.lastName}`} </DialogTitle>
+                        <DialogTitle>{`Add New Parent for studentId: ${student.id}`} </DialogTitle>
                         <DialogDescription>
                           Add parent information here. Click save when you are done.
                         </DialogDescription>
-                      </DialogHeader> 
-                    <GuardianInfoForm guardian={{
-                          firstName: undefined,
-                          lastName: undefined,
-                          phone: undefined,
-                          address: undefined,
-                          email: undefined,
-                          profession: undefined,
-                          annualIncome: undefined,
-                          guardianType: undefined,
-                        }} studentId = {params.studentId}/>
+                      </DialogHeader>
+                    <GuardianInfoForm studentId = {params.studentId}/>
                     </DialogContent>
               </Dialog>
             </div>
@@ -114,5 +109,5 @@ export default async function StudentPage({ params }: StudentPageProps) {
       </div>
     </div>
   );
-  
+
 }

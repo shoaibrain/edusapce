@@ -59,7 +59,6 @@ export const deleteStudent = async (studentId: string) => {
                 id: studentId,
             }
         })
-        console.log(JSON.stringify(deletedStudent));
         return deletedStudent;
     } catch(error) {
         throw new Error(`Error deleting student: ${error.message}`);
@@ -70,7 +69,7 @@ export const patchStudent = async (studentId: string, studentUpdates) => {
     try {
       const patchedStudent = await prisma.student.update({
         where: {
-          id: studentId, 
+          id: studentId,
         },
         data: studentUpdates,
       });
@@ -98,7 +97,6 @@ export const addGuardianForStudent = async (studentId: string, guardian:any) => 
                 },
             },
         })
-        console.log('New guardian created:', newGuardian);
     } catch(error) {
         throw new Error(`Error adding guardian: ${error.message}`);
     }
