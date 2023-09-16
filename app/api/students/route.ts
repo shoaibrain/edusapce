@@ -23,7 +23,7 @@ export async function GET(){
     // }
     const students = await getStudents();
     return new Response(JSON.stringify(students), { status: 200 })
-  
+
   } catch(error) {
     return new Response(error.message, { status: 500 })
   }

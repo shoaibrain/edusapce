@@ -1,4 +1,3 @@
-//TODO: this is not working yet, wil throw type error
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/db';
 import { guardianCreateSchema } from '@/lib/validations/guardian';
@@ -23,7 +22,7 @@ export async function GET (req: Request) {
 }
 
 export async function POST(request: Request){
-  
+
   try{
   const json = await request.json()
   const body = guardianCreateSchema.parse(json)

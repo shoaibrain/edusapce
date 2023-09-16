@@ -14,25 +14,24 @@ const routeContextSchema = z.object({
     context: z.infer<typeof routeContextSchema>
   ){
     try {
-      // Validate the route params.
       const { params } = routeContextSchema.parse(context)
-
       const guardian = await prisma.guardian.findUnique({
         where: {
-          id: params.guardianId as string,
+          id: params.guardianId,
         },
       })
-
+      if (!guardian) {
+        return new Response(null, { status: 404 });
+      }
       return new Response(JSON.stringify(guardian), { status: 200})
-
     } catch (error) {
       if (error instanceof z.ZodError) {
         return new Response(JSON.stringify(error.issues), { status: 422 })
       }
-  
       return new Response(null, { status: 500 })
     }
   }
+
   export async function DELETE(
     req: Request,
     context: z.infer<typeof routeContextSchema>
@@ -53,7 +52,7 @@ const routeContextSchema = z.object({
       if (error instanceof z.ZodError) {
         return new Response(JSON.stringify(error.issues), { status: 422 })
       }
-  
+
       return new Response(null, { status: 500 })
     }
   }
@@ -65,14 +64,14 @@ const routeContextSchema = z.object({
       // Validate route params.
       const { params } = routeContextSchema.parse(context);
       console.log(params);
-  
+
       // Get the request body and validate it.
       const json = await req.json();
       const body = guardianPatchSchema.parse(json);
-  
+
       // Construct the data object for partial updates.
       const data: Prisma.GuardianUpdateInput = {};
-  
+
       if (body.firstName) data.firstName = body.firstName;
       if (body.lastName) data.lastName = body.lastName;
       if (body.phone) data.phone = body.phone;
@@ -83,7 +82,7 @@ const routeContextSchema = z.object({
       if (body.students) data.students = {
         connect: body.students.map((studentId: string) => ({ id: studentId })),
       };
-  
+
       // Update guardian
       await prisma.guardian.update({
         where: {
@@ -91,7 +90,7 @@ const routeContextSchema = z.object({
         },
         data,
       });
-  
+
       return new Response(null, { status: 200 });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -101,10 +100,10 @@ const routeContextSchema = z.object({
             message: issue.message,
           };
         });
-  
+
         return new Response(JSON.stringify(validationErrors), { status: 422 });
       }
-  
+
       console.error(error);
       return new Response(null, { status: 500 });
     }

@@ -17,6 +17,9 @@ const routeContextSchema = z.object({
     try {
       const { params } = routeContextSchema.parse(context)
       const student = await getStudent(params.studentId as string);
+      if (!student) {
+        return new Response(null, { status: 404 });
+      }
       return new Response(JSON.stringify(student), { status: 200})
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -40,7 +43,7 @@ const routeContextSchema = z.object({
       return new Response(null, { status: 500 })
     }
   }
-  
+
   export async function PATCH(
     req: Request,
     context: z.infer<typeof routeContextSchema>
@@ -49,10 +52,9 @@ const routeContextSchema = z.object({
       const { params } = routeContextSchema.parse(context);
       const json = await req.json();
       const body = studentPatchSchema.parse(json);
-      console.log(`Parsed body: ${JSON.stringify(body)}`)
       // Construct the data object for partial updates.
       const data: Prisma.StudentUpdateInput = {};
-  
+
       if (body.firstName) data.firstName = body.firstName;
       if (body.middleName || body.middleName === "") data.middleName = body.middleName;
       if (body.lastName) data.lastName = body.lastName;
@@ -91,9 +93,9 @@ const routeContextSchema = z.object({
       const { params } = routeContextSchema.parse(context)
       const json = await request.json();
       const body = guardianCreateSchema.parse(json);
-      const studentId = params.studentId; 
+      const studentId = params.studentId;
       const newGuardian = await addGuardianForStudent(studentId, body);
-      
+
       return new Response(JSON.stringify(newGuardian), { status: 201 })
     } catch (error) {
       if (error instanceof z.ZodError) {
