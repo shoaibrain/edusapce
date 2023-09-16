@@ -49,6 +49,42 @@ model User {
   @@map("users")
 }
 
+model Student {
+  id               String      @id @default(cuid())
+  firstName        String
+  middleName       String?
+  lastName         String
+  birthDate        DateTime
+  gender           String
+  currentGrade     String?
+  nationality      String?
+  ssn              String?
+  email            String?
+  phone            String?
+  address          String
+  enrollmentStatus String?
+  role             Role        @default(STUDENT)
+  guardians        Guardian[]  @relation("GuardianStudent")
+  class            Class?      @relation(fields: [classId], references: [id])
+  gradeLevel       GradeLevel? @relation(fields: [gradeLevelId], references: [id])
+  gradeLevelId     String?
+  classId          String?
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @default(now()) @map("updated_at")
+}
+
+model Class {
+  id           String        @id @default(cuid())
+  name         String
+  gradeLevelId String
+  gradeLevel   GradeLevel    @relation(fields: [gradeLevelId], references: [id])
+  students     Student[] // One-to-many relationship with Student
+  classPeriods ClassPeriod[] // One-to-many relationship with ClassPeriod
+  teachers     Employee[] // Many-to-many relationship with Employee (Teachers)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @default(now()) @map("updated_at")
+}
+
 model Guardian {
   id           String    @id @default(cuid())
   firstName    String
@@ -59,54 +95,49 @@ model Guardian {
   profession   String?
   annualIncome String?
   guardianType String?
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @default(now()) @map("updated_at")
   role         Role      @default(USER)
   students     Student[] @relation("GuardianStudent")
-
-  @@map("guardians")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @default(now()) @map("updated_at")
 }
 
-model Student {
-  id               String     @id @default(cuid())
-  firstName        String
-  middleName       String?
-  lastName         String
-  birthDate        DateTime
-  gender           String
-  currentGrade     String?
-  nationality      String?
-  nagriktaNumber   String?
-  email            String?
-  phone            String?
-  address          String
-  createdAt        DateTime   @default(now()) @map("created_at")
-  updatedAt        DateTime   @default(now()) @map("updated_at")
-  role             Role       @default(STUDENT)
-  enrollmentStatus String?
-  guardians        Guardian[] @relation("GuardianStudent")
+model ClassPeriod {
+  id        String   @id @default(cuid())
+  name      String
+  classId   String
+  class     Class    @relation(fields: [classId], references: [id])
+  startTime DateTime
+  endTime   DateTime
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
 
-  @@map("students")
+model GradeLevel {
+  id        String    @id @default(cuid())
+  name      String
+  students  Student[] // One-to-many relationship with Student
+  classes   Class[] // One-to-many relationship with Class
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @map("updated_at")
 }
 
 model Employee {
-  id             String    @id @default(cuid())
-  firstName      String
-  middleName     String?
-  lastName       String
-  phone          String
-  email          String?
-  address        String
-  role           Role      @default(STAFF)
-  birthDate      String?
-  gender         String
-  nagriktaNumber String?
-  departent      String?
-  hiredDate      DateTime? @map("hired_date")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @default(now()) @map("updated_at")
-
-  @@map("employees")
+  id         String    @id @default(cuid())
+  firstName  String
+  middleName String?
+  lastName   String
+  phone      String
+  email      String?
+  address    String
+  role       Role      @default(STAFF)
+  birthDate  String?
+  gender     String
+  ssn        String?
+  department String?
+  hiredDate  DateTime? @map("hired_date")
+  classes    Class[] // Many-to-many relationship with Teachers
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @default(now()) @map("updated_at")
 }
 
 model VerificationToken {
@@ -126,15 +157,6 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
-}
-
-model GuardianStudent {
-  A String
-  B String
-
-  @@unique([A, B], map: "_GuardianStudent_AB_unique")
-  @@index([B], map: "_GuardianStudent_B_index")
-  @@map("_GuardianStudent")
 }
 
 enum Role {

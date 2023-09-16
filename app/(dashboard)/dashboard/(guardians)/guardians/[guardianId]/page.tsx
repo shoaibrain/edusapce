@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 const URL = 'https://project-eduspace.vercel.app';
 
-async function getGuardian(guardianId: Guardian["id"]) {
+async function getGuardian(guardianId: string) {
   try {
     const res =  await fetch(`${URL}/api/guardians/${guardianId}`, {
       method: 'GET',
@@ -35,7 +35,7 @@ interface GuardianPageProps {
 }
 
 export default async function GuardianPage({ params }: GuardianPageProps) {
-  const guardian = await getGuardian(params.guardianId);
+  const guardian = await getGuardian(params.guardianId as string);
   console.log(guardian)
   if (!guardian) {
     notFound();

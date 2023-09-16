@@ -14,7 +14,7 @@ export const getStudents = async () => {
                 enrollmentStatus: true,
                 currentGrade: true,
                 nationality: true,
-                nagriktaNumber: true,
+                ssn: true,
                 email: true,
                 phone: true,
                 address: true,
