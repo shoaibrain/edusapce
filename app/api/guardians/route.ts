@@ -26,6 +26,7 @@ export async function POST(request: Request){
   try{
   const json = await request.json()
   const body = guardianCreateSchema.parse(json)
+  console.log(`Body: ${JSON.stringify(body)}`)
   const newGuardian = await prisma.guardian.create({
     data: {
       firstName: body.firstName,
@@ -41,6 +42,7 @@ export async function POST(request: Request){
   return new Response(JSON.stringify(newGuardian))
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log(`Error: ${JSON.stringify(error.issues)}`)
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }
      return new Response(null, { status: 500 })

@@ -24,11 +24,10 @@ export const metadata: Metadata = {
 interface StudentPageProps {
   params: { studentId: string };
 }
-const URL = 'https://project-eduspace.vercel.app';
 
 async function getStudent(studentId: Student["id"]) {
   try {
-    const res = await fetch(`${URL}/api/students/${studentId}`,{
+    const res = await fetch(`${process.env.API_URL}/api/students/${studentId}`,{
       method : 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -109,5 +108,4 @@ export default async function StudentPage({ params }: StudentPageProps) {
       </div>
     </div>
   );
-
 }

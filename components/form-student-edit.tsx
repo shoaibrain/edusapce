@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
 import { studentPatchSchema } from "@/lib/validations/student"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "@/components/ui/use-toast"
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
@@ -25,7 +26,6 @@ interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   student: Student;
 }
 type FormData = z.infer<typeof studentPatchSchema>
-const URL = 'https://project-eduspace.vercel.app';
 
 //TODO: patch through webUI is not working, works with postman
 export function StudentEditForm({ student, className, ...props }: StudentEditFormProps) {
@@ -35,21 +35,24 @@ export function StudentEditForm({ student, className, ...props }: StudentEditFor
     register,
     formState: { errors },
   } = useForm<FormData>({
+    resolver: zodResolver(studentPatchSchema),
     defaultValues: {
-      firstName: student.firstName,
-      middleName: student.middleName || "", //todo: fix this later
-      lastName: student.lastName,
-      gender: student.gender,
-      email: student.email || "",
-      phone: student.phone || "",
-      currentGrade: student.currentGrade || "",
+      firstName: student?.firstName,
+      middleName: student?.middleName || "",
+      lastName: student?.lastName,
+      gender: student?.gender,
+      email: student?.email || "",
+      phone: student?.phone || "",
+      currentGrade: student?.currentGrade || "",
+      enrollmentStatus: student?.enrollmentStatus || "",
     }
   })
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
-    const response = await fetch(`${URL}/api/students/${student.id}`,{
+
+    const response = await fetch(`${process.env.API_URL}/api/students/${student.id}`,{
       method : 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +63,7 @@ export function StudentEditForm({ student, className, ...props }: StudentEditFor
     if (!response?.ok) {
       return toast({
         title: "Something went wrong.",
-        description: "Failed to update student. Please try again.",
+        description: `Failed to update student: ${response?.statusText}`,
         variant: "destructive",
       })
     }
@@ -86,6 +89,9 @@ export function StudentEditForm({ student, className, ...props }: StudentEditFor
                 size={32}
                 {...register("firstName")}
                 />
+                 {errors?.firstName && (
+                    <p className="px-1 text-xs text-red-600">{errors.firstName.message}</p>
+                  )}
             </div>
             <div className="sm:col-span-2">
                 <Label  htmlFor="middleName">
@@ -97,6 +103,9 @@ export function StudentEditForm({ student, className, ...props }: StudentEditFor
                 size={32}
                 {...register("middleName")}
                 />
+                {errors?.middleName && (
+              <p className="px-1 text-xs text-red-600">{errors.middleName.message}</p>
+                )}
             </div>
             <div className="sm:col-span-2">
             <Label  htmlFor="lastName">
@@ -108,17 +117,9 @@ export function StudentEditForm({ student, className, ...props }: StudentEditFor
                 size={32}
                 {...register("lastName")}
                 />
-            </div>
-            <div className="sm:col-span-3">
-              <Label  htmlFor="birthDate">
-                Date of Birth
-              </Label>
-                <Input
-                id= "birthDate"
-                className="w-[350px]"
-                size={32}
-                {...register("birthDate")}
-                />
+                {errors?.lastName && (
+              <p className="px-1 text-xs text-red-600">{errors.lastName.message}</p>
+                )}
             </div>
             <div className="sm:col-span-3">
             <Label  htmlFor="gender">
@@ -138,7 +139,9 @@ export function StudentEditForm({ student, className, ...props }: StudentEditFor
                     </SelectGroup>
                 </SelectContent>
                 </Select>
-
+                 {errors?.gender && (
+                   <p className="px-1 text-xs text-red-600">{errors.gender.message}</p>
+                 )}
             </div>
             <div className="sm:col-span-3">
             <Label  htmlFor="email">
@@ -150,6 +153,9 @@ export function StudentEditForm({ student, className, ...props }: StudentEditFor
                 size={32}
                 {...register("email")}
                 />
+                {errors?.email && (
+              <p className="px-1 text-xs text-red-600">{errors.email.message}</p>
+                )}
             </div>
             <div className="sm:col-span-3">
             <Label  htmlFor="phone">
@@ -161,6 +167,9 @@ export function StudentEditForm({ student, className, ...props }: StudentEditFor
                 size={32}
                 {...register("phone")}
                 />
+                {errors?.phone && (
+                   <p className="px-1 text-xs text-red-600">{errors.phone.message}</p>
+                )}
             </div>
             <div className="sm:col-span-2">
                 <Label  htmlFor="enrollmentStatus">
@@ -172,6 +181,9 @@ export function StudentEditForm({ student, className, ...props }: StudentEditFor
                 size={32}
                 {...register("enrollmentStatus")}
                 />
+                {errors?.enrollmentStatus && (
+                    <p className="px-1 text-xs text-red-600">{errors.enrollmentStatus.message}</p>
+                )}
             </div>
             <div className="sm:col-span-2">
             <Label  htmlFor="currentGrade">
@@ -183,6 +195,9 @@ export function StudentEditForm({ student, className, ...props }: StudentEditFor
                   size={32}
                   {...register("currentGrade")}
                 />
+                {errors?.currentGrade && (
+                    <p className="px-1 text-xs text-red-600">{errors.currentGrade.message}</p>
+                )}
             </div>
         </div>
         <button

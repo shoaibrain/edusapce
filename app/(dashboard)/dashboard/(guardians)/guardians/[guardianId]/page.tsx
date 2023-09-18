@@ -9,11 +9,10 @@ export const metadata: Metadata = {
   description: "Guardian Dashboard",
 }
 
-const URL = 'https://project-eduspace.vercel.app';
 
 async function getGuardian(guardianId: string) {
   try {
-    const res =  await fetch(`${URL}/api/guardians/${guardianId}`, {
+    const res =  await fetch(`${process.env.API_URL}/api/guardians/${guardianId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

@@ -8,22 +8,12 @@ import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { Student, columns } from '@/components/columns'
 import { DataTable } from '@/components/data-table'
-import prisma from '@/lib/db'
 
 export const metadata: Metadata = {
   title: "Employees",
   description: "Employees Dashboard",
 }
 
-// async function getEmployees(): Promise<Employee[]> {
-//     try {
-//         const employees = await prisma.employee.findMany();
-//         return employees;
-//     } catch (error) {
-//         console.error('Error fetching employees:', error);
-//         throw error;
-//     }
-// }
 export default async function EmployeesPage() {
   return (
     <>

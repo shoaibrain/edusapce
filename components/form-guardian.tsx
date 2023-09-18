@@ -1,160 +1,224 @@
-"use client";
-import { cn } from "@/lib/utils";
-import { toast } from "@/components/ui/use-toast";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { buttonVariants } from "./ui/button";
-import { Icons } from "./icons";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { Guardian } from "@prisma/client";
-import { z } from "zod";
+"use client"
+
+import Link from "next/link"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useFieldArray, useForm } from "react-hook-form"
+import * as z from "zod"
+
+import { cn } from "@/lib/utils"
+import { Button, buttonVariants } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useRouter } from "next/navigation";
-import { guardianCreateSchema } from "@/lib/validations/guardian";
+} from "@/components/ui/select"
+import { toast } from "@/components/ui/use-toast"
+import { guardianCreateSchema } from "@/lib/validations/guardian"
+import React from "react"
+import { Icons } from "./icons"
 
 interface GuardianFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  guardian?: Guardian;
   studentId?: string;
 }
+type formData = z.infer<typeof guardianCreateSchema>
 
-type FormData = z.infer<typeof guardianCreateSchema>;
 
 export function GuardianInfoForm({
-  guardian,
   studentId,
   className,
   ...props
 }: GuardianFormProps) {
-  const router = useRouter();
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm<FormData>({});
+
+  const form = useForm<formData>({
+    resolver: zodResolver(guardianCreateSchema),
+    mode: "onChange",
+  })
 
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
-  async function onSubmit(data: FormData) {
-      setIsSaving(true);
-      const response = await fetch(`/api/guardians`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      setIsSaving(false);
-
-      if (!response.ok) {
-        return toast({
-          title: "Something went wrong.",
-          description: "Failed to add parent. Please try again.",
-          variant: "destructive",
-        });
-      }
-
-      // TODO: establish relationship between student and guardian
-
-      toast({
-        title: "Success",
-        description: "A parent has been added.",
-        variant: "default",
-      });
+  async function onSubmit(data: formData) {
+    setIsSaving(true);
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    })
+    setIsSaving(false);
   }
 
   return (
-    <form className={cn(className)} onSubmit={handleSubmit(onSubmit)} {...props}>
-      <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-        <div className="sm:col-span-3">
-          <Label htmlFor="firstName">First Name</Label>
-          <Input
-            id="firstName"
-            className="w-[350px]"
-            size={32}
-            {...register("firstName")}
-          />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div  className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Enter your legal first name
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div  className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Enter your legal last name
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div  className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Enter your email address
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div  className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone No.</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Enter your contact number
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div  className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Enter your home address
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="sm:col-span-2">
+            <FormField
+              control={form.control}
+              name="guardianType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Guardian Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a guardian type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Father">Father</SelectItem>
+                      <SelectItem value="Mother">Mother</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            </div>
+            <div  className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="profession"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Profession</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Enter your profession|occupation
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div  className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="annualIncome"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Annual Income</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Enter your yearly income
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
         </div>
-        <div className="sm:col-span-3">
-          <Label htmlFor="lastName">Last Name</Label>
-          <Input
-            id="lastName"
-            className="w-[350px]"
-            size={32}
-            {...register("lastName")}
-          />
-        </div>
-        <div className="sm:col-span-3">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            className="w-[350px]"
-            size={32}
-            {...register("email")}
-          />
-        </div>
-        <div className="sm:col-span-3">
-          <Label htmlFor="phone">Phone</Label>
-          <Input
-            id="phone"
-            className="w-[350px]"
-            size={32}
-            {...register("phone")}
-          />
-        </div>
-        <div className="sm:col-span-3">
-          <Label htmlFor="address">Address</Label>
-          <Input
-            id="address"
-            className="w-[350px]"
-            size={32}
-            {...register("address")}
-          />
-        </div>
-        <div className="sm:col-span-3">
-          <Label htmlFor="guardianType">Guardian Type</Label>
-          <Select>
-            <SelectTrigger className="w-[350px]">
-              <SelectValue placeholder="Select a guardian type" />
-            </SelectTrigger>
-            <SelectContent {...register("guardianType")}>
-              <SelectGroup>
-                <SelectLabel>Guardian Type</SelectLabel>
-                <SelectItem value="Mother">Mother</SelectItem>
-                <SelectItem value="Father">Father</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="sm:col-span-2">
-          <Label htmlFor="profession">Profession</Label>
-          <Input
-            id="profession"
-            className="w-[250px]"
-            size={32}
-            {...register("profession")}
-          />
-        </div>
-        <div className="sm:col-span-2">
-          <Label htmlFor="annualIncome">Annual Income</Label>
-          <Input
-            id="annualIncome"
-            className="w-[250px]"
-            size={32}
-            {...register("annualIncome")}
-          />
-        </div>
-      </div>
-      <button
+        <button
         type="submit"
         className={cn(buttonVariants(), className)}
         disabled={isSaving}
@@ -164,6 +228,7 @@ export function GuardianInfoForm({
         )}
         <span>Save Changes</span>
       </button>
-    </form>
-  );
+      </form>
+    </Form>
+  )
 }

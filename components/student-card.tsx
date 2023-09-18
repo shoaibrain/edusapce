@@ -36,7 +36,7 @@ export function StudentCard({student}) {
           </div>
           <div>
             <dt className="text-sm font-medium leading-6 text-gray-900">Birth Date</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{student.dob}</dd>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{student.birthDate}</dd>
           </div>
           <div>
             <dt className="text-sm font-medium leading-6 text-gray-900">Current Class</dt>
@@ -53,6 +53,10 @@ export function StudentCard({student}) {
           <div>
             <dt className="text-sm font-medium leading-6 text-gray-900">phone</dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{student.phone}</dd>
+          </div>
+          <div>
+            <dt className="text-sm font-medium leading-6 text-gray-900">Enrollment Status</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{student.enrollmentStatus}</dd>
           </div>
         </div>
     </div>

@@ -50,7 +50,7 @@ model User {
 }
 
 model Student {
-  id               String      @id @default(cuid())
+  id               String       @id @default(cuid())
   firstName        String
   middleName       String?
   lastName         String
@@ -63,26 +63,26 @@ model Student {
   phone            String?
   address          String
   enrollmentStatus String?
-  role             Role        @default(STUDENT)
-  guardians        Guardian[]  @relation("GuardianStudent")
-  class            Class?      @relation(fields: [classId], references: [id])
-  gradeLevel       GradeLevel? @relation(fields: [gradeLevelId], references: [id])
-  gradeLevelId     String?
+  role             Role         @default(STUDENT)
+  guardians        Guardian[]   @relation("GuardianStudent")
+  gradeLevel       CLASS_LEVEL? @relation(fields: [classId], references: [id])
   classId          String?
-  createdAt        DateTime    @default(now()) @map("created_at")
-  updatedAt        DateTime    @default(now()) @map("updated_at")
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @default(now()) @map("updated_at")
 }
 
-model Class {
+model CLASS_LEVEL {
   id           String        @id @default(cuid())
-  name         String
-  gradeLevelId String
-  gradeLevel   GradeLevel    @relation(fields: [gradeLevelId], references: [id])
+  name         String // e.g. 1st Grade, 2nd Grade, etc.
+  description  String?
   students     Student[] // One-to-many relationship with Student
   classPeriods ClassPeriod[] // One-to-many relationship with ClassPeriod
   teachers     Employee[] // Many-to-many relationship with Employee (Teachers)
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @default(now()) @map("updated_at")
+  gradeLevelId String?
+
+  @@map("class_levels")
 }
 
 model Guardian {
@@ -102,42 +102,35 @@ model Guardian {
 }
 
 model ClassPeriod {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   name      String
   classId   String
-  class     Class    @relation(fields: [classId], references: [id])
+  class     CLASS_LEVEL @relation(fields: [classId], references: [id])
   startTime DateTime
   endTime   DateTime
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-}
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @default(now()) @map("updated_at")
 
-model GradeLevel {
-  id        String    @id @default(cuid())
-  name      String
-  students  Student[] // One-to-many relationship with Student
-  classes   Class[] // One-to-many relationship with Class
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @default(now()) @map("updated_at")
+  @@map("class_periods")
 }
 
 model Employee {
-  id         String    @id @default(cuid())
+  id         String        @id @default(cuid())
   firstName  String
   middleName String?
   lastName   String
   phone      String
   email      String?
   address    String
-  role       Role      @default(STAFF)
+  role       Role          @default(STAFF)
   birthDate  String?
   gender     String
   ssn        String?
   department String?
-  hiredDate  DateTime? @map("hired_date")
-  classes    Class[] // Many-to-many relationship with Teachers
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @default(now()) @map("updated_at")
+  hiredDate  DateTime?     @map("hired_date")
+  classes    CLASS_LEVEL[] // Many-to-many relationship with Teachers
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime      @default(now()) @map("updated_at")
 }
 
 model VerificationToken {

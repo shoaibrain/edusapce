@@ -9,17 +9,17 @@ import { buttonVariants } from '@/components/ui/button'
 import { columns } from '@/components/columns'
 import { DataTable } from '@/components/data-table'
 import { Metadata } from 'next'
+import { StudentAdmissionForm } from '@/components/form-student-admit'
 
 export const metadata: Metadata = {
   title: "Students",
   description: "Students Dashboard",
 }
 
-const URL = 'https://project-eduspace.vercel.app';
-
 async function getStudents() {
+  console.log(`${process.env.API_URL}/api/students`)
   try {
-    const res = await fetch(`${URL}/api/students`, {
+    const res = await fetch(`${process.env.API_URL}/api/students`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
