@@ -1,19 +1,12 @@
-import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/db';
+
 import { guardianCreateSchema } from '@/lib/validations/guardian';
-import { getGuardians } from '@/services/service-guardian';
-import { getServerSession } from 'next-auth';
+import { getGuardians, postGuardian } from '@/services/service-guardian';
 import { NextResponse } from 'next/server';
 import * as z from "zod";
 
 export async function GET (req: Request) {
 
     try {
-      const session = await getServerSession(authOptions)
-
-      // if (!session) {
-      //   return new Response("Unauthorized", { status: 403 })
-      // }
         const guardians = await getGuardians();
         return new NextResponse(JSON.stringify(guardians),{status:200})
       } catch (error) {
@@ -26,19 +19,7 @@ export async function POST(request: Request){
   try{
   const json = await request.json()
   const body = guardianCreateSchema.parse(json)
-  console.log(`Body: ${JSON.stringify(body)}`)
-  const newGuardian = await prisma.guardian.create({
-    data: {
-      firstName: body.firstName,
-      lastName: body.lastName,
-      phone: body.phone,
-      address: body.address,
-      email: body.email,
-      profession: body.profession,
-      annualIncome: body.annualIncome,
-      guardianType: body.guardianType,
-    },
-  })
+  const newGuardian = await postGuardian(body);
   return new Response(JSON.stringify(newGuardian))
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -48,3 +29,4 @@ export async function POST(request: Request){
      return new Response(null, { status: 500 })
   }
 }
+

@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { Student } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-
 import {
   Dialog,
   DialogContent,
@@ -11,11 +10,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { StudentEditForm } from "@/components/form-student-edit";
 import { GuardianCard } from "@/components/guardian-card";
 import { GuardianInfoForm } from "@/components/form-guardian";
 import { StudentCard } from "@/components/student-card";
 import { Metadata } from "next";
+import { StudentEditForm } from "@/components/form-student-edit";
 
 export const metadata: Metadata = {
   title: "Student Details",
@@ -24,10 +23,11 @@ export const metadata: Metadata = {
 interface StudentPageProps {
   params: { studentId: string };
 }
+const URL = "https://project-eduspace.vercel.app/api";
 
 async function getStudent(studentId: Student["id"]) {
   try {
-    const res = await fetch(`${process.env.API_URL}/api/students/${studentId}`,{
+    const res = await fetch(`${URL}/students/${studentId}`,{
       method : 'GET',
       headers: {
         'Content-Type': 'application/json'

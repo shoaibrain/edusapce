@@ -1,7 +1,6 @@
 "use client"
-
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useFieldArray, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -57,6 +56,11 @@ export function GuardianInfoForm({
   const router = useRouter()
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   async function onSubmit(data: formData) {
+
+    if (studentId) {
+      data.students = [studentId];
+    }
+    console.log(studentId)
     setIsSaving(true);
     const response = await fetch(`${URL}/guardians`,{
       method : 'POST',
@@ -93,9 +97,6 @@ export function GuardianInfoForm({
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Enter your legal first name
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -111,9 +112,6 @@ export function GuardianInfoForm({
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Enter your legal last name
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -156,7 +154,7 @@ export function GuardianInfoForm({
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter your email address
+                      email address
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -174,7 +172,7 @@ export function GuardianInfoForm({
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter your contact number
+                      contact number
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -192,7 +190,7 @@ export function GuardianInfoForm({
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter your home address
+                      home address
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -211,7 +209,7 @@ export function GuardianInfoForm({
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter your profession|occupation
+                      profession|occupation
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -229,7 +227,7 @@ export function GuardianInfoForm({
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter your yearly income
+                      Enter yearly income
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

@@ -60,18 +60,8 @@ export default async function EmployeesPage() {
           </div>
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3'>
             <div>
-            <Link href="dashboard/employees" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
+            <Link href="/hire" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
               Add New Employee
-            </Link>
-            </div>
-            <div>
-            <Link href="dashboard/employees" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
-              Human Resource
-            </Link>
-            </div>
-            <div>
-            <Link  href="dashboard/employees" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
-              Some Button
             </Link>
             </div>
           </div>

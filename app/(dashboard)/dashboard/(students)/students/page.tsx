@@ -15,11 +15,10 @@ export const metadata: Metadata = {
   title: "Students",
   description: "Students Dashboard",
 }
-
+const URL = "https://project-eduspace.vercel.app/api"
 async function getStudents() {
-  console.log(`${process.env.API_URL}/api/students`)
   try {
-    const res = await fetch(`${process.env.API_URL}/api/students`, {
+    const res = await fetch(`${URL}/students`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -73,47 +72,12 @@ export default async function StudentsPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Academic Performance
-                </CardTitle>
-                <GraduationCap className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">
-                  +06% from last month
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Alerts
-                </CardTitle>
-                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">
-                 +9 new Alerts
-                </p>
-              </CardContent>
-            </Card>
+
           </div>
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3'>
             <div>
-            <Link href="dashboard/admission" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
+            <Link href="/admission" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
               Add Student
-            </Link>
-            </div>
-            <div>
-            <Link href="dashboard/students/bills" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
-              Pay School Fees
-            </Link>
-            </div>
-            <div>
-            <Link  href="dashboard/students/bills" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
-              Generate Transcript
             </Link>
             </div>
           </div>

@@ -41,4 +41,5 @@ export const guardianCreateSchema = z.object({
   profession: z.string(),
   annualIncome: z.string(),
   guardianType: z.string(),
+  students: z.array(z.string()).optional(), // array of student ids
 })

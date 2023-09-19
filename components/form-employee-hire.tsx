@@ -1,9 +1,10 @@
 "use client"
+
 import { zodResolver } from "@hookform/resolvers/zod"
-import {  useForm } from "react-hook-form"
+import { useFieldArray, useForm } from "react-hook-form"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -25,51 +26,54 @@ import { toast } from "@/components/ui/use-toast"
 import React from "react"
 import { Icons } from "./icons"
 import { useRouter } from "next/navigation"
-import { Student } from "@prisma/client"
-import { studentPatchSchema } from "@/lib/validations/student"
+import { studentAdmitSchema } from "@/lib/validations/student"
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
+import { format } from "date-fns"
+import { CalendarIcon } from "@radix-ui/react-icons"
+import { Calendar } from "./ui/calendar"
 
-interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  student: Student;
+interface EmployeeHireFormProps extends React.HTMLAttributes<HTMLFormElement> {
+  guardianId?: string;
 }
 
-type FormData = z.infer<typeof studentPatchSchema>
+type formData = z.infer<typeof studentAdmitSchema>
 const URL = "https://project-eduspace.vercel.app/api";
 
-export function StudentEditForm({
-  student,
+export function EmployeeHireForm({
+  guardianId,
   className,
   ...props
-}: StudentEditFormProps) {
-    const form  = useForm<FormData>({
-      resolver: zodResolver(studentPatchSchema),
-      mode: "onChange",
-      defaultValues: {
-        firstName: student?.firstName,
-        middleName: student?.middleName || "",
-        lastName: student?.lastName,
-        gender: student?.gender,
-        email: student?.email || "",
-        phone: student?.phone || "",
-        currentGrade: student?.currentGrade || "",
-        enrollmentStatus: student?.enrollmentStatus || "",
-      }
-    })
-    const router = useRouter()
-    const [isSaving, setIsSaving] = React.useState<boolean>(false)
-    async function onSubmit(data: FormData) {
-      setIsSaving(true)
-      const response = await fetch(`${URL}/students/${student.id}`,{
-        method : 'PATCH',
+}: EmployeeHireFormProps) {
+  const form = useForm<formData>({
+    resolver: zodResolver(studentAdmitSchema),
+    mode: "onChange",
+    defaultValues: {
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      address: "",
+      enrollmentStatus: "",
+      currentGrade: "",
+    }
+  })
+  const router = useRouter()
+  const [isSaving, setIsSaving] = React.useState<boolean>(false);
+  async function onSubmit(data: formData) {
+    setIsSaving(true);
+      const res = await fetch(`${URL}/students`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       })
-      setIsSaving(false)
-      if(!response?.ok){
+      setIsSaving(false);
+      if (!res.ok) {
         return toast({
           title: "Something went wrong.",
-          description: `Failed to update student: ${response?.statusText}`,
+          description: `Failed to update student: ${res?.statusText}`,
           variant: "destructive",
         })
       }
@@ -77,13 +81,13 @@ export function StudentEditForm({
         description: "Your profile has been updated.",
       })
       router.refresh()
-    }
+  }
 
-    return (
-     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+  return (
+    <Form {...form}>
+  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-2">
+            <div  className="sm:col-span-2">
               <FormField
                 control={form.control}
                 name="firstName"
@@ -107,12 +111,12 @@ export function StudentEditForm({
                 name="middleName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Middle Name</FormLabel>
+                    <FormLabel>Middle name</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter middle name name if any
+                      optional
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -137,34 +141,82 @@ export function StudentEditForm({
                 )}
               />
             </div>
-            <div className="sm:col-span-2">
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Gender</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select gender" >
-                          {student?.gender}
-                        </SelectValue>
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Female">Female</SelectItem>
-                      <SelectItem value="Male">Male</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Student Gender</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select student gender" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Female">Female</SelectItem>
+                        <SelectItem value="Male">Male</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
+
+            <div  className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="birthDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Birth Date</FormLabel>
+                    <FormControl>
+                    <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-[240px] pl-3 text-left font-normal",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value ? (
+                        format(field.value, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+                    </FormControl>
+                    <FormDescription>
+                      Enter date of birth
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <div  className="sm:col-span-3">
               <FormField
                 control={form.control}
@@ -176,7 +228,7 @@ export function StudentEditForm({
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter your email address
+                      Enter your email address| optional
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -219,43 +271,6 @@ export function StudentEditForm({
                 )}
               />
             </div>
-
-            <div  className="sm:col-span-3">
-              <FormField
-                control={form.control}
-                name="enrollmentStatus"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Enrollment Status</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Student Enrollment Status
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div  className="sm:col-span-3">
-              <FormField
-                control={form.control}
-                name="currentGrade"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Class Grade</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Current Class Grade
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
         </div>
         <button
         type="submit"
@@ -265,9 +280,9 @@ export function StudentEditForm({
         {isSaving && (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         )}
-        <span>Save Changes</span>
-        </button>
+        <span>Admit Student</span>
+      </button>
       </form>
     </Form>
-    )
+  )
 }
