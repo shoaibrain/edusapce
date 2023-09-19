@@ -14,7 +14,7 @@ export const studentPatchSchema = z.object({
   guardians: z.array(z.string()).optional()
 });
 
-export const studentCreateSchema = z.object({
+export const studentAdmitSchema = z.object({
   firstName: z.string().min(3).max(32),
   middleName: z.string().min(3).max(32).optional(),
   lastName: z.string().min(3).max(32),
@@ -24,5 +24,6 @@ export const studentCreateSchema = z.object({
   gender: z.string().min(3).max(8),
   address: z.string().min(3).max(32),
   enrollmentStatus: z.string().optional(),
-  currentGrade: z.string()
+  currentGrade: z.string().optional(),
 })
+

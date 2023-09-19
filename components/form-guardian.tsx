@@ -1,12 +1,10 @@
 "use client"
 
-import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
 import * as z from "zod"
-
 import { cn } from "@/lib/utils"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -28,44 +26,64 @@ import { toast } from "@/components/ui/use-toast"
 import { guardianCreateSchema } from "@/lib/validations/guardian"
 import React from "react"
 import { Icons } from "./icons"
+import { useRouter } from "next/navigation"
 
 interface GuardianFormProps extends React.HTMLAttributes<HTMLFormElement> {
   studentId?: string;
 }
 type formData = z.infer<typeof guardianCreateSchema>
-
+const URL = "https://project-eduspace.vercel.app/api";
 
 export function GuardianInfoForm({
   studentId,
   className,
   ...props
 }: GuardianFormProps) {
-
   const form = useForm<formData>({
     resolver: zodResolver(guardianCreateSchema),
     mode: "onChange",
+    //TODO: better way to handle this?
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      guardianType: "",
+      email: "",
+      phone: "",
+      address: "",
+      profession: "",
+      annualIncome: "",
+    }
   })
-
+  const router = useRouter()
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
-
   async function onSubmit(data: formData) {
     setIsSaving(true);
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+    const response = await fetch(`${URL}/guardians`,{
+      method : 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
     })
     setIsSaving(false);
+    if (!response?.ok) {
+      return toast({
+        title: "Something went wrong.",
+        description: `Failed to update student: ${response?.statusText}`,
+        variant: "destructive",
+      })
+    }
+    toast({
+      description: "Your profile has been updated.",
+    })
+    router.refresh()
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div  className="sm:col-span-3">
+            <div  className="sm:col-span-2">
               <FormField
                 control={form.control}
                 name="firstName"
@@ -83,7 +101,7 @@ export function GuardianInfoForm({
                 )}
               />
             </div>
-            <div  className="sm:col-span-3">
+            <div  className="sm:col-span-2">
               <FormField
                 control={form.control}
                 name="lastName"
@@ -100,6 +118,32 @@ export function GuardianInfoForm({
                   </FormItem>
                 )}
               />
+            </div>
+            <div className="sm:col-span-2">
+            <FormField
+              control={form.control}
+              name="guardianType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Guardian Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a guardian type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Father">Father</SelectItem>
+                      <SelectItem value="Mother">Mother</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             </div>
             <div  className="sm:col-span-3">
               <FormField
@@ -155,32 +199,7 @@ export function GuardianInfoForm({
                 )}
               />
             </div>
-            <div className="sm:col-span-2">
-            <FormField
-              control={form.control}
-              name="guardianType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Guardian Type</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a guardian type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Father">Father</SelectItem>
-                      <SelectItem value="Mother">Mother</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            </div>
+
             <div  className="sm:col-span-3">
               <FormField
                 control={form.control}

@@ -26,7 +26,7 @@ interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   student: Student;
 }
 type FormData = z.infer<typeof studentPatchSchema>
-
+const URL = "https://project-eduspace.vercel.app/api";
 //TODO: patch through webUI is not working, works with postman
 export function StudentEditForm({ student, className, ...props }: StudentEditFormProps) {
   const router = useRouter()
@@ -52,7 +52,7 @@ export function StudentEditForm({ student, className, ...props }: StudentEditFor
   async function onSubmit(data: FormData) {
     setIsSaving(true)
 
-    const response = await fetch(`${process.env.API_URL}/api/students/${student.id}`,{
+    const response = await fetch(`/students/${student.id}`,{
       method : 'PATCH',
       headers: {
         'Content-Type': 'application/json',

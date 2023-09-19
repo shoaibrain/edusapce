@@ -40,5 +40,5 @@ export const guardianCreateSchema = z.object({
     .email(),
   profession: z.string(),
   annualIncome: z.string(),
-  guardianType: z.enum(["Mother", "Father", "Other"]),
+  guardianType: z.string(),
 })
