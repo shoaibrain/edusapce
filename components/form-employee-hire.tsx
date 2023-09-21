@@ -26,26 +26,26 @@ import { toast } from "@/components/ui/use-toast"
 import React from "react"
 import { Icons } from "./icons"
 import { useRouter } from "next/navigation"
-import { studentAdmitSchema } from "@/lib/validations/student"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { format } from "date-fns"
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { Calendar } from "./ui/calendar"
+import { employeeCreateSchema } from "@/lib/validations/employee"
+
 
 interface EmployeeHireFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  guardianId?: string;
+
 }
 
-type formData = z.infer<typeof studentAdmitSchema>
+type formData = z.infer<typeof employeeCreateSchema>
 const URL = "https://project-eduspace.vercel.app/api";
 
 export function EmployeeHireForm({
-  guardianId,
   className,
   ...props
 }: EmployeeHireFormProps) {
   const form = useForm<formData>({
-    resolver: zodResolver(studentAdmitSchema),
+    resolver: zodResolver(employeeCreateSchema),
     mode: "onChange",
     defaultValues: {
       firstName: "",
@@ -54,15 +54,17 @@ export function EmployeeHireForm({
       email: "",
       phone: "",
       address: "",
-      enrollmentStatus: "",
-      currentGrade: "",
+      gender: "",
+      ssn: "",
+      department: "",
     }
   })
   const router = useRouter()
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   async function onSubmit(data: formData) {
+    console.log(JSON.stringify(data, null, 2))
     setIsSaving(true);
-      const res = await fetch(`${URL}/students`, {
+      const res = await fetch(`${URL}/employees`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,12 +75,12 @@ export function EmployeeHireForm({
       if (!res.ok) {
         return toast({
           title: "Something went wrong.",
-          description: `Failed to update student: ${res?.statusText}`,
+          description: `Failed to create employee: ${res?.statusText}`,
           variant: "destructive",
         })
       }
       toast({
-        description: "Your profile has been updated.",
+        description: "A new employee has been created.",
       })
       router.refresh()
   }
@@ -98,7 +100,7 @@ export function EmployeeHireForm({
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter your legal first name
+                      legal first name
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -134,7 +136,7 @@ export function EmployeeHireForm({
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter your legal last name
+                      legal last name
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -147,11 +149,11 @@ export function EmployeeHireForm({
                 name="gender"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Student Gender</FormLabel>
+                    <FormLabel>Gender</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select student gender" />
+                          <SelectValue placeholder="Select birth gender" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -209,7 +211,7 @@ export function EmployeeHireForm({
               </Popover>
                     </FormControl>
                     <FormDescription>
-                      Enter date of birth
+                      date of birth
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -253,7 +255,7 @@ export function EmployeeHireForm({
                 )}
               />
             </div>
-            <div  className="sm:col-span-3">
+            <div  className="sm:col-span-4">
               <FormField
                 control={form.control}
                 name="address"
@@ -271,6 +273,43 @@ export function EmployeeHireForm({
                 )}
               />
             </div>
+
+            <div  className="sm:col-span-2">
+              <FormField
+                control={form.control}
+                name="ssn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Identification No.</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      driving license, ssn, passport, etc
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div  className="sm:col-span-2">
+              <FormField
+                control={form.control}
+                name="department"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Department</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      working department
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
         </div>
         <button
         type="submit"
@@ -280,7 +319,7 @@ export function EmployeeHireForm({
         {isSaving && (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         )}
-        <span>Admit Student</span>
+        <span>Add New Employee</span>
       </button>
       </form>
     </Form>

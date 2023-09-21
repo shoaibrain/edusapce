@@ -1,7 +1,7 @@
+//@ts-nocheck
 "use client"
-
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useFieldArray, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -86,7 +86,7 @@ export function StudentAdmissionForm({
   return (
     <Form {...form}>
   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 p-2 sm:grid-cols-6">
             <div  className="sm:col-span-2">
               <FormField
                 control={form.control}

@@ -18,7 +18,7 @@ export const studentAdmitSchema = z.object({
   firstName: z.string().min(3).max(32),
   middleName: z.string().min(3).max(32).optional(),
   lastName: z.string().min(3).max(32),
-  birthDate: z.date(),
+  birthDate: z.string(),
   email: z.string().email().optional(),
   phone: z.string().min(3).max(32).optional(),
   gender: z.string().min(3).max(8),

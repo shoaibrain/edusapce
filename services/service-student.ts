@@ -37,18 +37,28 @@ export const getStudent = async(studentId : string) => {
             guardians: true,
         }
       })
-      if (!student) {
-        throw new Error(`Student with id: ${studentId} not found`);
+      if (student) {
+        return student;
       }
-    return student;
+      return null;
     } catch (error) {
-        throw new Error(`Error getting student: ${error.message}`);
+      throw new Error(`Error getting student: ${error.message}`);
     }
 }
 export const postStudent = async (student) => {
+  let dob = new Date(student.birthDate);
     try {
         const newStudent = await prisma.student.create({
-            data: student,
+          data: {
+            firstName: student.firstName,
+            middleName: student.middleName,
+            lastName: student.lastName,
+            birthDate: dob,
+            gender: student.gender,
+            address: student.address,
+            phone: student.phone,
+            email: student.email,
+        },
           })
         return newStudent;
       } catch (error) {
@@ -69,7 +79,6 @@ export const deleteStudent = async (studentId: string) => {
 
 }
 export const patchStudent = async (studentId: string, studentUpdates) => {
-  console.log(`Updated student inside service-student: ${JSON.stringify(studentUpdates)}`)
     try {
       const patchedStudent = await prisma.student.update({
         where: {
@@ -77,7 +86,6 @@ export const patchStudent = async (studentId: string, studentUpdates) => {
         },
         data: studentUpdates,
       });
-      console.log(`Patched Student inside service-student: ${JSON.stringify(patchedStudent)}`)
       return patchedStudent;
     } catch (error) {
       console.log(`Error updating student inside service-student: ${error.message}`)

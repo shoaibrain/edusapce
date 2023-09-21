@@ -123,7 +123,7 @@ model Employee {
   email      String?
   address    String
   role       Role          @default(STAFF)
-  birthDate  String?
+  birthDate  DateTime
   gender     String
   ssn        String?
   department String?

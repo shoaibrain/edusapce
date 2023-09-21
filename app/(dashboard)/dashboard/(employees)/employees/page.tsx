@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "Employees",
   description: "Employees Dashboard",
 }
-
+const URL = "https://project-eduspace.vercel.app/api/v1"
 export default async function EmployeesPage() {
   return (
     <>

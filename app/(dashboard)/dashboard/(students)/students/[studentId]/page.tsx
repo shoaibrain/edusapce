@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 interface StudentPageProps {
   params: { studentId: string };
 }
-const URL = "https://project-eduspace.vercel.app/api";
+const URL = "https://project-eduspace.vercel.app/api/v1";
 
 async function getStudent(studentId: Student["id"]) {
   try {
