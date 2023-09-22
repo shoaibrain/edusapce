@@ -1,6 +1,5 @@
 import prisma from "@/lib/db";
 
-
 export const getGuardians = async () => {
     try {
         const guardians = await prisma.guardian.findMany(
@@ -15,7 +14,6 @@ export const getGuardians = async () => {
                 profession: true,
                 annualIncome: true,
                 guardianType: true,
-
               }
         }
         );

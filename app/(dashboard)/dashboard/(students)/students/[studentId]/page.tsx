@@ -102,7 +102,6 @@ export default async function StudentPage({ params }: StudentPageProps) {
             <GuardianCard parent={guardian}/>
           ))}
 
-          {/* Academic Info */}
           <h2 className="text-base font-semibold leading-7 text-gray-900"> Academic Overview</h2>
         </dl>
       </div>

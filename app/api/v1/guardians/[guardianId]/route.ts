@@ -4,11 +4,12 @@ import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 
-export const routeContextSchema = z.object({
+const routeContextSchema = z.object({
     params: z.object({
       guardianId: z.string(),
     }),
   });
+
 export async function GET(
   request: Request,
   context: z.infer<typeof routeContextSchema>

@@ -85,7 +85,6 @@ export default async function EmployeesPage() {
             </Link>
             </div>
           </div>
-          {/* Employee Table */}
           <div className='container mx-auto py-10'>
           <DataTable columns={columns} data={[]} />
           </div>
