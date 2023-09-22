@@ -46,20 +46,19 @@ export const getStudent = async(studentId : string) => {
     }
 }
 export const postStudent = async (student) => {
-  let dob = new Date(student.birthDate);
     try {
         const newStudent = await prisma.student.create({
           data: {
             firstName: student.firstName,
             middleName: student.middleName,
             lastName: student.lastName,
-            birthDate: dob,
+            birthDate: student.birthDate,
             gender: student.gender,
             address: student.address,
             phone: student.phone,
             email: student.email,
         },
-          })
+      })
         return newStudent;
       } catch (error) {
        throw new Error(`Error creating student: ${error.message}`);

@@ -14,16 +14,15 @@ export async function GET(
 ){
   try {
     const { params } = routeContextSchema.parse(context)
-    const employee = getEmployee(params.employeeId as string);
+    const employee = await getEmployee(params.employeeId as string);
     if (!employee) {
-      return new Response(null, { status: 404 });
+      return new Response(JSON.stringify("Not Found"), { status: 404 });
     }
     return new Response(JSON.stringify(employee), { status: 200})
   } catch(error) {
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }
-    return new Response(null, { status: 500 })
   }
 }
 
@@ -66,7 +65,7 @@ export const PATCH = async (
     if (body.phone) data.phone = body.phone
     if (body.email) data.email = body.email
     if (body.address) data.address = body.address
-    if (body.birthDate) data.birthDate = body.birthDate
+    if (body.birthDate) data.birthDate = body.birthDate.toISOString()
     if (body.department) data.department = body.department
 
     const employee = await patchEmployee(params.employeeId as string, data)

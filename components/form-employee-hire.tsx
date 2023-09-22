@@ -38,7 +38,7 @@ interface EmployeeHireFormProps extends React.HTMLAttributes<HTMLFormElement> {
 }
 
 type formData = z.infer<typeof employeeCreateSchema>
-const URL = "https://project-eduspace.vercel.app/api";
+const URL = "https://project-eduspace.vercel.app/api/v1";
 
 export function EmployeeHireForm({
   className,

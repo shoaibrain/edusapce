@@ -17,6 +17,7 @@ export async function GET (
   try {
     const { params } = routeContextSchema.parse(context)
     const student = await getStudent(params.studentId as string);
+    //TODO:  if not found, return 404 not found
     if (!student) {
       return new Response(JSON.stringify("Not Found"), { status: 404 });
     }
@@ -74,7 +75,6 @@ export async function PATCH(
     return new Response(null, { status: 200 });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log(error.issues)
       const validationErrors = error.issues.map((issue) => {
         return {
           field: issue.path.join('.'),

@@ -46,7 +46,6 @@ export const getGuardian = async(guardianId : string) => {
 }
 
 export const postGuardian = async (guardian) => {
-  console.log(JSON.stringify(guardian))
     try {
         const newGuardian = await prisma.guardian.create({
             data: guardian,

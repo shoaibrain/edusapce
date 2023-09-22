@@ -14,10 +14,30 @@ export const metadata: Metadata = {
   description: "Employees Dashboard",
 }
 const URL = "https://project-eduspace.vercel.app/api/v1"
+
+const getEmployees = async () => {
+  try {
+    const res = await fetch(`${URL}/employees`,{
+      method : 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      next: { revalidate: 5 },
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch employee data')
+    }
+    return res.json();
+  } catch(error) {
+    console.error('Error fetching employees:', error);
+    throw error;
+  }
+}
 export default async function EmployeesPage() {
   return (
     <>
-                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">

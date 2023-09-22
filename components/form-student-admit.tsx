@@ -1,4 +1,3 @@
-//@ts-nocheck
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -26,18 +25,18 @@ import { toast } from "@/components/ui/use-toast"
 import React from "react"
 import { Icons } from "./icons"
 import { useRouter } from "next/navigation"
-import { studentAdmitSchema } from "@/lib/validations/student"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { format } from "date-fns"
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { Calendar } from "./ui/calendar"
+import { studentCreateSchema } from "@/lib/validations/student"
 
 interface StudentAdmissionFormProps extends React.HTMLAttributes<HTMLFormElement> {
   guardianId?: string;
 }
 
-type formData = z.infer<typeof studentAdmitSchema>
-const URL = "https://project-eduspace.vercel.app/api";
+type formData = z.infer<typeof studentCreateSchema>
+const URL = "https://project-eduspace.vercel.app/api/v1";
 
 export function StudentAdmissionForm({
   guardianId,
@@ -45,7 +44,7 @@ export function StudentAdmissionForm({
   ...props
 }: StudentAdmissionFormProps) {
   const form = useForm<formData>({
-    resolver: zodResolver(studentAdmitSchema),
+    resolver: zodResolver(studentCreateSchema),
     mode: "onChange",
     defaultValues: {
       firstName: "",
