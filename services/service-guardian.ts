@@ -68,6 +68,7 @@ export const deleteGuardian = async (guardianId: string) => {
 }
 
 export const patchGuardian = async (guardianId: string, guardian) => {
+  console.log(`Guardian data: ${JSON.stringify(guardian)}`)
     try {
         const updatedGuardian = await prisma.guardian.update({
             where: {
@@ -77,6 +78,7 @@ export const patchGuardian = async (guardianId: string, guardian) => {
           })
         return updatedGuardian;
       } catch (error) {
+        console.log(`Error updating student: ${error.message}`)
        throw new Error(`Error updating student: ${error.message}`);
       }
 }

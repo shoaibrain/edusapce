@@ -60,7 +60,6 @@ export function GuardianInfoForm({
     if (studentId) {
       data.students = [studentId];
     }
-    console.log(studentId)
     setIsSaving(true);
     const response = await fetch(`${URL}/guardians`,{
       method : 'POST',

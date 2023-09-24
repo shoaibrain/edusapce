@@ -1,13 +1,12 @@
-//@ts-nocheck
 import React from 'react'
-import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { GraduationCap, Gauge, Users, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
-import { Student, columns } from '@/components/columns'
+import {  columns } from '@/components/columns'
 import { DataTable } from '@/components/data-table'
+import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: "Employees",

@@ -1,22 +1,27 @@
-import { notFound, redirect } from "next/navigation";
-import { Guardian, User } from "@prisma/client";
-import prisma from "@/lib/db";
-import Image from 'next/image'
+import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ProfileOptions } from "@/components/profile-options";
+import { Guardian } from "@prisma/client";
 
 export const metadata: Metadata = {
   title: "Guardian Details",
   description: "Guardian Dashboard",
 }
+interface GuardianPageProps {
+  params: { guardianId: string };
+}
+
 const URL = "https://project-eduspace.vercel.app/api/v1"
 
-async function getGuardian(guardianId: string) {
+async function getGuardian(guardianId: Guardian["id"]) {
   try {
     const res =  await fetch(`${URL}/guardians/${guardianId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       },
+      next: { revalidate: 5 },
     });
     if (!res.ok) {
       throw new Error('Failed to fetch guardian data')
@@ -28,65 +33,60 @@ async function getGuardian(guardianId: string) {
  }
 }
 
-
-interface GuardianPageProps {
-  params: { guardianId: string };
-}
-
 export default async function GuardianPage({ params }: GuardianPageProps) {
-  const guardian = await getGuardian(params.guardianId as string);
-  console.log(guardian)
+
+  const guardian = await getGuardian(params.guardianId);
+
   if (!guardian) {
     notFound();
   }
-  const { firstName, lastName, phone, address, email, professoin,annualIncome, guardianType } = guardian;
-
   return (
     <div>
-      <div className="grid grid-cols-2 justify-between gap-4 p-2 px-5 sm:px-0 ">
-        <div className="p-4">
-          <h2 className="text-base font-semibold leading-7 text-gray-900"> {`${firstName} ${lastName}`}</h2>
-        </div>
-      </div>
-      <div className="mt-6 border-t border-gray-100">
-        <dl className="divide-y divide-gray-100">
-           {/* Guardian Info */}
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <div className="h-40 w-40 shrink-0 items-start">
-                <Image
-                  className="h-40 w-40"
-                  src="/public/user.jpeg"
-                  alt="Guardian Image"
-                  width={80}
-                  height={80}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900">First Name</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{firstName}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900">Last Name</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{lastName}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900">Address</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{address}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900">email</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{email}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium leading-6 text-gray-900">phone</dt>
-                  <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{phone}</dd>
+          <div className="flex-1 space-y-4 p-8 pt-6">
+              <div className="flex items-center justify-between space-y-2">
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  {`${guardian.firstName} ${guardian.lastName}`}
+                </h2>
+                <div className="flex items-center space-x-2">
+                   <ProfileOptions guardian={guardian}/>
                 </div>
               </div>
+              <Tabs defaultValue="overview" className="space-y-4">
+              <TabsList className="p-5">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="students" disabled>Students</TabsTrigger>
+                <TabsTrigger value="accounts" disabled>Accounts</TabsTrigger>
+              </TabsList>
+              <TabsContent value="overview" className="space-y-4">
+                <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
+                  <div>
+                    <dt className="text-sm font-medium leading-6 text-gray-900">First Name</dt>
+                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{guardian.firstName}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium leading-6 text-gray-900">Last Name</dt>
+                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{guardian.lastName}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium leading-6 text-gray-900">Phone No.</dt>
+                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{guardian.phone}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium leading-6 text-gray-900">Home Address</dt>
+                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{guardian.address}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium leading-6 text-gray-900">Email</dt>
+                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{guardian.email}</dd>
+                  </div>
+                </div>
 
+              </TabsContent>
+              <TabsContent value="students">Student details</TabsContent>
+              <TabsContent value="accounts">Account Details</TabsContent>
+            </Tabs>
           </div>
-        </dl>
-      </div>
+
     </div>
   );
 
