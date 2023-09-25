@@ -74,6 +74,7 @@ model Student {
 model GRADE_LEVEL {
   id           String         @id @default(cuid())
   name         String
+  levelOrder   Int
   description  String?
   students     Student[]
   classPeriods CLASS_PERIOD[]

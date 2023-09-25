@@ -1,3 +1,4 @@
+import { classPeriodCreateSchema } from "@/lib/validations/academics";
 import { getClassPeriods, postClassPeriod } from "@/services/service-academic";
 import { z } from "zod";
 
@@ -14,7 +15,12 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const json = await request.json();
-    const newClassPeriod = await postClassPeriod(json);
+    let st = new Date(json.startTime);
+    let et = new Date(json.endTime);
+    json.startTime = st;
+    json.endTime = et;
+    const body = classPeriodCreateSchema.parse(json);
+    const newClassPeriod = await postClassPeriod(body);
     return new Response(JSON.stringify(newClassPeriod), { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
