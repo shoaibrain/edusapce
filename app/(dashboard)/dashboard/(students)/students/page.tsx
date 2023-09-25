@@ -3,7 +3,7 @@ import React from 'react'
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { GraduationCap, Gauge, Users, AlertTriangle } from 'lucide-react'
+import { Gauge, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { columns } from '@/components/columns'

@@ -1,20 +1,9 @@
 import { notFound } from "next/navigation";
 import { Student } from "@prisma/client";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { GuardianCard } from "@/components/guardian-card";
-import { GuardianInfoForm } from "@/components/form-guardian";
-import { StudentCard } from "@/components/student-card";
 import { Metadata } from "next";
-import { StudentEditForm } from "@/components/form-student-edit";
+import { ProfileOptions } from "@/components/profile-options";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GuardianCard } from "@/components/guardian-card";
 
 export const metadata: Metadata = {
   title: "Student Details",
@@ -34,7 +23,6 @@ async function getStudent(studentId: Student["id"]) {
       },
       next: { revalidate: 5 },
     });
-
     if (!res.ok) {
       throw new Error('Failed to fetch student data')
     }
@@ -49,61 +37,82 @@ export default async function StudentPage({ params }: StudentPageProps) {
   if (!student) {
     notFound();
   }
-  const { guardians } = student;
+  const guardians = student.guardians || [];
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-      <h2 className="text-base font-semibold leading-7 text-gray-900">
-        {`${student.firstName} ${student.lastName}`}
-      </h2>
-      <p className="text-base leading-7 text-gray-700">{`id: ${student.id}`}</p>
-        <div className="p-4">
-          <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline">Update Student Profile</Button>
-                </DialogTrigger>
-                <DialogContent className="mx-auto sm:max-w-[800px]">
-                  <DialogHeader>
-                    <DialogTitle>Update Student Information</DialogTitle>
-                    <DialogDescription>
-                      Edit student information here. Click save when you are done.
-                    </DialogDescription>
-                  </DialogHeader>
-                    <StudentEditForm student={student}/>
-                </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-      <div className="mt-6 border-t border-gray-100">
-        <dl className="divide-y divide-gray-100">
-          <StudentCard student={student}/>
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold leading-7 text-gray-900">Guardians</h2>
-            <div className="p-4">
-              <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline">Add New Parent</Button>
-                    </DialogTrigger>
-                    <DialogContent className="mx-auto sm:max-w-[800px]">
-                      <DialogHeader>
-                        <DialogTitle>{`Add New Parent for studentId: ${student.id}`} </DialogTitle>
-                        <DialogDescription>
-                          Add parent information here. Click save when you are done.
-                        </DialogDescription>
-                      </DialogHeader>
-                    <GuardianInfoForm studentId = {params.studentId}/>
-                    </DialogContent>
-              </Dialog>
-            </div>
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        <div className="flex items-center justify-between space-y-2">
+          <h2 className="text-sm font-medium">
+            {`${student.firstName} ${student.lastName}`}
+          </h2>
+          <div className="flex items-center space-x-2">
+            <ProfileOptions student = {student} />
           </div>
+        </div>
+        <Tabs defaultValue="overview" className="space-y-4">
+              <TabsList className="p-5">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="guardians" >Guardians</TabsTrigger>
+                <TabsTrigger value="accounts" disabled>Academics</TabsTrigger>
+                <TabsTrigger value="medicals" disabled>Medicals</TabsTrigger>
+              </TabsList>
+              <TabsContent value="overview" className="space-y-4">
+                <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
+                  <div>
+                    <dt className="text-sm font-medium">First Name</dt>
+                    <dd className="text-sm font-medium">{student.firstName}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium">Middle Name</dt>
+                    <dd className="text-sm font-medium">{student.middleName}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium">Last Name</dt>
+                    <dd className="text-sm font-medium">{student.lastName}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium">Birth Date</dt>
+                    <dd className="text-sm font-medium">{student.birthDate}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium">Gender</dt>
+                    <dd className="text-sm font-medium">{student.gender}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium">Grade Level</dt>
+                    <dd className="text-sm font-medium">{student.currentGrade}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium">Nationality</dt>
+                    <dd className="text-sm font-medium">{student.nationality}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium">Email</dt>
+                    <dd className="text-sm font-medium">{student.email}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium">Phone No.</dt>
+                    <dd className="text-sm font-medium">{student.phone}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium">Home Address</dt>
+                    <dd className="text-sm font-medium">{student.address}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium">Enrollment Status</dt>
+                    <dd className="text-sm font-medium">{student.enrollmentStatus}</dd>
+                  </div>
+                </div>
 
-          {guardians.map((guardian) => (
-            <GuardianCard parent={guardian}/>
-          ))}
-
-          <h2 className="text-base font-semibold leading-7 text-gray-900"> Academic Overview</h2>
-        </dl>
+              </TabsContent>
+              <TabsContent value="guardians">
+              {guardians.map((guardian) => (
+                  <GuardianCard key={guardian.id} parent={guardian} />
+              ))}
+              </TabsContent>
+              <TabsContent value="accounts">Account Details</TabsContent>
+        </Tabs>
       </div>
     </div>
   );

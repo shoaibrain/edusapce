@@ -49,13 +49,12 @@ export async function PATCH(
   request: Request,
   context: z.infer<typeof routeContextSchema>
 ) {
+  console.log(`Inside the PATCH api methid `)
   try {
     const {params } = routeContextSchema.parse(context);
     const json = await request.json();
-    console.log(`JSON: ${JSON.stringify(json)}`)
     const body = guardianPatchSchema.parse(json);
-    console.log(`Body: ${JSON.stringify(body)}`)
-    // Construct the data object for partial updates.
+    // data object for partial updates.
     const data: Prisma.GuardianUpdateInput = {};
     if (body.firstName) data.firstName = body.firstName;
     if (body.lastName) data.lastName = body.lastName;
@@ -68,7 +67,6 @@ export async function PATCH(
       connect: body.students.map((studentId: string) => ({ id: studentId })),
     };
     const patchedGuardian = await patchGuardian(params.guardianId as string, data);
-    console.log(`Patched guardian: ${JSON.stringify(patchedGuardian)}`)
     return new Response(JSON.stringify(patchedGuardian), { status: 200 });
   } catch(error) {
     if (error instanceof z.ZodError) {
@@ -78,6 +76,7 @@ export async function PATCH(
           message: issue.message,
         };
       });
+      console.log(JSON.stringify(validationErrors))
       return new Response(JSON.stringify(validationErrors), { status: 422 });
   }
     return new Response(null, { status: 500 })

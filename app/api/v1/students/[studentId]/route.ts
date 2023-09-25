@@ -54,7 +54,7 @@ export async function PATCH(
     const { params } = routeContextSchema.parse(context);
     const json = await req.json();
     const body = studentPatchSchema.parse(json);
-    // Construct the data object for partial updates.
+    // data object for partial updates.
     const data: Prisma.StudentUpdateInput = {};
 
     if (body.firstName) data.firstName = body.firstName;
@@ -83,7 +83,6 @@ export async function PATCH(
       });
       return new Response(JSON.stringify(validationErrors), { status: 422 });
     }
-    console.log(JSON.stringify(error.message));
     return new Response(null, { status: 500 });
   }
 }

@@ -14,47 +14,40 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { toast } from "@/components/ui/use-toast"
-import { guardianPatchSchema } from "@/lib/validations/guardian"
 import React from "react"
 
 import { Icons } from "@/components/icons"
-import { Guardian } from "@prisma/client"
+import {  Student } from "@prisma/client"
+import { studentPatchSchema } from "@/lib/validations/student"
 
 
-interface GuardianEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  guardian: Guardian;
-
+interface StudentEditFromProps extends React.HTMLAttributes<HTMLFormElement> {
+  student: Student;
 }
 
-type FormData = z.infer<typeof guardianPatchSchema>
+type FormData = z.infer<typeof studentPatchSchema>
 const URL = "https://project-eduspace.vercel.app/api/v1";
 
-export function GuardianEditForm({
-  guardian,
+export function StudentEditForm({
+  student,
   className,
   ...props
-}: GuardianEditFormProps) {
+}: StudentEditFromProps) {
 
   const form = useForm<FormData>({
-    resolver: zodResolver(guardianPatchSchema),
+    resolver: zodResolver(studentPatchSchema),
     mode: "onChange",
     defaultValues: {
-      firstName: guardian?.firstName,
-      lastName: guardian?.lastName,
-      guardianType: guardian?.guardianType || "",
-      email: guardian?.email || "",
-      phone: guardian?.phone || "",
-      address: guardian?.address || "",
-      profession: guardian?.profession || "",
-      annualIncome: guardian?.annualIncome || "",
+      firstName: student?.firstName,
+      middleName: student?.middleName || "",
+      lastName: student?.lastName,
+      currentGrade: student?.currentGrade || "",
+      nationality: student?.nationality || "",
+      email: student?.email || "",
+      phone: student?.phone || "",
+      address: student?.address,
+      enrollmentStatus: student?.enrollmentStatus || "",
     }
   })
 
@@ -62,7 +55,7 @@ export function GuardianEditForm({
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
-    const response = await fetch(`${URL}/guardians/${guardian.id}`,{
+    const response = await fetch(`${URL}/students/${student.id}`,{
       method : 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -73,26 +66,43 @@ export function GuardianEditForm({
     if (!response?.ok) {
       return toast({
         title: "Something went wrong.",
-        description: `Failed to update guardian information.`,
+        description: `Failed to update student information.`,
         variant: "destructive",
       })
     }
+
     toast({
       title:"Successfully updated",
       description: "Information has been updated.",
     })
+
   }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div  className="sm:col-span-2">
+            <div className="sm:col-span-2">
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div  className="sm:col-span-2">
+              <FormField
+                control={form.control}
+                name="middleName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Middle Name</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -116,33 +126,43 @@ export function GuardianEditForm({
                 )}
               />
             </div>
-            <div className="sm:col-span-2">
-            <FormField
-              control={form.control}
-              name="guardianType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Guardian Type</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <div  className="sm:col-span-2">
+              <FormField
+                control={form.control}
+                name="currentGrade"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Currenty Class Grade</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a guardian type" />
-                      </SelectTrigger>
+                      <Input {...field} />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Father">Father</SelectItem>
-                      <SelectItem value="Mother">Mother</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormDescription>
+                      Current Class Grade
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-            <div  className="sm:col-span-3">
+            <div  className="sm:col-span-2">
+              <FormField
+                control={form.control}
+                name="nationality"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nationality</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Student nationality
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div  className="sm:col-span-2">
               <FormField
                 control={form.control}
                 name="email"
@@ -190,43 +210,6 @@ export function GuardianEditForm({
                     </FormControl>
                     <FormDescription>
                       home address
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div  className="sm:col-span-3">
-              <FormField
-                control={form.control}
-                name="profession"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Profession</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      profession|occupation
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div  className="sm:col-span-3">
-              <FormField
-                control={form.control}
-                name="annualIncome"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Annual Income</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Enter yearly income
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
