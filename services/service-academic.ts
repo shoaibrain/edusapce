@@ -1,69 +1,119 @@
 import prisma from "@/lib/db";
 
-export const getClasses = async () => {
-  try {
-    const classes = await prisma.cLASS_LEVEL.findMany(
-    {
-        select: {
-            id: true,
-            name: true,
-          }
-    }
-    );
-    if (!classes) throw new Error("No classes found");
-    return classes;
-  } catch (error ) {
-    throw new Error(`Error getting all classes: ${error.message}`);
-  }
+export const getClassPeriods = async () => {
+  const classPeriods = await prisma.cLASS_PERIOD.findMany({
+  });
+  return classPeriods;
 }
-export const getClass = async(classId : string) => {
+
+export const getClassPeriod = async (classPeriodId: string) => {
   try {
-    const classObj = await prisma.cLASS_LEVEL.findUnique({
-        where: {
-          id: classId,
-        },
-        include:{
-            students: true,
-            teachers: true,
-        }
-      })
-    return classObj;
-  } catch(error) {
-    throw new Error(`Error getting class: ${error.message}`);
+    const classPeriod = await prisma.cLASS_PERIOD.findUnique({
+      where: {
+        id: classPeriodId,
+      },
+  });
+  if (!classPeriod) {
+    throw new Error(`ClassPeriod with id: ${classPeriodId} not found`);
   }
+  return classPeriod;
+} catch (error) {
+    throw new Error(`Error getting classPeriod: ${error.message}`);
 }
-export const postClass = async (classObj) => {
+}
+export const postClassPeriod = async (classPeriod) => {
   try {
-    const newClass = await prisma.cLASS_LEVEL.create({
-        data: classObj,
-      })
-    return newClass;
+    const newClassPeriod = await prisma.cLASS_PERIOD.create({
+      data: classPeriod,
+    })
+    return newClassPeriod;
   } catch (error) {
-    throw new Error(`Error creating class: ${error.message}`);
+    throw new Error(`Error creating classPeriod: ${error.message}`);
   }
 }
-export const deleteClass = async (classId: string) => {
+
+export const deleteClassPeriod = async (classPeriodId: string) => {
   try {
-    const deletedClass = await prisma.cLASS_LEVEL.delete({
-        where: {
-            id: classId,
-        }
-      })
-    return deletedClass;
+    const deletedClassPeriod = await prisma.cLASS_PERIOD.delete({
+      where: {
+        id: classPeriodId,
+      },
+    })
+    return deletedClassPeriod;
   } catch (error) {
-    throw new Error(`Error deleting class: ${error.message}`);
+    throw new Error(`Error deleting classPeriod: ${error.message}`);
   }
 }
-export const patchClass = async (classId: string, classObj) => {
+
+export const patchClassPeriod = async (classPeriodId: string, classPeriod) => {
   try {
-    const updatedClass = await prisma.cLASS_LEVEL.update({
-        where: {
-            id: classId,
-        },
-        data: classObj,
-      })
-    return updatedClass;
+    const updatedClassPeriod = await prisma.cLASS_PERIOD.update({
+      where: {
+        id: classPeriodId,
+      },
+      data: classPeriod,
+    })
+    return updatedClassPeriod;
   } catch (error) {
-    throw new Error(`Error updating class: ${error.message}`);
+    throw new Error(`Error updating classPeriod: ${error.message}`);
   }
 }
+
+export const getGradeLevels = async () => {
+  const gradeLevels = await prisma.gRADE_LEVEL.findMany({
+  });
+  return gradeLevels;
+}
+export const getGradeLevel = async (gradeLevelId: string) => {
+  try {
+    const gradeLevel = await prisma.gRADE_LEVEL.findUnique({
+      where: {
+        id: gradeLevelId,
+      },
+  });
+  if (!gradeLevel) {
+    throw new Error(`GradeLevel with id: ${gradeLevelId} not found`);
+  }
+  return gradeLevel;
+} catch (error) {
+    throw new Error(`Error getting gradeLevel: ${error.message}`);
+}
+}
+export const postGradeLevel = async (gradeLevel) => {
+  try {
+    const newGradeLevel = await prisma.gRADE_LEVEL.create({
+      data: gradeLevel,
+    })
+    return newGradeLevel;
+  } catch (error) {
+    throw new Error(`Error creating gradeLevel: ${error.message}`);
+  }
+}
+
+export const deleteGradeLevel = async (gradeLevelId: string) => {
+  try {
+    const deletedGradeLevel = await prisma.gRADE_LEVEL.delete({
+      where: {
+        id: gradeLevelId,
+      },
+    })
+    return deletedGradeLevel;
+  } catch (error) {
+    throw new Error(`Error deleting gradeLevel: ${error.message}`);
+  }
+}
+
+export const patchGradeLevel = async (gradeLevelId: string, gradeLevel) => {
+  try {
+    const updatedGradeLevel = await prisma.gRADE_LEVEL.update({
+      where: {
+        id: gradeLevelId,
+      },
+      data: gradeLevel,
+    })
+    return updatedGradeLevel;
+  } catch (error) {
+    throw new Error(`Error updating gradeLevel: ${error.message}`);
+  }
+}
+
