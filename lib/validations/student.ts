@@ -4,9 +4,7 @@ export const studentPatchSchema = z.object({
   firstName: z.string().min(2, {
     message:"First name must be at least 2 character long"
   }).max(20, {message:"Name should not be more than 20 cahracter long"}).optional(),
-  middleName: z.string().min(2,
-    {message:"should be more than 2 character"}).max(20,
-    {message:"shoud be less than 20 character"}).optional(),
+  middleName: z.string().optional(),
   lastName: z.string().optional(),
   birthDate: z.date().optional(),
   gender: z.string().optional(),

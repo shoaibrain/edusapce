@@ -50,78 +50,110 @@ model User {
 }
 
 model Student {
-  id               String       @id @default(cuid())
+  id               String      @id @default(cuid())
   firstName        String
   middleName       String?
   lastName         String
   birthDate        DateTime
   gender           String
-  currentGrade     String?
   nationality      String?
   ssn              String?
-  email            String?
+  email            String?     @unique
   phone            String?
   address          String
   enrollmentStatus String?
-  role             Role         @default(STUDENT)
-  guardians        Guardian[]   @relation("GuardianStudent")
-  gradeLevel       GRADE_LEVEL? @relation(fields: [classId], references: [id])
-  classId          String?
-  createdAt        DateTime     @default(now()) @map("created_at")
-  updatedAt        DateTime     @default(now()) @map("updated_at")
+  role             Role        @default(STUDENT)
+  guardians        Guardian[]  @relation("GuardianStudent")
+  currentGrade     GradeLevel? @relation(fields: [currentGradeId], references: [id])
+  currentGradeId   String?
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @default(now()) @map("updated_at")
 }
 
-model GRADE_LEVEL {
-  id           String         @id @default(cuid())
-  name         String
-  levelOrder   Int
-  description  String?
-  students     Student[]
-  classPeriods CLASS_PERIOD[]
-  teachers     Employee[]
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @default(now()) @map("updated_at")
+model GradeLevel {
+  id          String    @id @default(cuid())
+  name        String // e.g., "Grade One", "Grade Two"
+  levelOrder  Int       @unique // An integer representing the order of the grade level
+  description String?
+  category    String? // e.g., "Elementary", "Middle School", "High School"
+  students    Student[] // One-to-Many relationship with students
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
 
   @@map("grade_levels")
 }
 
-model CLASS_PERIOD {
-  id         String      @id @default(cuid())
-  name       String
-  classId    String
-  teacherId  String
-  class      GRADE_LEVEL @relation(fields: [classId], references: [id])
-  startTime  DateTime
-  endTime    DateTime
-  createdAt  DateTime    @default(now()) @map("created_at")
-  updatedAt  DateTime    @default(now()) @map("updated_at")
-  Employee   Employee?   @relation(fields: [employeeId], references: [id])
-  employeeId String?
+model Class {
+  id           String        @id @default(cuid())
+  name         String // e.g., "Math", "Science"
+  description  String?
+  type         ClassType // Use the ClassType enum to categorize classes
+  classPeriods ClassPeriod[] // One-to-Many relationship with ClassPeriod
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @default(now()) @map("updated_at")
+
+  @@map("classes")
+}
+
+model ClassPeriod {
+  id        String   @id @default(cuid())
+  name      String // e.g., "Morning Session", "Afternoon Session"
+  classId   String
+  teacherId String?
+  class     Class    @relation(fields: [classId], references: [id])
+  startTime DateTime
+  endTime   DateTime
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 
   @@map("class_periods")
 }
 
-model Employee {
-  id            String         @id @default(cuid())
-  firstName     String
-  middleName    String?
-  lastName      String
-  phone         String
-  email         String?
-  address       String
-  role          Role           @default(STAFF)
-  birthDate     DateTime
-  gender        String
-  ssn           String?
-  department    String?
-  hiredDate     DateTime?      @map("hired_date")
-  classPeriods  CLASS_PERIOD[]
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @default(now()) @map("updated_at")
-  GRADE_LEVEL   GRADE_LEVEL?   @relation(fields: [gRADE_LEVELId], references: [id])
-  gRADE_LEVELId String?
+enum ClassType {
+  MATH
+  SCIENCE
+  HISTORY
+  ENGLISH
+  ART
+  MUSIC
+  PHYSICAL_EDUCATION
+  FOREIGN_LANGUAGE
+  OTHER
+}
 
-  @@map("employees")
+model Term {
+  id          String   @id @default(cuid())
+  name        String // e.g., "Fall Term", "Spring Term"
+  startDate   DateTime
+  endDate     DateTime
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @map("updated_at")
+
+  @@map("terms")
+}
+
+model Teacher {
+  id          String      @id @default(cuid())
+  firstName   String
+  middleName  String?
+  lastName    String
+  phone       String
+  email       String      @unique
+  address     String
+  teacherRole TeacherRole
+  birthDate   DateTime
+  gender      String
+  hiredDate   DateTime?   @map("hired_date")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @default(now()) @map("updated_at")
+}
+
+enum TeacherRole {
+  TEACHER
+  STAFF
+  ACCOUNTANT
+  PRINCIPAL
 }
 
 model Guardian {
@@ -130,7 +162,7 @@ model Guardian {
   lastName     String
   phone        String
   address      String
-  email        String?
+  email        String?   @unique
   profession   String?
   annualIncome String?
   guardianType String?

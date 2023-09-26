@@ -47,6 +47,7 @@ export const postClassPeriod = async (classPeriod) => {
     }
     return newClassPeriod;
   } catch (error) {
+    console.log(`Error creating classPeriod: ${error.message}`)
     throw new Error(`Error creating classPeriod: ${error.message}`);
   }
 }
