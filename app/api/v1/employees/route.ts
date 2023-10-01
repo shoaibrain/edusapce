@@ -1,10 +1,8 @@
-import prisma from "@/lib/db";
 import { employeeCreateSchema } from "@/lib/validations/employee";
 import { getEmployees, postEmployee } from "@/services/service-employee";
 import { z } from "zod";
 
-
-export async function GET(){
+export const GET = async () => {
   try {
     const employees = await getEmployees();
     return new Response(JSON.stringify(employees), { status: 200 })
@@ -13,7 +11,7 @@ export async function GET(){
   }
 }
 
-export async function POST(request: Request) {
+export const POST = async (request: Request) => {
   try {
     const json  = await request.json();
     let dob = new Date(json.birthDate);
@@ -25,7 +23,6 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }
-    return new Response(error.message, { status: 500 })
+    return new Response(null, { status: 500 })
   }
 }
-

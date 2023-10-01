@@ -23,12 +23,12 @@ import {
 } from "@/components/ui/select"
 import { toast } from "@/components/ui/use-toast"
 import React from "react"
-import { Icons } from "./icons"
+import { Icons } from "@/components/icons"
 import { useRouter } from "next/navigation"
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
 import { CalendarIcon } from "@radix-ui/react-icons"
-import { Calendar } from "./ui/calendar"
+import { Calendar } from "@/components/ui/calendar"
 import { studentCreateSchema } from "@/lib/validations/student"
 
 interface StudentAdmissionFormProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -54,7 +54,6 @@ export function StudentAdmissionForm({
       phone: "",
       address: "",
       enrollmentStatus: "",
-      currentGrade: "",
     }
   })
   const router = useRouter()

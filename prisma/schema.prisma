@@ -49,129 +49,6 @@ model User {
   @@map("users")
 }
 
-model Student {
-  id               String      @id @default(cuid())
-  firstName        String
-  middleName       String?
-  lastName         String
-  birthDate        DateTime
-  gender           String
-  nationality      String?
-  ssn              String?
-  email            String?     @unique
-  phone            String?
-  address          String
-  enrollmentStatus String?
-  role             Role        @default(STUDENT)
-  guardians        Guardian[]  @relation("GuardianStudent")
-  currentGrade     GradeLevel? @relation(fields: [currentGradeId], references: [id])
-  currentGradeId   String?
-  createdAt        DateTime    @default(now()) @map("created_at")
-  updatedAt        DateTime    @default(now()) @map("updated_at")
-}
-
-model GradeLevel {
-  id          String    @id @default(cuid())
-  name        String // e.g., "Grade One", "Grade Two"
-  levelOrder  Int       @unique // An integer representing the order of the grade level
-  description String?
-  category    String? // e.g., "Elementary", "Middle School", "High School"
-  students    Student[] // One-to-Many relationship with students
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @default(now()) @map("updated_at")
-
-  @@map("grade_levels")
-}
-
-model Class {
-  id           String        @id @default(cuid())
-  name         String // e.g., "Math", "Science"
-  description  String?
-  type         ClassType // Use the ClassType enum to categorize classes
-  classPeriods ClassPeriod[] // One-to-Many relationship with ClassPeriod
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @default(now()) @map("updated_at")
-
-  @@map("classes")
-}
-
-model ClassPeriod {
-  id        String   @id @default(cuid())
-  name      String // e.g., "Morning Session", "Afternoon Session"
-  classId   String
-  teacherId String?
-  class     Class    @relation(fields: [classId], references: [id])
-  startTime DateTime
-  endTime   DateTime
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  @@map("class_periods")
-}
-
-enum ClassType {
-  MATH
-  SCIENCE
-  HISTORY
-  ENGLISH
-  ART
-  MUSIC
-  PHYSICAL_EDUCATION
-  FOREIGN_LANGUAGE
-  OTHER
-}
-
-model Term {
-  id          String   @id @default(cuid())
-  name        String // e.g., "Fall Term", "Spring Term"
-  startDate   DateTime
-  endDate     DateTime
-  description String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @default(now()) @map("updated_at")
-
-  @@map("terms")
-}
-
-model Teacher {
-  id          String      @id @default(cuid())
-  firstName   String
-  middleName  String?
-  lastName    String
-  phone       String
-  email       String      @unique
-  address     String
-  teacherRole TeacherRole
-  birthDate   DateTime
-  gender      String
-  hiredDate   DateTime?   @map("hired_date")
-  createdAt   DateTime    @default(now()) @map("created_at")
-  updatedAt   DateTime    @default(now()) @map("updated_at")
-}
-
-enum TeacherRole {
-  TEACHER
-  STAFF
-  ACCOUNTANT
-  PRINCIPAL
-}
-
-model Guardian {
-  id           String    @id @default(cuid())
-  firstName    String
-  lastName     String
-  phone        String
-  address      String
-  email        String?   @unique
-  profession   String?
-  annualIncome String?
-  guardianType String?
-  role         Role      @default(USER)
-  students     Student[] @relation("GuardianStudent")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @default(now()) @map("updated_at")
-}
-
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -197,4 +74,99 @@ enum Role {
   STAFF
   STUDENT
   USER
+}
+
+model Guardian {
+  id           String    @id @default(cuid())
+  firstName    String
+  lastName     String
+  phone        String
+  address      String
+  email        String?
+  profession   String?
+  annualIncome String?
+  guardianType String?
+  role         Role      @default(USER)
+  students     Student[]
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @default(now()) @map("updated_at")
+
+  @@map("guardians")
+}
+
+model Student {
+  id               String      @id @default(cuid())
+  firstName        String
+  middleName       String?
+  lastName         String
+  birthDate        DateTime
+  gender           String
+  nationality      String?
+  ssn              String?
+  email            String?
+  phone            String?
+  address          String
+  enrollmentStatus String?
+  role             Role        @default(STUDENT)
+  gradeLevelId     String?
+  gradeLevel       GradeLevel? @relation(fields: [gradeLevelId], references: [id])
+  guardians        Guardian[]
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @default(now()) @map("updated_at")
+
+  @@map("students")
+}
+
+// First Grade, Second Grade, Third Grade, etc.
+model GradeLevel {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  description   String?
+  levelCategory String? // Elementary, Middle, High
+  levelOrder    Int
+  students      Student[]
+  classes       Class[]
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @map("updated_at")
+
+  @@map("grade_levels")
+}
+
+// Math, Science, English, etc.
+model Class {
+  id           String      @id @default(cuid())
+  name         String
+  capacity     Int
+  department   String?
+  description  String?
+  startTime    DateTime
+  endTime      DateTime
+  gradeLevelId String?
+  gradeLevel   GradeLevel? @relation(fields: [gradeLevelId], references: [id])
+  teachers     Employee[] // A class can be taught by multiple teachers
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @default(now()) @map("updated_at")
+
+  @@map("classes")
+}
+
+model Employee {
+  id         String    @id @default(cuid())
+  firstName  String
+  middleName String?
+  lastName   String
+  phone      String
+  email      String?
+  address    String
+  classes    Class[] // Employee|Teacher can teach multiple classes
+  role       Role      @default(STAFF)
+  birthDate  DateTime
+  gender     String
+  ssn        String?
+  department String?
+  hiredDate  DateTime? @map("hired_date")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @default(now()) @map("updated_at")
+
+  @@map("employees")
 }

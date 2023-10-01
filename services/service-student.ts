@@ -12,30 +12,28 @@ export const getStudents = async () => {
                 birthDate: true,
                 gender: true,
                 enrollmentStatus: true,
-                currentGrade: true,
-                nationality: true,
-                ssn: true,
                 email: true,
                 phone: true,
                 address: true,
-              }
-        }
-        );
+                gradeLevelId: true,
+              },
+
+        });
         return students;
       } catch (error) {
-       throw new Error(`Error getting all students: ${error.message}`);
+       throw new Error(`Error getting students: ${error.message}`);
       }
 }
-
 export const getStudent = async(studentId : string) => {
     try{
-    const student =  await prisma.student.findUnique({
-        where: {
-          id: studentId,
-        },
-        include:{
-            guardians: true,
-        }
+        const student =  await prisma.student.findUnique({
+          where: {
+            id: studentId,
+          },
+          include:{
+              guardians: true,
+              gradeLevel: true,
+          }
       })
       if (student) {
         return student;
@@ -48,16 +46,7 @@ export const getStudent = async(studentId : string) => {
 export const postStudent = async (student) => {
     try {
         const newStudent = await prisma.student.create({
-          data: {
-            firstName: student.firstName,
-            middleName: student.middleName,
-            lastName: student.lastName,
-            birthDate: student.birthDate,
-            gender: student.gender,
-            address: student.address,
-            phone: student.phone,
-            email: student.email,
-        },
+          data: student,
       })
         return newStudent;
       } catch (error) {
@@ -87,7 +76,8 @@ export const patchStudent = async (studentId: string, studentUpdates) => {
       });
       return patchedStudent;
     } catch (error) {
-      console.log(`Error updating student inside service-student: ${error.message}`)
+      console.log(`Error updating student
+      inside service-student: ${error.message}`)
       throw new Error(`Error updating student: ${error.message}`);
     }
   };

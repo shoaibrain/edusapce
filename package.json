@@ -14,17 +14,7 @@
     "lint:fix": "next lint --fix",
     "preview": "next build && next start",
     "postinstall": "prisma generate",
-    "typecheck": "tsc --noEmit",
-    "test": "jest"
-  },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "<rootDir>/.next/",
-      "<rootDir>/node_modules/"
-    ],
-    "modulePaths": [
-      "<rootDir>/"
-    ]
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",

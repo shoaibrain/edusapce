@@ -17,7 +17,6 @@ export async function GET (
   try {
     const { params } = routeContextSchema.parse(context)
     const student = await getStudent(params.studentId as string);
-    //TODO:  if not found, return 404 not found
     if (!student) {
       return new Response(JSON.stringify("Not Found"), { status: 404 });
     }
@@ -60,16 +59,21 @@ export async function PATCH(
     if (body.firstName) data.firstName = body.firstName;
     if (body.middleName && body.middleName !== "") data.middleName = body.middleName;
     if (body.lastName) data.lastName = body.lastName;
+    if (body.birthDate) data.birthDate = new Date(body.birthDate);
     if (body.gender) data.gender = body.gender;
     if (body.nationality) data.nationality = body.nationality;
+    if (body.ssn) data.ssn = body.ssn;
     if (body.email) data.email = body.email;
     if (body.phone) data.phone = body.phone;
     if (body.address) data.address = body.address;
-    if (body.currentGrade) data.currentGrade = body.currentGrade;
     if (body.enrollmentStatus) data.enrollmentStatus = body.enrollmentStatus;
     if (body.guardians) data.guardians = {
       connect: body.guardians.map((guardianId: string) => ({ id: guardianId })),
     };
+    if (body.gradeLevel) data.gradeLevel = {
+      connect: { id: body.gradeLevel },
+    };
+
 
     await patchStudent(params.studentId as string, data);
     return new Response(null, { status: 200 });

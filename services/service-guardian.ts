@@ -21,7 +21,6 @@ export const getGuardians = async () => {
       } catch (error) {
        throw new Error(`Error getting all students: ${error.message}`);
       }
-
 }
 
 export const getGuardian = async(guardianId : string) => {

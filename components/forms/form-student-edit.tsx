@@ -42,7 +42,6 @@ export function StudentEditForm({
       firstName: student?.firstName,
       middleName: student?.middleName || "",
       lastName: student?.lastName,
-      currentGrade: student?.currentGrade || "",
       nationality: student?.nationality || "",
       email: student?.email || "",
       phone: student?.phone || "",
@@ -126,24 +125,7 @@ export function StudentEditForm({
                 )}
               />
             </div>
-            <div  className="sm:col-span-2">
-              <FormField
-                control={form.control}
-                name="currentGrade"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Currenty Class Grade</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Current Class Grade
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+
             <div  className="sm:col-span-2">
               <FormField
                 control={form.control}

@@ -36,6 +36,7 @@ export const getEmployee = async (employeeId: string) => {
         phone: true,
         address: true,
         department: true,
+        classes: true,
       }
     })
     if (!employee) {
@@ -77,22 +78,10 @@ export const patchEmployee = async (employeeId: string, employee) => {
  export const postEmployee = async (employee) => {
   try {
     const newEmployee = await prisma.employee.create({
-      data: {
-        firstName: employee.firstName,
-        middleName: employee.middleName,
-        lastName: employee.lastName,
-        birthDate: employee.birthDate,
-        gender: employee.gender,
-        address: employee.address,
-        phone: employee.phone,
-        email: employee.email,
-        department: employee.department,
-        ssn: employee.ssn,
-    },
+      data: employee,
     })
     return newEmployee;
   } catch (error) {
     throw new Error(`Error creating employee: ${error.message}`);
   }
-
  }
