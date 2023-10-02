@@ -31,7 +31,7 @@ interface GuardianFormProps extends React.HTMLAttributes<HTMLFormElement> {
   studentId?: string;
 }
 type formData = z.infer<typeof guardianCreateSchema>
-const URL = "https://project-eduspace.vercel.app/api";
+const URL = 'https://project-eduspace.vercel.app/api/v1';
 
 export function GuardianInfoForm({
   studentId,

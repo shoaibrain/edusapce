@@ -36,7 +36,7 @@ interface StudentAdmissionFormProps extends React.HTMLAttributes<HTMLFormElement
 }
 
 type formData = z.infer<typeof studentCreateSchema>
-const URL = process.env.API_URL
+const URL = 'https://project-eduspace.vercel.app/api/v1';
 
 export function StudentAdmissionForm({
   guardianId,

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Employees",
   description: "Employees Dashboard",
 }
-const URL = process.env.API_URL
+const URL = 'https://project-eduspace.vercel.app/api/v1';
 
 const getEmployees = async () => {
   try {
