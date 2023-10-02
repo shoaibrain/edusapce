@@ -12,9 +12,10 @@ interface GuardianPageProps {
   params: { guardianId: string };
 }
 
-const URL = "https://project-eduspace.vercel.app/api/v1"
+const URL = process.env.API_URL
 
 async function getGuardian(guardianId: Guardian["id"]) {
+  console.log(URL)
   try {
     const res =  await fetch(`${URL}/guardians/${guardianId}`, {
       method: 'GET',

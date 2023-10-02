@@ -20,7 +20,7 @@ export const studentPatchSchema = z.object({
 
 export const studentCreateSchema = z.object({
   firstName: z.string().min(3).max(32),
-  middleName: z.string().min(3).max(32).optional(),
+  middleName: z.string().optional(),
   lastName: z.string().min(3).max(32),
   birthDate: z.date(),
   email: z.string().email().optional(),

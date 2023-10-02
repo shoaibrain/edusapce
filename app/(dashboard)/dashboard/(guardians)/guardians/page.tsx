@@ -13,7 +13,8 @@ export const metadata: Metadata = {
   title: "Guardians",
   description: "Guardians Dashboard",
 }
-const URL = "https://project-eduspace.vercel.app/api/v1"
+const URL = process.env.API_URL
+
 async function getGuardians() {
     try {
       const res = await fetch(`${URL}/guardians`, {

@@ -36,7 +36,7 @@ interface StudentAdmissionFormProps extends React.HTMLAttributes<HTMLFormElement
 }
 
 type formData = z.infer<typeof studentCreateSchema>
-const URL = "https://project-eduspace.vercel.app/api/v1";
+const URL = process.env.API_URL
 
 export function StudentAdmissionForm({
   guardianId,
@@ -59,6 +59,7 @@ export function StudentAdmissionForm({
   const router = useRouter()
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   async function onSubmit(data: formData) {
+    console.log(`The URL is ${URL}`)
     setIsSaving(true);
       const res = await fetch(`${URL}/students`, {
         method: "POST",
@@ -71,12 +72,12 @@ export function StudentAdmissionForm({
       if (!res.ok) {
         return toast({
           title: "Something went wrong.",
-          description: `Failed to update student: ${res?.statusText}`,
+          description: `Student admission failed with ${res.status} ${res.statusText}`,
           variant: "destructive",
         })
       }
       toast({
-        description: "Your profile has been updated.",
+        description: "Student admission successful",
       })
       router.refresh()
   }
