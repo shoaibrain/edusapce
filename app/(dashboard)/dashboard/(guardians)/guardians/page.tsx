@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "Guardians",
   description: "Guardians Dashboard",
 }
-const URL = 'https://project-eduspace.vercel.app/api/v1';
+const URL = process.env.API_URL;
 
 async function getGuardians() {
     try {
@@ -79,7 +79,6 @@ export default async function GuardiansPage() {
           <div className='container mx-auto py-10'>
           <DataTableGuardian columns={columns} data={guardians} />
         </div>
-
     </>
   )
 }

@@ -55,7 +55,7 @@ export function ProfileOptions({
                   {guardian && <GuardianEditForm guardian={guardian} /> }
                   </DialogContent>
             </Dialog>
-          </div>
+        </div>
         <DropdownMenuSeparator />
         <Link href = "#" >View Students</Link>
         <DropdownMenuSeparator />

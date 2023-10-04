@@ -4,6 +4,15 @@ import { Metadata } from "next";
 import { ProfileOptions } from "@/components/profile-options";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GuardianCard } from "@/components/guardian-card";
+import { Dialog,
+        DialogContent,
+        DialogDescription,
+        DialogHeader,
+        DialogTitle,
+        DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { GuardianAddForm } from "@/components/forms/form-guardian-add";
+
 
 export const metadata: Metadata = {
   title: "Student Details",
@@ -12,7 +21,7 @@ export const metadata: Metadata = {
 interface StudentPageProps {
   params: { studentId: string };
 }
-const URL = 'https://project-eduspace.vercel.app/api/v1';
+const URL = process.env.API_URL;
 
 async function getStudent(studentId: Student["id"]) {
   try {
@@ -107,9 +116,29 @@ export default async function StudentPage({ params }: StudentPageProps) {
 
               </TabsContent>
               <TabsContent value="guardians">
-              {guardians.map((guardian) => (
-                  <GuardianCard key={guardian.id} parent={guardian} />
-              ))}
+               {guardians.length > 0 ? (
+                  guardians.map((guardian) => (
+                    <GuardianCard key={guardian.id} parent={guardian} />
+                  ))
+                ) : (
+                  <p className="text-sm font-medium">No guardian for this student.</p>
+                )}
+              <div className="p-4">
+                <Dialog>
+                      <DialogTrigger asChild>
+                      <Button variant={"outline"}> Add Guardian </Button>
+                      </DialogTrigger>
+                      <DialogContent className="mx-auto sm:max-w-[800px]">
+                        <DialogHeader>
+                          <DialogTitle>Add Parent for {student.firstName}</DialogTitle>
+                          <DialogDescription>
+                            Enter guardian information here. Click save when you are done.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <GuardianAddForm studentId={student.id}/>
+                      </DialogContent>
+                </Dialog>
+              </div>
               </TabsContent>
               <TabsContent value="accounts">Account Details</TabsContent>
         </Tabs>

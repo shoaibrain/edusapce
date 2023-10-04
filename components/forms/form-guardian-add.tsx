@@ -24,16 +24,16 @@ import {
 import { toast } from "@/components/ui/use-toast"
 import { guardianCreateSchema } from "@/lib/validations/guardian"
 import React from "react"
-import { Icons } from "./icons"
+import { Icons } from "@/components/icons"
 import { useRouter } from "next/navigation"
 
 interface GuardianFormProps extends React.HTMLAttributes<HTMLFormElement> {
   studentId?: string;
 }
 type formData = z.infer<typeof guardianCreateSchema>
-const URL = 'https://project-eduspace.vercel.app/api/v1';
+const URL = process.env.API_URL;
 
-export function GuardianInfoForm({
+export function GuardianAddForm({
   studentId,
   className,
   ...props
@@ -60,26 +60,36 @@ export function GuardianInfoForm({
     if (studentId) {
       data.students = [studentId];
     }
-    setIsSaving(true);
-    const response = await fetch(`${URL}/guardians`,{
-      method : 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
-    setIsSaving(false);
-    if (!response?.ok) {
-      return toast({
-        title: "Something went wrong.",
-        description: `Failed to update student: ${response?.statusText}`,
-        variant: "destructive",
-      })
-    }
+
     toast({
-      description: "Your profile has been updated.",
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
     })
-    router.refresh()
+
+    // setIsSaving(true);
+    // const response = await fetch(`${URL}/guardians`,{
+    //   method : 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(data)
+    // })
+    // setIsSaving(false);
+    // if (!response?.ok) {
+    //   return toast({
+    //     title: "Something went wrong.",
+    //     description: `Failed to update student: ${response?.statusText}`,
+    //     variant: "destructive",
+    //   })
+    // }
+    // toast({
+    //   description: "Your profile has been updated.",
+    // })
+    // router.refresh()
   }
 
   return (

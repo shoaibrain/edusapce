@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Employees",
   description: "Employees Dashboard",
 }
-const URL = 'https://project-eduspace.vercel.app/api/v1';
+const URL = process.env.API_URL;
 
 const getEmployees = async () => {
   try {
@@ -87,7 +87,6 @@ export default async function EmployeesPage() {
           <div className='container mx-auto py-10'>
           <DataTable columns={columns} data={[]} />
           </div>
-
     </>
   )
 }

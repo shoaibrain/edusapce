@@ -27,7 +27,7 @@ interface StudentEditFromProps extends React.HTMLAttributes<HTMLFormElement> {
 }
 
 type FormData = z.infer<typeof studentPatchSchema>
-const URL = "https://project-eduspace.vercel.app/api/v1";
+const URL =  process.env.API_URL;
 
 export function StudentEditForm({
   student,
@@ -53,27 +53,37 @@ export function StudentEditForm({
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
   async function onSubmit(data: FormData) {
-    setIsSaving(true)
-    const response = await fetch(`${URL}/students/${student.id}`,{
-      method : 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
-    setIsSaving(false)
-    if (!response?.ok) {
-      return toast({
-        title: "Something went wrong.",
-        description: `Failed to update student information.`,
-        variant: "destructive",
-      })
-    }
 
     toast({
-      title:"Successfully updated",
-      description: "Information has been updated.",
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
     })
+
+    // setIsSaving(true)
+    // const response = await fetch(`${URL}/students/${student.id}`,{
+    //   method : 'PATCH',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(data)
+    // })
+    // setIsSaving(false)
+    // if (!response?.ok) {
+    //   return toast({
+    //     title: "Something went wrong.",
+    //     description: `Failed to update student information.`,
+    //     variant: "destructive",
+    //   })
+    // }
+
+    // toast({
+    //   title:"Successfully updated",
+    //   description: "Information has been updated.",
+    // })
 
   }
   return (
@@ -125,7 +135,6 @@ export function StudentEditForm({
                 )}
               />
             </div>
-
             <div  className="sm:col-span-2">
               <FormField
                 control={form.control}
@@ -193,6 +202,21 @@ export function StudentEditForm({
                     <FormDescription>
                       home address
                     </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <FormField
+                control={form.control}
+                name="enrollmentStatus"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Enrollment Status</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

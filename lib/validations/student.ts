@@ -12,9 +12,7 @@ export const studentPatchSchema = z.object({
   phone: z.string().optional(),
   address: z.string().optional(),
   enrollmentStatus: z.string().optional(),
-  gradeLevelId: z.string().optional(),
-  guardians: z.array(z.string()).optional(),
-  gradeLevel: z.string().optional(),
+  guardians: z.array(z.string()).optional()
 
 });
 

@@ -3,6 +3,10 @@ import { Metadata } from "next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ProfileOptions } from "@/components/profile-options";
 import { Guardian } from "@prisma/client";
+import { StudentCard } from "@/components/student-card";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Guardian Details",
@@ -12,7 +16,7 @@ interface GuardianPageProps {
   params: { guardianId: string };
 }
 
-const URL = 'https://project-eduspace.vercel.app/api/v1';
+const URL = process.env.API_URL;
 
 async function getGuardian(guardianId: Guardian["id"]) {
   console.log(URL)
@@ -41,8 +45,9 @@ export default async function GuardianPage({ params }: GuardianPageProps) {
   if (!guardian) {
     notFound();
   }
+  const students = guardian.students || [];
   return (
-    <div>
+      <div>
           <div className="flex-1 space-y-4 p-8 pt-6">
               <div className="flex items-center justify-between space-y-2">
                 <h2 className="text-sm font-medium">
@@ -55,8 +60,8 @@ export default async function GuardianPage({ params }: GuardianPageProps) {
               <Tabs defaultValue="overview" className="space-y-4">
               <TabsList className="p-5">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="students" disabled>Students</TabsTrigger>
-                <TabsTrigger value="accounts" disabled>Accounts</TabsTrigger>
+                <TabsTrigger value="students">Students</TabsTrigger>
+                <TabsTrigger value="accounts">Accounts</TabsTrigger>
               </TabsList>
               <TabsContent value="overview" className="space-y-4">
                 <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
@@ -91,12 +96,25 @@ export default async function GuardianPage({ params }: GuardianPageProps) {
                 </div>
 
               </TabsContent>
-              <TabsContent value="students">Student details</TabsContent>
+              <TabsContent value="students">
+                { students.length > 0 ? (
+                  students.map((student) => (
+                    <StudentCard key={student.id} student={student} />
+                ))
+                ) : (
+                  <p className="text-sm font-medium">No students found for this guardian.</p>
+                )}
+                <div className="p-4">
+                    <Link href="/admission" className={cn(buttonVariants({ size: "sm", variant: "outline" }))}>
+                        Admit new Student
+                    </Link>
+                </div>
+              </TabsContent>
               <TabsContent value="accounts">Account Details</TabsContent>
             </Tabs>
           </div>
 
-    </div>
+     </div>
   );
 
 }

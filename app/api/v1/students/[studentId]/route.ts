@@ -70,9 +70,6 @@ export async function PATCH(
     if (body.guardians) data.guardians = {
       connect: body.guardians.map((guardianId: string) => ({ id: guardianId })),
     };
-    if (body.gradeLevel) data.gradeLevel = {
-      connect: { id: body.gradeLevel },
-    };
 
 
     await patchStudent(params.studentId as string, data);

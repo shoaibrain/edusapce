@@ -35,7 +35,7 @@ interface GuardianEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
 }
 
 type FormData = z.infer<typeof guardianPatchSchema>
-const URL = "https://project-eduspace.vercel.app/api/v1";
+const URL = process.env.API_URL;
 
 export function GuardianEditForm({
   guardian,
@@ -61,25 +61,34 @@ export function GuardianEditForm({
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
   async function onSubmit(data: FormData) {
-    setIsSaving(true)
-    const response = await fetch(`${URL}/guardians/${guardian.id}`,{
-      method : 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
-    setIsSaving(false)
-    if (!response?.ok) {
-      return toast({
-        title: "Something went wrong.",
-        description: `Failed to update guardian information.`,
-        variant: "destructive",
-      })
-    }
+    // setIsSaving(true)
+    // const response = await fetch(`${URL}/guardians/${guardian.id}`,{
+    //   method : 'PATCH',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(data)
+    // })
+    // setIsSaving(false)
+    // if (!response?.ok) {
+    //   return toast({
+    //     title: "Something went wrong.",
+    //     description: `Failed to update guardian information.`,
+    //     variant: "destructive",
+    //   })
+    // }
+    // toast({
+    //   title:"Successfully updated",
+    //   description: "Information has been updated.",
+    // })
+
     toast({
-      title:"Successfully updated",
-      description: "Information has been updated.",
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
     })
   }
   return (

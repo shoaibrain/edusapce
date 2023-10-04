@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "Students",
   description: "Students Dashboard",
 }
-const URL = 'https://project-eduspace.vercel.app/api/v1';
+const URL = process.env.API_URL;
 
 async function getStudents() {
   try {
