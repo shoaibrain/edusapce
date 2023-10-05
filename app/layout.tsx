@@ -35,7 +35,6 @@ export const metadata = {
     "Server Components",
     "Radix UI",
     "School management system",
-    "School management software",
   ],
   authors: [
     {
@@ -43,7 +42,7 @@ export const metadata = {
       url: "https://twitter.com/shoaib_rain",
     },
   ],
-  creator: "Shoaib Rain | forked from https://tx.shadcn.com/",
+  creator: "Shoaib Rain",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },
     { media: "(prefers-color-scheme: dark)", color: "black" },

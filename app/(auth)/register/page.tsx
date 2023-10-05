@@ -6,7 +6,7 @@ import { Icons } from "@/components/icons"
 import { UserRegisterForm } from "@/components/user-register-form"
 
 export const metadata = {
-  title: "Create an account",
+  title: "Register",
   description: "Create an account to get started.",
 }
 
