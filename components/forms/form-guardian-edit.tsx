@@ -54,7 +54,7 @@ export function GuardianEditForm({
       phone: guardian?.phone || "",
       address: guardian?.address || "",
       profession: guardian?.profession || "",
-      annualIncome: guardian?.annualIncome || "",
+      annualIncome: guardian?.annualIncome || ""
     }
   })
 

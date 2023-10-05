@@ -1,29 +1,17 @@
 import * as z from "zod"
 
 export const guardianPatchSchema = z.object({
-  firstName: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }).max(30, {
-    message: "Username must not be longer than 30 characters.",
-  }).optional(),
-lastName: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }).max(30, {
-    message: "Username must not be longer than 30 characters.",
-  }).optional(),
+firstName: z.string().min(2, ).max(30).optional(),
+lastName: z.string().min(2).max(30).optional(),
 phone: z.string().min(2, {
-    message: "enter vaid phone number",
+    message: "enter vaid phone number.",
   }).max(10, {
-    message: "enter vaid phone number",
+    message: "enter vaid phone number.",
   }).optional(),
-address: z.string().min(2, {
-    message: "enter vaid address",
-  }).max(30, {
-    message: "enter vaid address",
-  }).optional(),
+address: z.string().min(2).max(30).optional(),
 email: z
   .string({
-    required_error: "Please enter a valid email.",
+    required_error: "enter a valid email.",
   })
   .email().optional(),
 profession: z.string().optional(),

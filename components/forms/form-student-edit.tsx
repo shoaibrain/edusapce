@@ -3,7 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { CalendarIcon, CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
 import {
   Form,
   FormControl,
@@ -20,6 +21,16 @@ import React from "react"
 import { Icons } from "@/components/icons"
 import {  Student } from "@prisma/client"
 import { studentPatchSchema } from "@/lib/validations/student"
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+import { format } from "date-fns"
+import { Calendar } from "../ui/calendar"
+import { Command, CommandGroup, CommandInput, CommandItem } from "../ui/command"
+
+const genders = [
+  { label: "Male", value: "m" },
+  { label: "Female", value: "f" },
+  { label: "Other", value: "o" },
+] as const
 
 
 interface StudentEditFromProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -133,6 +144,113 @@ export function StudentEditForm({
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <FormField
+                control={form.control}
+                name="birthDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Date of birth</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-[240px] pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date("1900-01-01")
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormDescription>
+                      Your date of birth is used to calculate your age.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Language</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-[200px] justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? genders.find(
+                                    (gender) => gender.value === field.value
+                                  )?.label
+                                : "Select gender"}
+                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[200px] p-0">
+                            <Command>
+                              <CommandGroup>
+                                {genders.map((gender) => (
+                                  <CommandItem
+                                    value={gender.label}
+                                    key={gender.value}
+                                    onSelect={() => {
+                                      form.setValue("gender", gender.value);
+                                    }}
+                                  >
+                                    <CheckIcon
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        gender.value === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {gender.label}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormDescription>
+                        Bith gender of student
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
               />
             </div>
             <div  className="sm:col-span-2">

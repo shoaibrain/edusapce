@@ -8,11 +8,19 @@ export const studentPatchSchema = z.object({
   gender: z.string().optional(),
   nationality: z.string().optional(),
   ssn: z.string().optional(),
-  email: z.string().email().optional(),
-  phone: z.string().optional(),
+  email: z
+  .string({
+    required_error: "enter a valid email.",
+  })
+  .email().optional(),
+  phone: z.string().min(2, {
+    message: "enter vaid phone number.",
+  }).max(10, {
+    message: "enter vaid phone number.",
+  }).optional(),
   address: z.string().optional(),
   enrollmentStatus: z.string().optional(),
-  guardians: z.array(z.string()).optional()
+  guardians: z.array(z.string()).optional() // array of guardian ids
 
 });
 
