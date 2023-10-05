@@ -21,6 +21,12 @@ export const dashboardConfig: DashboardConfig = {
       icon: "dashboard",
     },
     {
+      title: "Academics",
+      href: "/dashboard/academics",
+      disabled: false,
+      icon: "billing"
+    },
+    {
       title: "Students",
       href: "/dashboard/students",
       disabled: false,

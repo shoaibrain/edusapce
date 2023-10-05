@@ -27,6 +27,7 @@ import {
   Backpack,
   Users,
   LayoutDashboard,
+
   Award,
   X,
   type Icon as LucideIcon,
@@ -41,6 +42,7 @@ export const Icons = {
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
   trash: Trash,
+  academic: Command,
   post: FileText,
   page: File,
   media: Image,
@@ -53,7 +55,7 @@ export const Icons = {
   arrowRight: ArrowRight,
   help: HelpCircle,
   pizza: Pizza,
-  dashboard: LayoutDashboard, 
+  dashboard: LayoutDashboard,
   users: Users,
   sun: SunMedium,
   moon: Moon,
@@ -61,6 +63,7 @@ export const Icons = {
   class: Backpack,
   exam: Award,
   laptop: Laptop,
+
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
