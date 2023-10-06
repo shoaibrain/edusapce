@@ -40,7 +40,25 @@
       label: "TEN",
     }
   ]
-  
+  export const departments = [
+    {
+      value: "Science",
+      label: "SCIENCE",
+    },
+    {
+      value: "Arts",
+      label: "ARTS",
+    },
+    {
+      value: "Mathematics",
+      label: "Mathematics",
+    },
+    {
+      value: "General",
+      label: "GENERAL",
+    },
+  ]
+
   export const enrollment_status = [
     {
       label: "Enrolled",

@@ -8,6 +8,7 @@ export const getEmployees = async () => {
           id: true,
           firstName: true,
           lastName: true,
+          gender: true,
           email: true,
           phone: true,
           address: true,

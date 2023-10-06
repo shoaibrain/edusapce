@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { GraduationCap, Gauge, Users, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
-import {  columns } from '@/components/columns'
-import { DataTable } from '@/components/data-table'
+import { DataTable } from '@/components/data-tables/data-table'
 import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { columns } from '@/components/data-tables/columns-employee-data-table'
 
 export const metadata: Metadata = {
   title: "Employees",
@@ -34,6 +35,11 @@ const getEmployees = async () => {
   }
 }
 export default async function EmployeesPage() {
+  const employees = await getEmployees();
+  if (!employees) {
+    notFound()
+  }
+
   return (
     <>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -85,7 +91,7 @@ export default async function EmployeesPage() {
             </div>
           </div>
           <div className='container mx-auto py-10'>
-          <DataTable columns={columns} data={[]} />
+          <DataTable columns={columns} data={employees} empolyee={true}/>
           </div>
     </>
   )

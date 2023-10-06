@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {  Gauge, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
-import { DataTableGuardian } from '@/components/data-table-guardians'
-import {  columns } from '@/components/columns-guardian'
+import {  columns } from '@/components/data-tables/columns-guardian-data-table'
 import { Metadata } from 'next'
+import { DataTable } from '@/components/data-tables/data-table'
 
 export const metadata: Metadata = {
   title: "Guardians",
@@ -77,7 +77,7 @@ export default async function GuardiansPage() {
             </div>
           </div>
           <div className='container mx-auto py-10'>
-          <DataTableGuardian columns={columns} data={guardians} />
+          <DataTable columns={columns} data={guardians} guardian={true}/>
         </div>
     </>
   )

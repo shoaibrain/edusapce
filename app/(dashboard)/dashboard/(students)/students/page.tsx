@@ -6,8 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Gauge, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
-import { columns } from '@/components/columns'
-import { DataTable } from '@/components/data-table'
+import { columns } from '@/components/data-tables/columns-student-data-table'
+import { DataTable } from '@/components/data-tables/data-table'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -82,7 +82,7 @@ export default async function StudentsPage() {
             </div>
           </div>
           <div className="container mx-auto  py-10">
-            <DataTable columns={columns} data={students} />
+            <DataTable columns={columns} data={students} student={true} />
           </div>
     </>
   )

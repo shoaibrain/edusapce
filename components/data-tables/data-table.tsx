@@ -26,18 +26,26 @@ import {
 import { DataTablePagination } from "./data-table-pagination"
 
 import React from "react"
-import { DataTableToolbar } from "./data-table-toolbar"
+import { StudentDataTableToolbar } from "./search-filter-toolbar-student"
+import { GuardianDataTableToolbar } from "./search-filter-toolbar-guardian"
+import { EmployeeDataTableToolbar } from "./search-filter-toolbar-employee"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  student?: boolean
+  guardian?: boolean
+  empolyee?: boolean
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  student,
+  guardian,
+  empolyee,
 }: DataTableProps<TData, TValue>) {
-  
+
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -66,9 +74,27 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-   
+
     <div className="space-y-4">
-      <DataTableToolbar table={table} />
+      {student ? (
+        <>
+          <StudentDataTableToolbar table={table} />
+        </>
+      ) : null}
+      {
+        guardian ? (
+          <>
+            <GuardianDataTableToolbar table={table} />
+          </>
+        ) : null
+      }
+      {
+        empolyee ? (
+          <>
+            <EmployeeDataTableToolbar table={table} />
+          </>
+        ) : null
+      }
       <div className="rounded-md border">
         <Table>
           <TableHeader>
