@@ -1,21 +1,19 @@
 "use client"
 
 import * as React from "react"
-
 import { useRouter } from "next/navigation"
-
 import { Card, CardHeader,
-          CardFooter, CardTitle, 
+          CardFooter, CardTitle,
           CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import {ZodType, z} from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast"
 import { userRegisterSchema } from "@/lib/validations/userRegisterSchema";
-import axios from "axios";
+import { z } from "zod";
+
 
 interface UserRegisterFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -23,18 +21,20 @@ type FormData = z.infer<typeof userRegisterSchema>
 
 export function UserRegisterForm({className, ...props}:UserRegisterFormProps ) {
   const router = useRouter()
-  
+
   const {register, handleSubmit, formState:{errors}} = useForm<FormData>({resolver: zodResolver(userRegisterSchema)})
-  
+
   async function registerUser(data: FormData) {
     try {
-      const response = await axios.post('/api/register', data);
-      console.log(response);
+      const response = await fetch("/api/auth/register")
+
       toast({
         title: 'Registered successfully',
         variant: "default",
       });
+
       router.push('/login');
+
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
         const errorMessage = error.response.data.message;
@@ -51,7 +51,7 @@ export function UserRegisterForm({className, ...props}:UserRegisterFormProps ) {
         }
       } else {
         toast({
-          title: 'Error during registration',
+          title: 'Failed to register user. contact admin',
           variant: "destructive"
         });
       }
@@ -92,13 +92,13 @@ export function UserRegisterForm({className, ...props}:UserRegisterFormProps ) {
           <Input id="confirmPassword" type="password" autoCapitalize="none" autoCorrect="off"{...register("confirmPassword")}/>
           {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
           </div>
-        </CardContent>        
+        </CardContent>
 
         <CardFooter>
         <Button className="w-full" type="submit">Create account</Button>
       </CardFooter>
       </form>
-      </Card>    
+      </Card>
 
   )
 }

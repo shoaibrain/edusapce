@@ -28,7 +28,6 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
     setIsLoading(true)
     try {
         const signInResult = await signIn("credentials", {
-          //Todo: if user not found, redirect to signup page
           email: data.email.toLowerCase(),
           password: data.password,
           redirect: true,
@@ -44,7 +43,7 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
         }
          toast({
           title: "Logged in successfully",
-        })  
+        })
     } catch (error) {
       console.log(error)
     }
@@ -87,6 +86,12 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
               disabled={isLoading}
               {...register("password")}
             />
+            {/* BUG: Error doesnt show up for this filed */}
+            { errors?.password && (
+              <p className="px-1 text-xs text-red-600">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           <button className={cn(buttonVariants())} disabled={isLoading}>

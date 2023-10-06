@@ -53,6 +53,8 @@ export function StudentEditForm({
       firstName: student?.firstName,
       middleName: student?.middleName || "",
       lastName: student?.lastName,
+      birthDate: student?.birthDate || "",
+      gender: student?.gender,
       nationality: student?.nationality || "",
       email: student?.email || "",
       phone: student?.phone || "",
@@ -65,36 +67,36 @@ export function StudentEditForm({
 
   async function onSubmit(data: FormData) {
 
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
-
-    // setIsSaving(true)
-    // const response = await fetch(`${URL}/students/${student.id}`,{
-    //   method : 'PATCH',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(data)
-    // })
-    // setIsSaving(false)
-    // if (!response?.ok) {
-    //   return toast({
-    //     title: "Something went wrong.",
-    //     description: `Failed to update student information.`,
-    //     variant: "destructive",
-    //   })
-    // }
-
     // toast({
-    //   title:"Successfully updated",
-    //   description: "Information has been updated.",
+    //   title: "You submitted the following values:",
+    //   description: (
+    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+    //     </pre>
+    //   ),
     // })
+
+    setIsSaving(true)
+    const response = await fetch(`${URL}/students/${student.id}`,{
+      method : 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+    setIsSaving(false)
+    if (!response?.ok) {
+      return toast({
+        title: "Something went wrong.",
+        description: `Failed to update student information.`,
+        variant: "destructive",
+      })
+    }
+
+    toast({
+      title:"Successfully updated",
+      description: "Information has been updated.",
+    })
 
   }
   return (
@@ -198,7 +200,7 @@ export function StudentEditForm({
                   name="gender"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Language</FormLabel>
+                      <FormLabel>Birth gender</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>

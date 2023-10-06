@@ -3,7 +3,7 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
-import { UserRegisterForm } from "@/components/user-register-form"
+import { UserRegisterForm } from "@/components/forms/user-register-form"
 
 export const metadata = {
   title: "Register",
@@ -12,8 +12,8 @@ export const metadata = {
 
 export default function RegisterPage() {
   return (
-    <div className="container grid h-screen w-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
-      <Link
+    <>
+          <Link
         href="/login"
         className={cn(
           buttonVariants({ variant: "ghost" }),
@@ -22,6 +22,7 @@ export default function RegisterPage() {
       >
         Login
       </Link>
+      <div className="container grid w-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="hidden h-full bg-muted lg:block" />
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
@@ -47,5 +48,7 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+
+    </>
   )
 }
