@@ -2,7 +2,7 @@ import prisma from "@/lib/db";
 
 export const getClasses = async () => {
   try {
-    const classes = await prisma.class.findMany({
+    const classes = await prisma.classPeriod.findMany({
       select: {
         id: true,
         name: true,
@@ -20,7 +20,7 @@ export const getClasses = async () => {
 
 export const getClass = async (classId: string) => {
   try {
-    const classData = await prisma.class.findUnique({
+    const classData = await prisma.classPeriod.findUnique({
       where: {
         id: classId,
       },
@@ -46,7 +46,7 @@ export const getClass = async (classId: string) => {
 
 export const postClass = async (classData) => {
   try {
-    const newClass = await prisma.class.create({
+    const newClass = await prisma.classPeriod.create({
       data: classData,
     })
     return newClass;
@@ -57,7 +57,7 @@ export const postClass = async (classData) => {
 
 export const deleteClass = async (classId: string) => {
   try {
-    await prisma.class.delete({
+    await prisma.classPeriod.delete({
       where: {
         id: classId,
       },
@@ -70,7 +70,7 @@ export const deleteClass = async (classId: string) => {
 
 export const patchClass = async (classId: string, classData) => {
   try {
-    const updatedClass = await prisma.class.update({
+    const updatedClass = await prisma.classPeriod.update({
       where: {
         id: classId,
       },

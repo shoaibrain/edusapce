@@ -38,7 +38,8 @@ interface StudentEditFromProps extends React.HTMLAttributes<HTMLFormElement> {
 }
 
 type FormData = z.infer<typeof studentPatchSchema>
-const URL =  process.env.API_URL;
+// TODO: replace with env variable
+const URL = 'http://localhost:3000/api/v1'
 
 export function StudentEditForm({
   student,
@@ -53,8 +54,6 @@ export function StudentEditForm({
       firstName: student?.firstName,
       middleName: student?.middleName || "",
       lastName: student?.lastName,
-      birthDate: student?.birthDate || "",
-      gender: student?.gender,
       nationality: student?.nationality || "",
       email: student?.email || "",
       phone: student?.phone || "",
@@ -200,7 +199,7 @@ export function StudentEditForm({
                   name="gender"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Birth gender</FormLabel>
+                      <FormLabel>Language</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>

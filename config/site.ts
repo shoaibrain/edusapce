@@ -2,8 +2,8 @@ export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
   name: "eduSpace",
-  description:"A School Management System",
-  url: "https://project-eduspace.vercel.app",
+  description:"School Management System",
+  url: "http://localhost:3000/",
   mainNav: [
     {
       title: "Home",

@@ -49,6 +49,27 @@ model User {
   @@map("users")
 }
 
+model Employee {
+  id         String        @id @default(cuid())
+  firstName  String
+  middleName String?
+  lastName   String
+  phone      String
+  email      String?
+  address    String
+  classes    ClassPeriod[] // Employee|Teacher can teach multiple classes
+  role       Role          @default(STAFF)
+  birthDate  DateTime
+  gender     String
+  ssn        String?
+  department String?
+  hiredDate  DateTime?     @map("hired_date")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime      @default(now()) @map("updated_at")
+
+  @@map("employees")
+}
+
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -69,16 +90,84 @@ model Session {
 }
 
 enum Role {
+  SUPPORT
   ADMIN
+  PRINCIPAL
   TEACHER
   STAFF
   STUDENT
   USER
 }
 
+model SchoolYear {
+  id              String   @id @default(cuid())
+  name            String
+  startDate       DateTime
+  endDate         DateTime
+  terms           Term[]
+  allocatedBudget Float?
+  expenses        Float?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @map("updated_at")
+
+  @@map("school_years")
+}
+
+model Term {
+  id          String       @id @default(cuid())
+  yearId      String // Foreign key to SchoolYear
+  name        String
+  startDate   DateTime
+  endDate     DateTime
+  schoolYear  SchoolYear   @relation(fields: [yearId], references: [id])
+  gradeLevels GradeLevel[]
+
+  @@map("school_terms")
+}
+
+// First grade, second grade, etc.
+model GradeLevel {
+  id            String        @id @default(cuid())
+  name          String        @unique
+  description   String?
+  levelCategory String // Elementary, Middle, High
+  levelOrder    Int
+  students      Student[]
+  classes       ClassPeriod[] // Classes belonging to this grade level
+  Term          Term?         @relation(fields: [termId], references: [id])
+  termId        String?
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @default(now()) @map("updated_at")
+
+  @@map("grade_levels")
+}
+
+// First Period, Second Period, etc.
+model ClassPeriod {
+  id           String     @id @default(cuid())
+  name         String
+  capacity     Int?
+  subject      Subject    @relation(fields: [subjectId], references: [id])
+  department   String
+  description  String?
+  startTime    DateTime
+  endTime      DateTime
+  gradeLevelId String? // Foreign key to GradeLevel
+  teachers     Employee[] // A class can be taught by multiple teachers
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @default(now()) @map("updated_at")
+
+  // Explicit foreign key reference
+  gradeLevel GradeLevel? @relation(fields: [gradeLevelId], references: [id])
+  subjectId  String
+
+  @@map("class_periods")
+}
+
 model Guardian {
   id           String    @id @default(cuid())
   firstName    String
+  middleName   String?
   lastName     String
   phone        String
   address      String
@@ -88,6 +177,8 @@ model Guardian {
   guardianType String?
   role         Role      @default(USER)
   students     Student[]
+  isPrimary    Boolean   @default(false) @map("is_primary")
+  canPickup    Boolean   @default(false) @map("can_pickup")
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @default(now()) @map("updated_at")
 
@@ -117,56 +208,48 @@ model Student {
   @@map("students")
 }
 
-// First Grade, Second Grade, Third Grade, etc.
-model GradeLevel {
-  id            String    @id @default(cuid())
-  name          String    @unique
-  description   String?
-  levelCategory String? // Elementary, Middle, High
-  levelOrder    Int
-  students      Student[]
-  classes       Class[]
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @default(now()) @map("updated_at")
+model Test {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  type        String // Quiz, Assignment, Terminal  Exam, Final Exam, etc.
+  question    String? // url to the question file
+  classId     String? // Foreign key to ClassPeriod
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @map("updated_at")
+  Subject     Subject? @relation(fields: [subjectId], references: [id])
+  subjectId   String?
 
-  @@map("grade_levels")
+  @@map("tests")
 }
 
-// Math, Science, English, etc.
-model Class {
-  id           String      @id @default(cuid())
-  name         String
-  capacity     Int
-  department   String?
+// Math, English, Chemistry, etc.
+model Subject {
+  id           String        @id @default(cuid())
+  subjectName  String
+  textbookName String?
+  textbookUrl  String?
   description  String?
-  startTime    DateTime
-  endTime      DateTime
-  gradeLevelId String?
-  gradeLevel   GradeLevel? @relation(fields: [gradeLevelId], references: [id])
-  teachers     Employee[] // A class can be taught by multiple teachers
-  createdAt    DateTime    @default(now()) @map("created_at")
-  updatedAt    DateTime    @default(now()) @map("updated_at")
+  department   String?
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @default(now()) @map("updated_at")
+  ClassPeriod  ClassPeriod[]
+  tests        Test[] // A subject can have multiple tests
 
-  @@map("classes")
+  @@map("subjects")
 }
 
-model Employee {
-  id         String    @id @default(cuid())
-  firstName  String
-  middleName String?
-  lastName   String
-  phone      String
-  email      String?
-  address    String
-  classes    Class[] // Employee|Teacher can teach multiple classes
-  role       Role      @default(STAFF)
-  birthDate  DateTime
-  gender     String
-  ssn        String?
-  department String?
-  hiredDate  DateTime? @map("hired_date")
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @default(now()) @map("updated_at")
+// First through third, its Elementary (same class all day, it can have one or more teacher/substitue-teacher) & have class periods
 
-  @@map("employees")
-}
+// Fourth to Twelve, it is middle school (different classes, different teachers)
+// Fourth thru fifth, it is middle school (different classes, different teachers)
+// Sith, thru Eighth is Junior High
+// Ninth thru Twelth is High School
+
+// All student can have tests, quizzes, assignments, final exams, etc.
+// Final exam is over all the stuffs that you have learned in the academic year
+
+// A general Test, can be of category Quiz, Assignment, Final Exam, etc.
+// A Test can have multiple questions(ClassQuestion)
+// A Test can be taken by multiple students
+// A Test can be taken by multiple classes
