@@ -86,7 +86,7 @@ export default async function EmployeesPage() {
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3'>
             <div>
             <Link href="/hire" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
-              Add New Employee
+              Some Button
             </Link>
             </div>
           </div>

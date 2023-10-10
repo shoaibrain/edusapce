@@ -77,7 +77,7 @@ export default async function StudentsPage() {
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3'>
             <div>
             <Link href="/admission" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
-              Add Student
+              Some Button
             </Link>
             </div>
           </div>

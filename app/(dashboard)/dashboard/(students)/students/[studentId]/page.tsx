@@ -37,7 +37,6 @@ async function getStudent(studentId: Student["id"]) {
     }
     return res.json();
   } catch(error) {
-    console.error('Error fetching students:', error);
     throw error;
   }
 }

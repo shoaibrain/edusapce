@@ -1,6 +1,6 @@
 import * as z from "zod"
 
-export const EmployeePatchSchema = z.object({
+export const employeePatchSchema = z.object({
     firstName: z.string().min(3).max(32).optional(),
     middleName: z.string().optional(),
     lastName: z.string().min(3).max(32).optional(),
