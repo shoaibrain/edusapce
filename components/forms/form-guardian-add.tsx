@@ -31,7 +31,8 @@ interface GuardianFormProps extends React.HTMLAttributes<HTMLFormElement> {
   studentId?: string;
 }
 type formData = z.infer<typeof guardianCreateSchema>
-const URL = process.env.API_URL;
+// const URL = process.env.API_URL;
+const URL = 'http://localhost:3000/api/v1';
 
 export function GuardianAddForm({
   studentId,
@@ -61,35 +62,28 @@ export function GuardianAddForm({
       data.students = [studentId];
     }
 
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
+    console.log(`data: ${JSON.stringify(data, null, 2)}`)
 
-    // setIsSaving(true);
-    // const response = await fetch(`${URL}/guardians`,{
-    //   method : 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(data)
-    // })
-    // setIsSaving(false);
-    // if (!response?.ok) {
-    //   return toast({
-    //     title: "Something went wrong.",
-    //     description: `Failed to update student: ${response?.statusText}`,
-    //     variant: "destructive",
-    //   })
-    // }
-    // toast({
-    //   description: "Your profile has been updated.",
-    // })
-    // router.refresh()
+    setIsSaving(true);
+    const response = await fetch(`${URL}/guardians`,{
+      method : 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+    setIsSaving(false);
+    if (!response?.ok) {
+      return toast({
+        title: "Something went wrong.",
+        description: `Failed to add guardian for ${data.firstName} ${data.lastName}`,
+        variant: "destructive",
+      })
+    }
+    toast({
+      description: "A new guardian has been added.",
+    })
+    router.refresh()
   }
 
   return (

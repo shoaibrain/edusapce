@@ -26,13 +26,23 @@ export function UserRegisterForm({className, ...props}:UserRegisterFormProps ) {
 
   async function registerUser(data: FormData) {
     try {
-      const response = await fetch("/api/auth/register")
-
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+      if (!response.ok) {
+        toast({
+          title: 'Failed to register user. contact admin',
+          variant: "destructive",
+        });
+      }
       toast({
         title: 'Registered successfully',
         variant: "default",
       });
-
       router.push('/login');
 
     } catch (error) {

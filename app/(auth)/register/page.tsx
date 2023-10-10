@@ -13,7 +13,7 @@ export const metadata = {
 export default function RegisterPage() {
   return (
     <>
-          <Link
+      <Link
         href="/login"
         className={cn(
           buttonVariants({ variant: "ghost" }),
@@ -39,7 +39,7 @@ export default function RegisterPage() {
           <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <Link
-              href="/terms"
+              href="/"
               className="hover:text-brand underline underline-offset-4"
             >
               Terms of Service

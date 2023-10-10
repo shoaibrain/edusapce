@@ -1,10 +1,9 @@
 import * as z from "zod"
 
 export const studentPatchSchema = z.object({
-  firstName: z.string().min(3).max(32),
+  firstName: z.string().min(3).max(32).optional(),
   middleName: z.string().optional(),
-  lastName: z.string().min(3).max(32),
-  birthDate: z.date(),
+  lastName: z.string().min(3).max(32).optional(),
   gender: z.string().optional(),
   nationality: z.string().optional(),
   ssn: z.string().optional(),
@@ -15,7 +14,7 @@ export const studentPatchSchema = z.object({
   .email().optional(),
   phone: z.string().min(2, {
     message: "enter vaid phone number.",
-  }).max(10, {
+  }).max(12, {
     message: "enter vaid phone number.",
   }).optional(),
   address: z.string().optional(),

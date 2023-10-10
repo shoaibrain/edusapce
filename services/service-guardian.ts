@@ -44,11 +44,33 @@ export const getGuardian = async(guardianId : string) => {
 
 export const postGuardian = async (guardian) => {
     try {
-        const newGuardian = await prisma.guardian.create({
-            data: guardian,
-          })
-        return newGuardian;
+
+      const guardianData = {
+        firstName: guardian.firstName,
+        lastName: guardian.lastName,
+        email: guardian.email,
+        phone: guardian.phone,
+        address: guardian.address,
+        profession: guardian.profession,
+        annualIncome: guardian.annualIncome,
+        guardianType: guardian.guardianType,
+        students: guardian.students,
+      };
+
+      if (guardian.students && guardian.students.length > 0) {
+        guardianData.students = {
+          connect: guardian.students.map((studentId) => ({
+            id: studentId,
+          })),
+        };
+      }
+      const newGuardian = await prisma.guardian.create({
+        data: guardianData,
+      });
+      return newGuardian;
+
       } catch (error) {
+        console.log(`Error creating student: ${error.message}`)
        throw new Error(`Error creating student: ${error.message}`);
       }
 }

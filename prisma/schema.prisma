@@ -238,18 +238,3 @@ model Subject {
 
   @@map("subjects")
 }
-
-// First through third, its Elementary (same class all day, it can have one or more teacher/substitue-teacher) & have class periods
-
-// Fourth to Twelve, it is middle school (different classes, different teachers)
-// Fourth thru fifth, it is middle school (different classes, different teachers)
-// Sith, thru Eighth is Junior High
-// Ninth thru Twelth is High School
-
-// All student can have tests, quizzes, assignments, final exams, etc.
-// Final exam is over all the stuffs that you have learned in the academic year
-
-// A general Test, can be of category Quiz, Assignment, Final Exam, etc.
-// A Test can have multiple questions(ClassQuestion)
-// A Test can be taken by multiple students
-// A Test can be taken by multiple classes

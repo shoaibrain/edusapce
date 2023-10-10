@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -14,20 +14,21 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { toast } from "@/components/ui/use-toast"
 import { guardianPatchSchema } from "@/lib/validations/guardian"
 import React from "react"
 
 import { Icons } from "@/components/icons"
 import { Guardian } from "@prisma/client"
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
+import { CommandItem } from "../ui/command"
 
+const guardianTypes = [
+    {label:"Father", value:"Father"},
+    {label:"Mother", value:"Mother"},
+    {label: "Other", value:"Other"}
+] as const;
 
 interface GuardianEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   guardian: Guardian;
@@ -35,7 +36,8 @@ interface GuardianEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
 }
 
 type FormData = z.infer<typeof guardianPatchSchema>
-const URL = process.env.API_URL;
+// TODO: replace with env variable
+const URL = 'http://localhost:3000/api/v1'
 
 export function GuardianEditForm({
   guardian,
@@ -61,34 +63,25 @@ export function GuardianEditForm({
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
   async function onSubmit(data: FormData) {
-    // setIsSaving(true)
-    // const response = await fetch(`${URL}/guardians/${guardian.id}`,{
-    //   method : 'PATCH',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(data)
-    // })
-    // setIsSaving(false)
-    // if (!response?.ok) {
-    //   return toast({
-    //     title: "Something went wrong.",
-    //     description: `Failed to update guardian information.`,
-    //     variant: "destructive",
-    //   })
-    // }
-    // toast({
-    //   title:"Successfully updated",
-    //   description: "Information has been updated.",
-    // })
-
+    setIsSaving(true)
+    const response = await fetch(`${URL}/guardians/${guardian.id}`,{
+      method : 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+    setIsSaving(false)
+    if (!response?.ok) {
+      return toast({
+        title: "Something went wrong.",
+        description: `Failed to update guardian information.`,
+        variant: "destructive",
+      })
+    }
     toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+      title:"Successfully updated",
+      description: "Information has been updated.",
     })
   }
   return (
@@ -127,28 +120,59 @@ export function GuardianEditForm({
             </div>
             <div className="sm:col-span-2">
             <FormField
-              control={form.control}
-              name="guardianType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Guardian Type</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a guardian type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Father">Father</SelectItem>
-                      <SelectItem value="Mother">Mother</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+                  control={form.control}
+                  name="guardianType"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Guardian Type</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-[200px] justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? guardianTypes.find(
+                                    (guardianType) => guardianType.value === field.value
+                                  )?.label
+                                : "Select guardian type"}
+                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[200px] p-0">
+                                {guardianTypes.map((guardianType) => (
+                                  <CommandItem
+                                    value={guardianType.label}
+                                    key={guardianType.value}
+                                    onSelect={() => {
+                                      form.setValue("guardianType", guardianType.value);
+                                    }}
+                                  >
+                                    <CheckIcon
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        guardianType.value === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {guardianType.label}
+                                  </CommandItem>
+                                ))}
+                        </PopoverContent>
+                      </Popover>
+                      <FormDescription>
+                        Guardian Type
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
             />
             </div>
             <div  className="sm:col-span-3">

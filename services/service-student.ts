@@ -76,8 +76,6 @@ export const patchStudent = async (studentId: string, studentUpdates) => {
       });
       return patchedStudent;
     } catch (error) {
-      console.log(`Error updating student
-      inside service-student: ${error.message}`)
       throw new Error(`Error updating student: ${error.message}`);
     }
   };
