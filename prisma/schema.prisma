@@ -49,27 +49,6 @@ model User {
   @@map("users")
 }
 
-model Employee {
-  id         String        @id @default(cuid())
-  firstName  String
-  middleName String?
-  lastName   String
-  phone      String
-  email      String?
-  address    String
-  classes    ClassPeriod[] // Employee|Teacher can teach multiple classes
-  role       Role          @default(STAFF)
-  birthDate  DateTime
-  gender     String
-  ssn        String?
-  department String?
-  hiredDate  DateTime?     @map("hired_date")
-  createdAt  DateTime      @default(now()) @map("created_at")
-  updatedAt  DateTime      @default(now()) @map("updated_at")
-
-  @@map("employees")
-}
-
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -100,27 +79,35 @@ enum Role {
 }
 
 model SchoolYear {
-  id              String   @id @default(cuid())
-  name            String
-  startDate       DateTime
-  endDate         DateTime
-  terms           Term[]
-  allocatedBudget Float?
-  expenses        Float?
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @default(now()) @map("updated_at")
+  id                String       @id @default(cuid())
+  name              String
+  startDate         DateTime
+  endDate           DateTime
+  terms             SchoolTerm[]
+  allocatedBudget   Float?
+  expenses          Float        @default(0)
+  registrationOpen  Boolean?
+  registrationClose DateTime?
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @default(now()) @map("updated_at")
 
   @@map("school_years")
 }
 
-model Term {
-  id          String       @id @default(cuid())
-  yearId      String // Foreign key to SchoolYear
-  name        String
-  startDate   DateTime
-  endDate     DateTime
-  schoolYear  SchoolYear   @relation(fields: [yearId], references: [id])
-  gradeLevels GradeLevel[]
+// school terms (e.g., Fall 2020, Spring 2021, etc.)
+model SchoolTerm {
+  id                String       @id @default(cuid())
+  termName          String
+  startDate         DateTime
+  endDate           DateTime
+  schoolYearId      String // Foreign key to SchoolYear
+  registrationOpen  Boolean?
+  registrationClose DateTime?
+  enrollmentCount   Int          @default(0)
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @default(now()) @map("updated_at")
+  schoolYear        SchoolYear   @relation(fields: [schoolYearId], references: [id])
+  gradeLevels       GradeLevel[]
 
   @@map("school_terms")
 }
@@ -128,13 +115,14 @@ model Term {
 // First grade, second grade, etc.
 model GradeLevel {
   id            String        @id @default(cuid())
-  name          String        @unique
+  levelName     String        @unique
   description   String?
   levelCategory String // Elementary, Middle, High
   levelOrder    Int
+  capacity      Int?
   students      Student[]
-  classes       ClassPeriod[] // Classes belonging to this grade level
-  Term          Term?         @relation(fields: [termId], references: [id])
+  classePeriods ClassPeriod[] // Classes belonging to this grade level
+  Term          SchoolTerm?   @relation(fields: [termId], references: [id])
   termId        String?
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @default(now()) @map("updated_at")
@@ -186,7 +174,7 @@ model Guardian {
 }
 
 model Student {
-  id               String      @id @default(cuid())
+  id               String         @id @default(cuid())
   firstName        String
   middleName       String?
   lastName         String
@@ -198,14 +186,39 @@ model Student {
   phone            String?
   address          String
   enrollmentStatus String?
-  role             Role        @default(STUDENT)
+  role             Role           @default(STUDENT)
   gradeLevelId     String?
-  gradeLevel       GradeLevel? @relation(fields: [gradeLevelId], references: [id])
+  gradeLevel       GradeLevel?    @relation(fields: [gradeLevelId], references: [id])
   guardians        Guardian[]
-  createdAt        DateTime    @default(now()) @map("created_at")
-  updatedAt        DateTime    @default(now()) @map("updated_at")
+  medicalRecord    MedicalRecord? @relation(fields: [medicalRecordId], references: [id])
+  medicalRecordId  String?        @unique
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @default(now()) @map("updated_at")
 
   @@map("students")
+}
+
+model Employee {
+  id              String         @id @default(cuid())
+  firstName       String
+  middleName      String?
+  lastName        String
+  phone           String
+  email           String?
+  address         String
+  classes         ClassPeriod[] // Employee|Teacher can teach multiple classes
+  role            Role           @default(STAFF)
+  birthDate       DateTime
+  gender          String
+  ssn             String?
+  department      String?
+  medicalRecord   MedicalRecord? @relation(fields: [medicalRecordId], references: [id])
+  medicalRecordId String?        @unique
+  hiredDate       DateTime?      @map("hired_date")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @default(now()) @map("updated_at")
+
+  @@map("employees")
 }
 
 model Test {
@@ -237,4 +250,17 @@ model Subject {
   tests        Test[] // A subject can have multiple tests
 
   @@map("subjects")
+}
+
+model MedicalRecord {
+  id         String    @id @default(cuid())
+  bloodType  String?
+  doctorName String?
+  notes      String?
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @default(now()) @map("updated_at")
+  Employee   Employee?
+  Student    Student?
+
+  @@map("medical_records")
 }
