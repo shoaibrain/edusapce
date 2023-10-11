@@ -61,7 +61,8 @@ export default async function GuardianPage({ params }: GuardianPageProps) {
               <TabsList className="p-5">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="students">Students</TabsTrigger>
-                <TabsTrigger value="accounts">Accounts</TabsTrigger>
+                <TabsTrigger value="billings">Billings</TabsTrigger>
+                <TabsTrigger value="communication">Communiation</TabsTrigger>
               </TabsList>
               <TabsContent value="overview" className="space-y-4">
                 <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
@@ -110,7 +111,8 @@ export default async function GuardianPage({ params }: GuardianPageProps) {
                     </Link>
                 </div>
               </TabsContent>
-              <TabsContent value="accounts">Account Details</TabsContent>
+              <TabsContent value="billings">Billing Details</TabsContent>
+              <TabsContent value="communication">Communication</TabsContent>
             </Tabs>
           </div>
 

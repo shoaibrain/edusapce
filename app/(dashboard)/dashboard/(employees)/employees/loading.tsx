@@ -7,8 +7,8 @@ export default function DashboardTeachersLoading() {
   return (
     <DashboardShell>
       <DashboardHeader
-        heading="Teachers"
-        text="Manage teacher records."
+        heading="Employees"
+        text="Manage employee records."
       />
       <div className="grid gap-10">
         <CardSkeleton />

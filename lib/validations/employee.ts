@@ -7,8 +7,9 @@ export const employeePatchSchema = z.object({
     phone: z.string().optional(),
     email: z.string().email().optional(),
     address: z.string().min(3).max(32).optional(),
-    birthDate: z.date().optional(),
-    department: z.string().min(3).max(32).optional(),
+    // gender: z.string().optional(),
+    // ssn: z.string().min(3).max(32).optional(),
+    // department: z.string().min(3).max(32).optional(),
 
 })
 export const employeeCreateSchema = z.object({

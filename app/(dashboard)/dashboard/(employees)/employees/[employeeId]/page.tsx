@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Employee Details",
-  description: "Employee Dashboard",
+  description: "Employee Details",
 }
 interface EmployeePageProps {
   params: { employeeId: string };
@@ -51,9 +51,10 @@ export default async function EmployeePage({ params }: EmployeePageProps){
       <Tabs defaultValue="overview" className="space-y-4">
             <TabsList className="p-5">
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="guardians" >Guardians</TabsTrigger>
-              <TabsTrigger value="accounts" disabled>Academics</TabsTrigger>
-              <TabsTrigger value="medicals" disabled>Medicals</TabsTrigger>
+              <TabsTrigger value="classes" >Classes</TabsTrigger>
+              {/* TODO: Should billing be applied to student or guardian? */}
+              <TabsTrigger value="hr" disabled>Human Resource</TabsTrigger>
+              <TabsTrigger value="communications" disabled>Communications</TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
               <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
@@ -92,12 +93,13 @@ export default async function EmployeePage({ params }: EmployeePageProps){
               </div>
 
             </TabsContent>
-            <TabsContent value="guardians">
-             <p>Tab Content </p>
+            <TabsContent value="classes">
+             <p>{`${employee.firstName} ${employee.lastName} is teaching following classes`}</p>
             <div className="p-4">
             </div>
             </TabsContent>
-            <TabsContent value="accounts">Classes</TabsContent>
+            <TabsContent value="hr">Human Resources</TabsContent>
+            <TabsContent value="communications">Communications</TabsContent>
       </Tabs>
     </div>
   </div>

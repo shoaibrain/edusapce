@@ -8,6 +8,8 @@ import {
   CreditCard,
   File,
   Trees,
+  Combine,
+
   FileText,
   HelpCircle,
   Image,
@@ -51,6 +53,7 @@ export const Icons = {
   ellipsis: MoreVertical,
   add: Plus,
   warning: AlertTriangle,
+  combine: Combine,
   user: User,
   arrowRight: ArrowRight,
   help: HelpCircle,

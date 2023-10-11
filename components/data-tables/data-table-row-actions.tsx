@@ -18,6 +18,7 @@ interface DataTableRowActionsProps<TData> {
   dataId: string
 }
 
+// TODO: Generalize this component for all data tables
 export function DataTableRowActions<TData>({
   row,
   dataId,

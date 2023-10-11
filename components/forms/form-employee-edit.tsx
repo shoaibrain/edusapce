@@ -25,19 +25,33 @@ import { format, parseISO } from "date-fns"
 import { Calendar } from "../ui/calendar"
 import { Command, CommandGroup, CommandInput, CommandItem } from "../ui/command"
 import { employeePatchSchema } from "@/lib/validations/employee"
+import { Employee } from "@prisma/client"
 
 
-const genders = [
-  { label: "Male", value: "Male" },
-  { label: "Female", value: "Female" },
-  { label: "Other", value: "Other" },
-] as const
+// const genders = [
+//   { label: "Male", value: "Male" },
+//   { label: "Female", value: "Female" },
+//   { label: "Other", value: "Other" },
+// ] as const
+
+// const departments = [
+//   { labe:"Science", value: "Science"},
+//   { labe:"Mathematics", value: "Mathematics"},
+//   { labe:"English", value: "English"},
+//   { label:"Arts", value: "Arts"},
+//   { label: "language", value: "language"},
+//   { label: "Social Studies", value: "Social Studies"},
+//   { label: "Physical Education", value: "Physical Education"},
+//   { label: "Music", value: "Music"},
+//   { label: "Computer Science", value: "Computer Science"},
+//   { label: "Other", value: "Other" },
+// ]
 interface EmployeeEditFromProps extends React.HTMLAttributes<HTMLFormElement> {
   employee: Employee;
 }
 
-type FormData = z.infer<typeof studentPatchSchema>
-// TODO: replace with env variable
+type FormData = z.infer<typeof employeePatchSchema>
+
 const URL = 'http://localhost:3000/api/v1'
 
 export function EmployeeEditForm({
@@ -46,11 +60,16 @@ export function EmployeeEditForm({
   ...props
 }: EmployeeEditFromProps) {
 
-
   const form = useForm<FormData>({
     resolver: zodResolver(employeePatchSchema),
     mode: "onChange",
     defaultValues: {
+      firstName: employee?.firstName,
+      middleName: employee?.middleName || "",
+      lastName: employee?.lastName,
+      phone: employee?.phone,
+      email: employee?.email || "",
+      address: employee?.address,
     }
   })
 
@@ -129,81 +148,7 @@ export function EmployeeEditForm({
                 )}
               />
             </div>
-            <div className="sm:col-span-2">
-              <FormField
-                  control={form.control}
-                  name="gender"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Gender</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                "w-[200px] justify-between",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value
-                                ? genders.find(
-                                    (gender) => gender.value === field.value
-                                  )?.label
-                                : "Select gender"}
-                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[200px] p-0">
-                                {genders.map((gender) => (
-                                  <CommandItem
-                                    value={gender.label}
-                                    key={gender.value}
-                                    onSelect={() => {
-                                      form.setValue("gender", gender.value);
-                                    }}
-                                  >
-                                    <CheckIcon
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        gender.value === field.value
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                    {gender.label}
-                                  </CommandItem>
-                                ))}
-                        </PopoverContent>
-                      </Popover>
-                      <FormDescription>
-                        Birth gender of student
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-              />
-            </div>
-            <div  className="sm:col-span-2">
-              <FormField
-                control={form.control}
-                name="nationality"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nationality</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Student nationality
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+
             <div  className="sm:col-span-2">
               <FormField
                 control={form.control}
@@ -222,6 +167,7 @@ export function EmployeeEditForm({
                 )}
               />
             </div>
+
             <div  className="sm:col-span-3">
               <FormField
                 control={form.control}
