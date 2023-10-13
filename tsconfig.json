@@ -29,7 +29,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts", "__tests__/users.test.js",
+    ".next/types/**/*.ts", "__tests__/users.test.js", "app/(hr)/admission/admission-form-with-stepper.js",
   ],
   "exclude": ["node_modules"]
 }

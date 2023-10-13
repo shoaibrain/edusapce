@@ -26,3 +26,4 @@ export const classPeriodPatchSchema = z.object({
   startTime: z.date().optional(),
   endTime: z.date().optional(),
 })
+

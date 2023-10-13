@@ -123,7 +123,7 @@ model SchoolTerm {
 // Kindergarten, First grade, second grade, etc.
 model YearGradeLevel {
   id            String        @id @default(cuid())
-  levelName     String        @unique
+  name          String        @unique
   description   String?
   levelCategory String // Elementary, Middle, High
   levelOrder    Int
@@ -137,7 +137,8 @@ model YearGradeLevel {
   SchoolYear    SchoolYear?   @relation(fields: [schoolYearId], references: [id])
   schoolYearId  String?
 
-  @@index([levelName, schoolYearId, levelCategory])
+  @@index([name])
+  @@index([levelCategory])
   @@map("grade_levels")
 }
 
@@ -158,8 +159,8 @@ model ClassPeriod {
   updatedAt    DateTime        @default(now()) @map("updated_at")
   gradeLevelId String? // foreign key to YearGradeLevel
   gradeLevel   YearGradeLevel? @relation(fields: [gradeLevelId], references: [id])
-  subjectId    String // foreign key to Subject assigned to this class
-  subject      Subject         @relation(fields: [subjectId], references: [id])
+  subjectId    String? // foreign key to Subject assigned to this class
+  subject      Subject?        @relation(fields: [subjectId], references: [id])
 
   @@index([department, startTime, endTime, gradeLevelId])
   @@map("class_periods")
@@ -242,17 +243,18 @@ model EmployeeSalary {
 }
 
 model Test {
-  id          String       @id @default(cuid())
-  name        String
-  description String?
-  type        String // Homework, Quiz, Exam, etc.
-  question    String? // URL to the test questions
-  classId     String? // foreign key to ClassPeriod this test belongs to
-  Subject     Subject?     @relation(fields: [subjectId], references: [id])
-  subjectId   String? // foreign key to Subject this test belongs to
-  testResults TestResult[]
+  id            String       @id @default(cuid())
+  name          String
+  description   String?
+  testType      String // Homework, Quiz, Exam, etc.
+  question      String? // URL to the test questions
+  classPeriodId String? // foreign key to ClassPeriod this test belongs to
+  Subject       Subject?     @relation(fields: [subjectId], references: [id])
+  subjectId     String? // foreign key to Subject this test belongs to
+  testDate      DateTime
+  testResults   TestResult[]
 
-  @@index([name, type, classId, subjectId])
+  @@index([name, testType, classPeriodId, subjectId])
   @@map("tests")
 }
 

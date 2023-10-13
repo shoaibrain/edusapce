@@ -1,83 +1,54 @@
 import prisma from "@/lib/db";
 
-export const getClasses = async () => {
+type ResourceType = 'SchoolYear' | 'SchoolTerm' | 'YearGradeLevel' | 'ClassPeriod';
+
+export const createResource = async (resourceType: ResourceType, data: any) => {
   try {
-    const classes = await prisma.classPeriod.findMany({
-      select: {
-        id: true,
-        name: true,
-        capacity: true,
-        department: true,
-        description: true,
-        gradeLevel: true,
+    const resource = await prisma[resourceType].create({
+      data,
+    });
+    return resource;
+  } catch (error) {
+    throw new Error(`Error creating ${resourceType}: ${error.message}`);
+  }
+}
+
+export const getAllResources = async (resourceType: ResourceType) => {
+  try {
+    const resources = await prisma[resourceType].findMany();
+    return resources;
+  } catch (error) {
+    throw new Error(`Error getting all ${resourceType}s: ${error.message}`);
+  }
+}
+
+export const getResourceById = async (resourceType: ResourceType, resourceId: string) => {
+  try {
+    const resource = await prisma[resourceType].findUnique({
+      where: {
+        id: resourceId,
       },
     });
-    return classes;
-  } catch (error) {
-    throw new Error(`Error getting all classes: ${error.message}`);
-  }
-}
-
-export const getClass = async (classId: string) => {
-  try {
-    const classData = await prisma.classPeriod.findUnique({
-      where: {
-        id: classId,
-      },
-      select: {
-        name: true,
-        capacity: true,
-        department: true,
-        description: true,
-        startTime: true,
-        endTime: true,
-        gradeLevel: true,
-        teachers: true,
-      },
-    })
-    if (!classData) {
-      throw new Error(`Class with id: ${classId} not found`);
+    if (!resource) {
+      throw new Error(`${resourceType} with id: ${resourceId} not found`);
     }
-    return classData;
+    return resource;
   } catch (error) {
-    throw new Error(`Error getting class: ${error.message}`);
+    throw new Error(`Error getting ${resourceType}: ${error.message}`);
   }
 }
 
-export const postClass = async (classData) => {
+export const updateResource = async (resourceType: ResourceType, resourceId: string, data: any) => {
   try {
-    const newClass = await prisma.classPeriod.create({
-      data: classData,
-    })
-    return newClass;
-  } catch (error) {
-    throw new Error(`Error creating class: ${error.message}`);
-  }
-}
-
-export const deleteClass = async (classId: string) => {
-  try {
-    await prisma.classPeriod.delete({
+    const updatedResource = await prisma[resourceType].update({
       where: {
-        id: classId,
+        id: resourceId,
       },
-    })
-    return { ok: true };
+      data,
+    });
+    return updatedResource;
   } catch (error) {
-    throw new Error(`Error deleting class: ${error.message}`);
+    throw new Error(`Error updating ${resourceType}: ${error.message}`);
   }
 }
 
-export const patchClass = async (classId: string, classData) => {
-  try {
-    const updatedClass = await prisma.classPeriod.update({
-      where: {
-        id: classId,
-      },
-      data: classData,
-    })
-    return updatedClass;
-  } catch (error) {
-    throw new Error(`Error updating class: ${error.message}`);
-  }
-}
