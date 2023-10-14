@@ -23,7 +23,6 @@ export function DataTableRowActions<TData>({
   row,
   dataId,
 }: DataTableRowActionsProps<TData>) {
-  console.log(`row: ${JSON.stringify(row)}`)
 
   return (
     <DropdownMenu>

@@ -9,7 +9,13 @@ import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import { MixerHorizontalIcon } from "@radix-ui/react-icons"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger } from "./ui/dialog"
 import { GuardianEditForm } from "./forms/form-guardian-edit"
 import { Employee, Guardian, Student } from "@prisma/client"
 import { StudentEditForm } from "./forms/form-student-edit"

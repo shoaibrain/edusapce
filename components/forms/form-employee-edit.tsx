@@ -3,8 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
-import { Button, buttonVariants } from "@/components/ui/button"
-import { CalendarIcon, CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
+import {buttonVariants } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -19,14 +18,10 @@ import { toast } from "@/components/ui/use-toast"
 import React from "react"
 
 import { Icons } from "@/components/icons"
-import { studentPatchSchema } from "@/lib/validations/student"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import { format, parseISO } from "date-fns"
-import { Calendar } from "../ui/calendar"
-import { Command, CommandGroup, CommandInput, CommandItem } from "../ui/command"
 import { employeePatchSchema } from "@/lib/validations/employee"
 import { Employee } from "@prisma/client"
 
+// TODO: Patch not working
 
 // const genders = [
 //   { label: "Male", value: "Male" },
@@ -46,19 +41,19 @@ import { Employee } from "@prisma/client"
 //   { label: "Computer Science", value: "Computer Science"},
 //   { label: "Other", value: "Other" },
 // ]
-interface EmployeeEditFromProps extends React.HTMLAttributes<HTMLFormElement> {
+interface EmployeeEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   employee: Employee;
 }
 
 type FormData = z.infer<typeof employeePatchSchema>
-
+// TODO: replace with env variable
 const URL = 'http://localhost:3000/api/v1'
 
 export function EmployeeEditForm({
   employee,
   className,
   ...props
-}: EmployeeEditFromProps) {
+}: EmployeeEditFormProps) {
 
   const form = useForm<FormData>({
     resolver: zodResolver(employeePatchSchema),
@@ -70,6 +65,9 @@ export function EmployeeEditForm({
       phone: employee?.phone,
       email: employee?.email || "",
       address: employee?.address,
+      gender: employee?.gender,
+      ssn: employee?.ssn || "",
+      department: employee?.department,
     }
   })
 
@@ -88,7 +86,7 @@ export function EmployeeEditForm({
     if (!response?.ok) {
       return toast({
         title: "Something went wrong.",
-        description: `Failed to update Employee information.`,
+        description: `Failed to update employee information.`,
         variant: "destructive",
       })
     }
@@ -148,7 +146,6 @@ export function EmployeeEditForm({
                 )}
               />
             </div>
-
             <div  className="sm:col-span-2">
               <FormField
                 control={form.control}
@@ -167,7 +164,6 @@ export function EmployeeEditForm({
                 )}
               />
             </div>
-
             <div  className="sm:col-span-3">
               <FormField
                 control={form.control}

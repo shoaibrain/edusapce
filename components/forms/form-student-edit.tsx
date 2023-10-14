@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { CalendarIcon, CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
+import {  CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
 import {
   Form,
   FormControl,
@@ -22,9 +22,7 @@ import { Icons } from "@/components/icons"
 import {  Student } from "@prisma/client"
 import { studentPatchSchema } from "@/lib/validations/student"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import { format, parseISO } from "date-fns"
-import { Calendar } from "../ui/calendar"
-import { Command, CommandGroup, CommandInput, CommandItem } from "../ui/command"
+import {CommandItem } from "../ui/command"
 
 const genders = [
   { label: "Male", value: "Male" },
@@ -33,7 +31,7 @@ const genders = [
 ] as const
 
 
-interface StudentEditFromProps extends React.HTMLAttributes<HTMLFormElement> {
+interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   student: Student;
 }
 
@@ -45,9 +43,8 @@ export function StudentEditForm({
   student,
   className,
   ...props
-}: StudentEditFromProps) {
+}: StudentEditFormProps) {
 
-  console.log(`Student data in form: ${JSON.stringify(student, null, 2)}`)
 
   const form = useForm<FormData>({
     resolver: zodResolver(studentPatchSchema),
