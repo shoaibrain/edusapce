@@ -7,7 +7,6 @@ const routeContextSchema = z.object({
     }),
   })
 
-
   export const GET = async (
     req: Request,
     context: z.infer<typeof routeContextSchema>
