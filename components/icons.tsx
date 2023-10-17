@@ -7,12 +7,13 @@ import {
   Command,
   CreditCard,
   File,
-  Trees,
+  Library,
   Combine,
-
+  School,
   FileText,
   HelpCircle,
   Image,
+  Contact,
   Laptop,
   Loader2,
   LucideProps,
@@ -38,7 +39,9 @@ import {
 export type Icon = LucideIcon
 
 export const Icons = {
-  logo: Trees,
+  logo: Combine,
+  school: School,
+  employee: Contact,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,
@@ -55,6 +58,9 @@ export const Icons = {
   warning: AlertTriangle,
   combine: Combine,
   user: User,
+
+  student: Backpack,
+  library: Library,
   arrowRight: ArrowRight,
   help: HelpCircle,
   pizza: Pizza,

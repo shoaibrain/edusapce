@@ -16,6 +16,7 @@ export type SidebarNavItem = {
   disabled?: boolean
   external?: boolean
   icon?: keyof typeof Icons
+  subItems?: SidebarNavItem[]
 } & (
   | {
       href: string
@@ -52,8 +53,3 @@ export type DashboardConfig = {
   sidebarNav: SidebarNavItem[]
 }
 
-export type AdmissionForm = {
-  studentDetails: {},
-  guardianDetails: {},
-  enrollmentDetails: {},
-}

@@ -24,19 +24,19 @@ export const dashboardConfig: DashboardConfig = {
       title: "Academics",
       href: "/dashboard/academics",
       disabled: false,
-      icon: "billing"
+      icon: "library"
     },
     {
       title: "Students",
       href: "/dashboard/students",
       disabled: false,
-      icon: "users"
+      icon: "student"
     },
     {
       title: "Employees",
       href: "/dashboard/employees",
       disabled: false,
-      icon: "users"
+      icon: "employee"
     },
     {
       title: "Guardians",
@@ -44,6 +44,24 @@ export const dashboardConfig: DashboardConfig = {
       disabled: false,
       icon: "users"
     },
-
+    {
+      title: "School Settings",
+      href: "/org",
+      disabled: false,
+      icon: "school",
+      // TODO: show sub items under accordion
+      subItems: [
+        {
+          title: "Academic Settings",
+          href: "/org/academics",
+          disabled: false,
+        },
+        {
+          title: "Class & Grade Settings",
+          href: "/org/grades",
+          disabled: false,
+        },
+      ],
+    }
   ],
 }

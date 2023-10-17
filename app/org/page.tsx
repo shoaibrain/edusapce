@@ -1,195 +1,62 @@
-"use client";
-
 import SideBar from "@/components/forms/side-bar";
 import { useStepper } from "@/hooks/use-stepper-wizard";
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import UserInfoForm from "@/components/forms/user-info-form";
 
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { TenantOrgForm } from "@/components/forms/tenant-org-form";
+import { Separator } from "@/components/ui/separator";
 
-interface AddOn {
-  id: number;
-  checked: boolean;
-  title: string;
-  subtitle: string;
-  price: number;
+export const metadata: Metadata = {
+  title: "School Settings",
+  description: "School and Academic Settings",
+};
+
+interface SchoolSettingsPageProps {
+  params: { schoolId: string };
 }
 
-export type FormItems = {
-  name: string;
-  email: string;
-  phone: string;
-  plan: "arcade" | "advanced" | "pro";
-  yearly: boolean;
-  addOns: AddOn[];
-};
+const URL = process.env.API_URL;
 
-const initialValues: FormItems = {
-  name: "",
-  email: "",
-  phone: "",
-  plan: "arcade",
-  yearly: false,
-  addOns: [
-    {
-      id: 1,
-      checked: true,
-      title: "Online Service",
-      subtitle: "Access to multiple games",
-      price: 1,
-    },
-    {
-      id: 2,
-      checked: false,
-      title: "Large storage",
-      subtitle: "Extra 1TB of cloud save",
-      price: 2,
-    },
-    {
-      id: 3,
-      checked: false,
-      title: "Customizable Profile",
-      subtitle: "Custom theme on your profile",
-      price: 2,
-    },
-  ],
-};
-
-export default async function TenantSetupPage() {
-
-  const [formData, setFormData] = useState(initialValues);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const {
-    previousStep,
-    nextStep,
-    currentStepIndex,
-    isFirstStep,
-    isLastStep,
-    steps,
-    goTo,
-    showSuccessMsg,
-  } = useStepper(4);
-
-  function updateForm(fieldToUpdate: Partial<FormItems>) {
-    const { name, email, phone } = fieldToUpdate;
-
-    if (name && name.trim().length < 3) {
-      setErrors((prevState) => ({
-        ...prevState,
-        name: "Name should be at least 3 characters long",
-      }));
-    } else if (name && name.trim().length > 15) {
-      setErrors((prevState) => ({
-        ...prevState,
-        name: "Name should be no longer than 15 characters",
-      }));
-    } else {
-      setErrors((prevState) => ({
-        ...prevState,
-        name: "",
-      }));
-    }
-
-    if (email && !/\S+@\S+\.\S+/.test(email)) {
-      setErrors((prevState) => ({
-        ...prevState,
-        email: "Please enter a valid email address",
-      }));
-    } else {
-      setErrors((prevState) => ({
-        ...prevState,
-        email: "",
-      }));
-    }
-
-    if (phone && !/^[0-9]{10}$/.test(phone)) {
-      setErrors((prevState) => ({
-        ...prevState,
-        phone: "Please enter a valid 10-digit phone number",
-      }));
-    } else {
-      setErrors((prevState) => ({
-        ...prevState,
-        phone: "",
-      }));
-    }
-
-    setFormData({ ...formData, ...fieldToUpdate });
-  }
-
-  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (Object.values(errors).some((error) => error)) {
-      return;
-    }
-    nextStep();
-  };
-
+export default async function SchoolSettingsPage({ params }: SchoolSettingsPageProps) {
   return (
-    <div
-      className={`flex justify-between ${
-        currentStepIndex === 1 ? "h-[600px] md:h-[500px]" : "h-[500px]"
-      } relative m-1 w-11/12 max-w-4xl rounded-lg border border-neutral-700 bg-[#262626] p-4`}
-    >
-      {!showSuccessMsg ? (
-        <SideBar currentStepIndex={currentStepIndex} goTo={goTo} />
-      ) : (
-        ""
-      )}
-      <main
-        className={`${showSuccessMsg ? "w-full" : "w-full md:mt-5 md:w-[65%]"}`}
-      >
-        {showSuccessMsg ? (
-          <AnimatePresence mode="wait">
-          </AnimatePresence>
-        ) : (
-          <form
-            onSubmit={handleOnSubmit}
-            className="flex h-full w-full flex-col justify-between"
-          >
-            <AnimatePresence mode="wait">
-              {currentStepIndex === 0 && (
-                <UserInfoForm
-                  key="step1"
-                  {...formData}
-                  updateForm={updateForm}
-                  errors={errors}
-                />
-              )}
-
-            </AnimatePresence>
-            <div className="flex w-full items-center justify-between">
-              <div className="">
-                <Button
-                  onClick={previousStep}
-                  type="button"
-                  variant="ghost"
-                  className={`${
-                    isFirstStep
-                      ? "invisible"
-                      : "visible p-0 text-neutral-200 hover:text-white"
-                  }`}
-                >
-                  Go Back
-                </Button>
-              </div>
-              <div className="flex items-center">
-                <div className="after:shadow-highlight relative after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:shadow-white/10 after:transition focus-within:after:shadow-[#77f6aa]">
-                  <Button
-                    type="submit"
-                    className="relative rounded-xl border border-black/20 bg-neutral-900 text-neutral-200 shadow-input hover:text-white"
-                  >
-                    {isLastStep ? "Confirm" : "Next Step"}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </form>
-        )}
-      </main>
+    <div className="space-y-6">
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        <h3 className="mb-4 text-lg font-medium">School Settings</h3>
+        <Tabs defaultValue="school profile" className="space-y-4">
+          <TabsList className="p-5">
+            <TabsTrigger value="school profile">General Settings</TabsTrigger>
+            <TabsTrigger value="academic settings">Academic Settings</TabsTrigger>
+            <TabsTrigger value="class management">Class Management</TabsTrigger>
+            <TabsTrigger value="security and access">Security & Access</TabsTrigger>
+          </TabsList>
+          <TabsContent value="school profile" className="space-y-4">
+            <p className="text-sm text-muted-foreground">School Information</p>
+            <p className="text-sm text-muted-foreground">Contact Details</p>
+            <p className="text-sm text-muted-foreground">Logo & Branding</p>
+            <p className="text-sm text-muted-foreground">Timezone Configuration</p>
+          </TabsContent>
+          <TabsContent value="academic settings" className="space-y-4">
+            <p className="text-sm text-muted-foreground">Academic Year Setup</p>
+            <p className="text-sm text-muted-foreground">Term/Semester Configuration</p>
+            <p className="text-sm text-muted-foreground">Grading System</p>
+            <p className="text-sm text-muted-foreground">Curriculum Management</p>
+          </TabsContent>
+          <TabsContent value="class management" className="space-y-4">
+            <p className="text-sm text-muted-foreground">Create/Edit Classes</p>
+            <p className="text-sm text-muted-foreground">Assign Teachers</p>
+            <p className="text-sm text-muted-foreground">Grading Criteria</p>
+            <p className="text-sm text-muted-foreground">Grade Scales</p>
+          </TabsContent>
+          <TabsContent value="security and access" className="space-y-4">
+            <p className="text-sm text-muted-foreground">User Roles & Permissions</p>
+            <p className="text-sm text-muted-foreground">Access Control</p>
+            <p className="text-sm text-muted-foreground">Password Policies</p>
+            <p className="text-sm text-muted-foreground">Data Privacy & Compliance</p>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
-
 }
