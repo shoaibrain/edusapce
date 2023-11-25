@@ -45,6 +45,8 @@ model User {
   updatedAt      DateTime  @default(now()) @map("updated_at")
   accounts       Account[]
   sessions       Session[]
+  schoolId       String?   @map("school_id")
+  school         School?   @relation(fields: [schoolId], references: [id])
 
   @@map("users")
 }
@@ -78,11 +80,26 @@ enum Role {
   USER
 }
 
-// TODO: Add Referential Actions
-// each academic year, admin setups (manually or can be automated) the school year, terms, grade levels, classes, etc.
+// User/Admin register a school/s
+model School {
+  id        String   @id @default(cuid())
+  name      String
+  address   String
+  phone     String
+  email     String?
+  website   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  users     User[]
+
+  @@index([name])
+  @@map("schools")
+}
+
 model SchoolYear {
   id                String           @id @default(cuid())
   name              String
+  schoolId          String           @unique @map("school_id")
   //academic year start and end dates
   startDate         DateTime
   endDate           DateTime
@@ -242,6 +259,7 @@ model EmployeeSalary {
   @@map("employee_salaries")
 }
 
+// Exam, Quiz, Homework, etc.
 model Test {
   id            String       @id @default(cuid())
   name          String

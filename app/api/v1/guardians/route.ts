@@ -1,6 +1,7 @@
 import { guardianCreateSchema } from "@/lib/validations/guardian";
 import { getGuardians, postGuardian } from "@/services/service-guardian";
 import { z } from "zod";
+import { logger } from "@/logger";
 
 export async function GET() {
   try {
@@ -16,6 +17,7 @@ export async function POST(request:Request) {
     const json = await request.json();
     const body = guardianCreateSchema.parse(json);
     const newGuardian = await postGuardian(body);
+    logger.info(`New guardian created: ${newGuardian.id}`);
     return new Response(JSON.stringify(newGuardian), { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {

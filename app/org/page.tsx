@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { TenantOrgForm } from "@/components/forms/tenant-org-form";
 import { Separator } from "@/components/ui/separator";
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "School Settings",

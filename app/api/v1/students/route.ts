@@ -1,6 +1,7 @@
 import * as z from "zod"
 import { getStudents, postStudent } from "@/services/service-student"
 import {  studentCreateSchema } from "@/lib/validations/student"
+import { logger } from "@/logger";
 
 export async function GET(){
   try {
@@ -18,6 +19,7 @@ export async function POST(request: Request) {
       json.birthDate = dob;
       const body = studentCreateSchema.parse(json);
       const newStudent = await postStudent(body);
+      logger.info(`New student created: ${newStudent.id}`);
       return new Response(JSON.stringify(newStudent), { status: 201 })
     } catch (error) {
       if (error instanceof z.ZodError) {

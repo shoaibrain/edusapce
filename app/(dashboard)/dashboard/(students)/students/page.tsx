@@ -18,7 +18,7 @@ const URL = process.env.API_URL;
 
 async function getStudents() {
   try {
-    const res = await fetch(`${URL}/students`, {
+    const res = await fetch(`http://localhost:3000/api/v1/students`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

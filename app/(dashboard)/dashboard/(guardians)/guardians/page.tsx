@@ -17,7 +17,7 @@ const URL = process.env.API_URL;
 
 async function getGuardians() {
     try {
-      const res = await fetch(`${URL}/guardians`, {
+      const res = await fetch(`http://localhost:3000/api/v1/guardians`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

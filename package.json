@@ -79,6 +79,7 @@
     "recharts": "^2.6.2",
     "tailwind-merge": "^1.13.2",
     "tailwindcss-animate": "^1.0.6",
+    "winston": "^3.11.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {

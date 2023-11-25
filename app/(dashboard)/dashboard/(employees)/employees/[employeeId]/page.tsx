@@ -15,7 +15,7 @@ const URL = process.env.API_URL;
 
 async function getEmployee(employeeId: Employee["id"]) {
   try {
-    const res = await fetch(`${URL}/employees/${employeeId}`,{
+    const res = await fetch(`http://localhost:3000/api/v1/employees/${employeeId}`,{
       method: "GET",
       headers: {
         "Content-Type": "application/json"

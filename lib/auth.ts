@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
           email: { label: "Email", type: "text"},
           password: { label: "Password", type: "password" },
         },
-  
+
         async authorize(credentials) {
           // check credential exists
           if (!credentials || !credentials.email || !credentials.password) {
@@ -53,6 +53,7 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name
         session.user.email = token.email
         session.user.image = token.picture
+
       }
 
       return session
@@ -76,6 +77,7 @@ export const authOptions: NextAuthOptions = {
         name: dbUser.name,
         email: dbUser.email,
         picture: dbUser.image,
+        schoolId: dbUser.schoolId,
       }
     },
   },
