@@ -15,7 +15,7 @@ export const getStudents = async () => {
                 email: true,
                 phone: true,
                 address: true,
-                gradeLevelId: true,
+                gradeLevel: true,
               },
 
         });
@@ -32,7 +32,7 @@ export const getStudent = async(studentId : string) => {
           },
           include:{
               guardians: true,
-              gradeLevel: true,
+              classGradeLevel: true,
           }
       })
       if (student) {

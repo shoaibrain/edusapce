@@ -35,8 +35,22 @@ interface StudentAdmissionFormProps extends React.HTMLAttributes<HTMLFormElement
   guardianId?: string;
 }
 
+const gradeLevels = [
+  "Kindergarten",
+  "One",
+  "Two",
+  "Three",
+  "Four",
+  "Five",
+  "Six",
+  "Seven",
+  "Eight",
+  "Nine",
+  "Ten",
+]
+
 type formData = z.infer<typeof studentCreateSchema>
-const URL = process.env.API_URL;
+
 export function StudentAdmissionForm({
   guardianId,
   className,
@@ -52,15 +66,25 @@ export function StudentAdmissionForm({
       email: "",
       phone: "",
       address: "",
-      enrollmentStatus: "",
+      gradeLevel: "",
     }
   })
   const router = useRouter()
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   async function onSubmit(data: formData) {
-    console.log(`The URL is ${URL}`)
+
+    data.enrollmentStatus = "Admitted"; // default enrollment status
+    // toast({
+    //   title: "You submitted the following values:",
+    //   description: (
+    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+    //     </pre>
+    //   ),
+    // })
+
     setIsSaving(true);
-      const res = await fetch(`${URL}/students`, {
+      const res = await fetch(`http://localhost:3000/api/v1/students/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,8 +182,6 @@ export function StudentAdmissionForm({
                         <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription>
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -172,7 +194,7 @@ export function StudentAdmissionForm({
                 name="birthDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Birth Date</FormLabel>
+                    <FormLabel className="mx-2">Birth Date</FormLabel>
                     <FormControl>
                     <Popover>
                 <PopoverTrigger asChild>
@@ -268,6 +290,35 @@ export function StudentAdmissionForm({
                   </FormItem>
                 )}
               />
+            </div>
+            <div className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="gradeLevel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Student Grade Level</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="select student grade level for admission" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                      {gradeLevels.map((level) => (
+                          <SelectItem key={level} value={level}>
+                            {level}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
             </div>
         </div>
         <button

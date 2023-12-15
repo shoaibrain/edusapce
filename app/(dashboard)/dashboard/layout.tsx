@@ -25,7 +25,7 @@ export default async function DashboardLayout({
       <header className="sticky top-0 z-40 border-b bg-background">
         <div className="container flex h-16 items-center justify-between py-4">
           <MainNav />
-          <UserAccountNav 
+          <UserAccountNav
             user={{
               name: user.name,
               image: user.image,

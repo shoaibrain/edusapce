@@ -145,7 +145,6 @@ model YearGradeLevel {
   levelCategory String // Elementary, Middle, High
   levelOrder    Int
   capacity      Int?
-  // where this grade level is physically located in the school, applicable for elementary schools
   classRoom     String?
   students      Student[]
   classePeriods ClassPeriod[] // Classes belonging to this grade level
@@ -197,8 +196,8 @@ model Student {
   address          String
   enrollmentStatus String?
   role             Role            @default(STUDENT)
-  gradeLevelId     String? // foreign key to Class Grade Level
-  gradeLevel       YearGradeLevel? @relation(fields: [gradeLevelId], references: [id])
+  gradeLevel       String // foreign key to Class Grade Level
+  classGradeLevel  YearGradeLevel? @relation(fields: [gradeLevel], references: [id])
   guardians        Guardian[] // can have multiple guardians
   medicalRecordId  String?         @unique
   medicalRecord    MedicalRecord?  @relation(fields: [medicalRecordId], references: [id])

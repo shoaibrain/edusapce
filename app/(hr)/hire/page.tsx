@@ -10,6 +10,6 @@ export const metadata: Metadata = {
 export default function AdmissionPage() {
 
   return (
-        <EmployeeHireForm />
+        <EmployeeHireForm/>
   )
 }

@@ -19,7 +19,6 @@ export async function POST(request: Request) {
       json.birthDate = dob;
       const body = studentCreateSchema.parse(json);
       const newStudent = await postStudent(body);
-      logger.info(`New student created: ${newStudent.id}`);
       return new Response(JSON.stringify(newStudent), { status: 201 })
     } catch (error) {
       if (error instanceof z.ZodError) {

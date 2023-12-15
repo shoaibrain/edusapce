@@ -59,7 +59,11 @@
     },
   ]
 
-  export const enrollment_status = [
+  export const student_enrollment_status = [
+    {
+      label: "Admitted",
+      value: "Admitted",
+    },
     {
       label: "Enrolled",
       value: "Enrolled",
@@ -69,8 +73,8 @@
       value: "Graduated",
     },
     {
-      label: "Dropout",
-      value: "Dropout",
+      label: "Dropped",
+      value: "Dropped",
     },
     {
       label: "Transferred",

@@ -7,7 +7,7 @@ import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { DataTableFacetedFilter } from "./data-table-faceted-filter"
 import { DataTableViewOptions } from "./data-table-view-options"
-import { enrollment_status, departments } from "@/lib/data/data"
+import { student_enrollment_status, departments } from "@/lib/data/data"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>

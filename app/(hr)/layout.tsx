@@ -1,14 +1,19 @@
+import { notFound } from "next/navigation"
 
+import { dashboardConfig } from "@/config/dashboard"
+import { getCurrentUser } from "@/lib/session"
+import { DashboardNav } from "@/components/dashboard-nav"
+import { UserAccountNav } from "@/components/user-account-nav"
 import { MainNav } from "@/components/main-nav"
 import { SiteFooter } from "@/components/site-footer"
 
-interface RegistrationLayoutProps {
+interface DashboardLayoutProps {
   children?: React.ReactNode
 }
 
-export default async function RegistrationLayout({
+export default function DashboardLayout({
   children,
-}: RegistrationLayoutProps) {
+}: DashboardLayoutProps) {
 
   return (
     <div className="flex min-h-screen flex-col space-y-6">
@@ -19,7 +24,8 @@ export default async function RegistrationLayout({
       </header>
       <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
         <aside className="hidden w-[200px] flex-col md:flex">
-          {/* TODO: Add Form Stepper here */}
+          <p>school user registration form</p>
+          {/* Add form stepper here */}
         </aside>
         <main className="flex w-full flex-1 flex-col overflow-hidden">
           {children}

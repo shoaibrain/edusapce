@@ -23,6 +23,7 @@ import {  Student } from "@prisma/client"
 import { studentPatchSchema } from "@/lib/validations/student"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import {CommandItem } from "../ui/command"
+import { student_enrollment_status } from "@/lib/data/data"
 
 const genders = [
   { label: "Male", value: "Male" },
@@ -58,7 +59,8 @@ export function StudentEditForm({
       email: student?.email || "",
       phone: student?.phone || "",
       address: student?.address,
-      enrollmentStatus: student?.enrollmentStatus || "",
+      enrollmentStatus: student?.enrollmentStatus || "status",
+      gradeLevel: student?.gradeLevel || "",
     }
   })
 
@@ -139,54 +141,6 @@ export function StudentEditForm({
                 )}
               />
             </div>
-            {/* TODO: Issue with date type update */}
-            {/* <div className="sm:col-span-2">
-            <FormField
-              control={form.control}
-              name="birthDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Date of birth</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-
-                      <Calendar
-                        mode="single"
-                        selected={parseISO(field.value)}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormDescription>
-                    Your date of birth is used to calculate your age.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            </div> */}
             <div className="sm:col-span-2">
               <FormField
                   control={form.control}
@@ -316,21 +270,64 @@ export function StudentEditForm({
                 )}
               />
             </div>
-            <div className="sm:col-span-2">
+
+            {/* <div className="sm:col-span-2">
               <FormField
-                control={form.control}
-                name="enrollmentStatus"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Enrollment Status</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                  control={form.control}
+                  name="enrollmentStatus"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Enrollment Status</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-[200px] justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? student_enrollment_status.find(
+                                    (enrollmentStatus) => enrollmentStatus.value === field.value
+                                  )?.label
+                                : "status"}
+                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[200px] p-0">
+                                {student_enrollment_status.map((enrollmentStatus) => (
+                                  <CommandItem
+                                    value={enrollmentStatus.value}
+                                    key={enrollmentStatus.label}
+                                    onSelect={() => {
+                                      form.setValue("enrollmentStatus", enrollmentStatus.value);
+                                    }}
+                                  >
+                                    <CheckIcon
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        enrollmentStatus.value === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {enrollmentStatus.label}
+                                  </CommandItem>
+                                ))}
+                        </PopoverContent>
+                      </Popover>
+                      <FormDescription>
+                        Student current enrollment status
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
               />
-            </div>
+            </div> */}
         </div>
         <button
         type="submit"

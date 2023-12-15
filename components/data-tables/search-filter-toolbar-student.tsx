@@ -7,7 +7,7 @@ import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { DataTableFacetedFilter } from "./data-table-faceted-filter"
 import { DataTableViewOptions } from "./data-table-view-options"
-import { enrollment_status, class_grades } from "@/lib/data/data"
+import { student_enrollment_status, class_grades } from "@/lib/data/data"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -29,9 +29,9 @@ export function StudentDataTableToolbar<TData>({
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn("currentGrade") && (
+        {table.getColumn("gradeLevel") && (
           <DataTableFacetedFilter
-            column={table.getColumn("currentGrade")}
+            column={table.getColumn("gradeLevel")}
             title="Grade Level"
             options={class_grades}
           />
@@ -40,7 +40,7 @@ export function StudentDataTableToolbar<TData>({
           <DataTableFacetedFilter
             column={table.getColumn("enrollmentStatus")}
             title="Enrollment Status"
-            options={enrollment_status}
+            options={student_enrollment_status}
           />
         )}
         {isFiltered && (
