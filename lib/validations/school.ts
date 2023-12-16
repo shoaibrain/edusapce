@@ -1,5 +1,25 @@
 import * as z from "zod"
 
+
+export const schoolCreateSchema = z.object({
+  name: z.string(),
+  address: z.string(),
+  phone: z.string(),
+  email: z.string().optional(),
+  website: z.string().url().optional(),
+  users: z.array(z.string()).optional(),
+})
+
+export const schoolPatchSchema = z.object({
+  name: z.string().optional(),
+  address: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().optional(),
+  website: z.string().url().optional(),
+  users: z.array(z.string()).optional(),
+})
+
+
 export const schoolYearCreateSchema = z.object({
   name: z.string(),
   startDate: z.date(),

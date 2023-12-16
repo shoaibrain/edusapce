@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
 import * as z from "zod"
@@ -17,64 +16,91 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/use-toast"
 
-const profileFormSchema = z.object({
-  username: z
+import { toast } from "@/components/ui/use-toast"
+import { School } from "@prisma/client"
+import React from "react"
+
+interface SchoolGeneralSettingsProps extends React.HTMLAttributes<HTMLFormElement> {
+  school: School;
+}
+
+const academicSettingPatchSchema = z.object({
+  academic_year: z
     .string()
-    .min(2, {
-      message: "Username must be at least 2 characters.",
+    .min(5, {
+      message: "School current academic year. academic year must be at least 5 characters, starting with year yyyy-schoolterm",
     })
     .max(30, {
-      message: "Username must not be longer than 30 characters.",
-    }),
-  email: z
-    .string({
-      required_error: "Please select an email to display.",
-    })
-    .email(),
-  bio: z.string().max(160).min(4),
-  urls: z
+      message: "School name must not be longer than 30 characters.",
+    }).optional(),
+    class_grades: z
     .array(
       z.object({
-        value: z.string().url({ message: "Please enter a valid URL." }),
+        value: z.string(),
       })
     )
     .optional(),
+    school_terms: z
+    .array(
+      z.object({
+        value: z.string(),
+      })
+    )
 })
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>
+type SchoolAcademicFormValues = z.infer<typeof academicSettingPatchSchema>
+const URL = 'http://localhost:3000/api/v1'
 
 // This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {
-  bio: "I own a computer.",
-  urls: [
-    { value: "https://shadcn.com" },
-    { value: "http://twitter.com/shadcn" },
-  ],
+// This can come from your database or API.
+const defaultValues: Partial<SchoolAcademicFormValues> = {
+  academic_year: "2021-2022",
+  class_grades: [{ value: "Kinder" }, { value: "One" }, { value: "Two" }],
+  school_terms: [{ value: "Term 1" }, { value: "Term 2" }, { value: "Term 3" }],
 }
 
-export function ProfileForm() {
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
+
+export function SchoolAcademicSettingsForm() {
+
+
+  const form = useForm<SchoolAcademicFormValues>({
+    resolver: zodResolver(academicSettingPatchSchema),
     defaultValues,
     mode: "onChange",
   })
 
-  const { fields, append } = useFieldArray({
-    name: "urls",
-    control: form.control,
-  })
+  const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
-  function onSubmit(data: ProfileFormValues) {
+  const { fields: current_classes, append: appendClassGrade } = useFieldArray({
+    name: "class_grades",
+    control: form.control,
+  });
+
+  const { fields: current_school_terms, append: appendSchoolTerm } =
+    useFieldArray({
+      name: "school_terms",
+      control: form.control,
+    });
+
+  async function onSubmit(data: SchoolAcademicFormValues) {
+    setIsSaving(true)
+    const response = await fetch(`${URL}/school/123}`,{
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+    setIsSaving(false)
+    // if (!response?.ok) {
+    //   return toast({
+    //     title: "Something went wrong.",
+    //     description: `Failed to update guardian information.`,
+    //     variant: "destructive",
+    //   })
+    // }
+
     toast({
       title: "You submitted the following values:",
       description: (
@@ -87,104 +113,94 @@ export function ProfileForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name. It can be your real name or a
-                pseudonym. You can only change this once every 30 days.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a verified email to display" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="m@example.com">m@example.com</SelectItem>
-                  <SelectItem value="m@google.com">m@google.com</SelectItem>
-                  <SelectItem value="m@support.com">m@support.com</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                You can manage verified email addresses in your{" "}
-                <Link href="/examples/forms">email settings</Link>.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="bio"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bio</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Tell us a little bit about yourself"
-                  className="resize-none"
-                  {...field}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div  className="sm:col-span-4">
+                <FormField
+                  control={form.control}
+                  name="academic_year"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Academic Year</FormLabel>
+                      <FormControl>
+                        <Input placeholder="school academic year" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Each school academic year can be
+                        given a name for easy identification.
+                        eg. academic_year_2023
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <FormDescription>
-                You can <span>@mention</span> other users and organizations to
-                link to them.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div>
-          {fields.map((field, index) => (
-            <FormField
-              control={form.control}
-              key={field.id}
-              name={`urls.${index}.value`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={cn(index !== 0 && "sr-only")}>
-                    URLs
-                  </FormLabel>
-                  <FormDescription className={cn(index !== 0 && "sr-only")}>
-                    Add links to your website, blog, or social media profiles.
-                  </FormDescription>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ))}
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="mt-2"
-            onClick={() => append({ value: "" })}
-          >
-            Add URL
-          </Button>
+              </div>
+              <div className="sm:col-span-3">
+                {current_classes.map((field, index) => (
+                  <FormField
+                    control={form.control}
+                    key={field.id}
+                    name={`class_grades.${index}.value`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className={cn(index !== 0 && "sr-only")}>
+                          Class Grade Level
+                        </FormLabel>
+                        <FormDescription className={cn(index !== 0 && "sr-only")}>
+                          Add class grade level
+                        </FormDescription>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                  onClick={() => appendClassGrade({ value: "" })}
+                >
+                  Add Class Grade
+                </Button>
+              </div>
+              <div className="sm:col-span-3">
+                {current_school_terms.map((field, index) => (
+                  <FormField
+                    control={form.control}
+                    key={field.id}
+                    name={`school_terms.${index}.value`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className={cn(index !== 0 && "sr-only")}>
+                          School Term
+                        </FormLabel>
+                        <FormDescription className={cn(index !== 0 && "sr-only")}>
+                          School Terms eg. Term 1, Term 2, Term 3
+                        </FormDescription>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                  onClick={() => appendSchoolTerm({ value: "" })}
+                >
+                  Add School Term
+                </Button>
+              </div>
         </div>
-        <Button type="submit">Update profile</Button>
+        <Button type="submit">Update Academic Settings</Button>
       </form>
     </Form>
   )

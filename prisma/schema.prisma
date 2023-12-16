@@ -80,7 +80,6 @@ enum Role {
   USER
 }
 
-// User/Admin register a school/s
 model School {
   id        String   @id @default(cuid())
   name      String

@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import SideBar from "@/components/forms/side-bar";
 import { useStepper } from "@/hooks/use-stepper-wizard";
 import { useState } from "react";
@@ -8,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { TenantOrgForm } from "@/components/forms/tenant-org-form";
 import { Separator } from "@/components/ui/separator";
 import { Metadata } from "next";
-import { SchoolGeneralForm } from "@/components/school-general-settings";
+import { SchoolSettingsForm } from "@/components/school-general-settings";
+import {SchoolAcademicSettingsForm} from "@/components/school-academic-settings";
 
 export const metadata: Metadata = {
   title: "School Settings",
@@ -31,16 +34,12 @@ export default async function SchoolSettingsPage({ params }: SchoolSettingsPageP
             <TabsTrigger value="school academic" >Academic Settings</TabsTrigger>
           </TabsList>
           <TabsContent value="school profile" className="space-y-4">
-            <SchoolGeneralForm />
+            <SchoolSettingsForm />
           </TabsContent>
 
           <TabsContent value="school academic" className="space-y-4">
-            {/* <SchoolGeneralForm /> */}
-            <p>School Academic Settings</p>
+            <SchoolAcademicSettingsForm />
           </TabsContent>
-
-
-
         </Tabs>
       </div>
     </div>

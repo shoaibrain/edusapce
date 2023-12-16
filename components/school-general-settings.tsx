@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import {  useForm } from "react-hook-form"
 import * as z from "zod"
 
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -18,8 +18,19 @@ import { Input } from "@/components/ui/input"
 
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
+import { cn } from "@/lib/utils"
+import { School } from "@prisma/client"
+import React from "react"
+import { Icons } from "./icons"
 
-const SchoolGeneralSettingsSchema = z.object({
+
+interface SchoolSettingsFormProps extends React.HTMLAttributes<HTMLFormElement> {
+  school: School;
+}
+
+type formData = z.infer<typeof SchoolSettingsPatchSchema>
+
+const SchoolSettingsPatchSchema = z.object({
   schoolName: z
     .string()
     .min(2, {
@@ -40,24 +51,39 @@ const SchoolGeneralSettingsSchema = z.object({
     .email(),
 
 })
-
-type SchoolFormValues = z.infer<typeof SchoolGeneralSettingsSchema>
+const URL = 'http://localhost:3000/api/v1'
+type SchoolFormValues = z.infer<typeof SchoolSettingsPatchSchema>
 
 // This can come from your database or API.
 const defaultValues: Partial<SchoolFormValues> = {
   schoolName: "Allen High School",
+  email: "example@school.com",
   address: "1234 Main St.",
-  email: "example@school.com"
 }
 
-export function SchoolGeneralForm() {
+async function getSchool(schoolId) {
+  // get school data from api
+}
+
+export function SchoolSettingsForm({
+    school,
+    className,
+    ...props
+}) {
   const form = useForm<SchoolFormValues>({
-    resolver: zodResolver(SchoolGeneralSettingsSchema),
+    resolver: zodResolver(SchoolSettingsPatchSchema),
     defaultValues,
     mode: "onChange",
   })
-
+  const [isSaving, setIsSaving] = React.useState<boolean>(false);
   function onSubmit(data: SchoolFormValues) {
+
+
+    console.log("updaing school settings.....")
+    setIsSaving(true)
+    console.log("done updaing school settings.....")
+    setIsSaving(false)
+
     toast({
       title: "You submitted the following values:",
       description: (
@@ -71,56 +97,75 @@ export function SchoolGeneralForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="schoolName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>School Name</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your school name
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>School Address</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="School Mailing Address"
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>School Email</FormLabel>
-              <FormControl>
-                <Input placeholder="Allen@school.com" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your school email
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Update School</Button>
+      <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div className="sm:col-span-3">
+            <FormField
+              control={form.control}
+              name="schoolName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>School Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="school name" {...field} disabled />
+                  </FormControl>
+                  <FormDescription>
+                    This is your school name. why is this disabled?
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+        </div>
+
+        <div className="sm:col-span-3">
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>School Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="Allen@school.com" {...field} />
+                </FormControl>
+                <FormDescription>
+                  This is your school email
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="sm:col-span-3">
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>School Address</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="School Mailing Address"
+                    className="resize-none"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      </div>
+      <button
+        type="submit"
+        className={cn(buttonVariants(), className)}
+        disabled={isSaving}
+      >
+        {isSaving && (
+          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+        )}
+        <span>Save Changes</span>
+      </button>
       </form>
     </Form>
   )

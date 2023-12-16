@@ -16,7 +16,7 @@ interface GuardianPageProps {
   params: { guardianId: string };
 }
 
-const URL = "https://project-eduspace.vercel.app/api/v1";
+const URL = "http://localhost:3000/api";
 
 async function getGuardian(guardianId: Guardian["id"]) {
   console.log(URL)
