@@ -1,10 +1,10 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useFieldArray, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
-import { Button, buttonVariants } from "@/components/ui/button"
+import {  buttonVariants } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -24,12 +24,8 @@ import {
 } from "@/components/ui/select"
 import { toast } from "@/components/ui/use-toast"
 import React from "react"
-import { Icons } from "./icons"
+import { Icons } from "../icons"
 import { useRouter } from "next/navigation"
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
-import { format } from "date-fns"
-import { CalendarIcon } from "@radix-ui/react-icons"
-import { Calendar } from "./ui/calendar"
 import { employeeCreateSchema } from "@/lib/validations/employee"
 
 
@@ -49,14 +45,11 @@ export function EmployeeHireForm({
     mode: "onChange",
     defaultValues: {
       firstName: "",
-      middleName: "",
       lastName: "",
       email: "",
       phone: "",
       address: "",
       gender: "",
-      ssn: "",
-      department: "",
     }
   })
   const router = useRouter()
@@ -107,24 +100,7 @@ export function EmployeeHireForm({
                 )}
               />
             </div>
-            <div  className="sm:col-span-2">
-              <FormField
-                control={form.control}
-                name="middleName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Middle name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      optional
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+
             <div  className="sm:col-span-2">
               <FormField
                 control={form.control}
@@ -173,55 +149,6 @@ export function EmployeeHireForm({
             <div  className="sm:col-span-3">
               <FormField
                 control={form.control}
-                name="birthDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Birth Date</FormLabel>
-                    <FormControl>
-                    <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-                    </FormControl>
-                    <FormDescription>
-                      date of birth
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div  className="sm:col-span-3">
-              <FormField
-                control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -230,7 +157,7 @@ export function EmployeeHireForm({
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter your email address| optional
+                      Enter your email address
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -266,44 +193,7 @@ export function EmployeeHireForm({
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter your home address
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div  className="sm:col-span-2">
-              <FormField
-                control={form.control}
-                name="ssn"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Identification No.</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      driving license, ssn, passport, etc
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div  className="sm:col-span-2">
-              <FormField
-                control={form.control}
-                name="department"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Department</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      working department
+                      Enter your mailing address
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

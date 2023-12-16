@@ -13,11 +13,11 @@ export const metadata: Metadata = {
   title: "Employees",
   description: "Employees Dashboard",
 }
-const URL = process.env.API_URL;
+const URL = "http://localhost:3000/api/v1";
 
 const getEmployees = async () => {
   try {
-    const res = await fetch(`http://localhost:3000/api/v1/employees`,{
+    const res = await fetch(`${URL}/employees`,{
       method : 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -56,37 +56,11 @@ export default async function EmployeesPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Widget
-                </CardTitle>
-                <Gauge className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">
-                    short Description
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                 Widget
-                </CardTitle>
-                <GraduationCap className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">
-                    short Description
-                </p>
-              </CardContent>
-            </Card>
           </div>
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3'>
             <div>
             <Link href="/hire" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
-              Some Button
+              Add Employee
             </Link>
             </div>
           </div>

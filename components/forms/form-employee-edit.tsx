@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -21,26 +23,6 @@ import { Icons } from "@/components/icons"
 import { employeePatchSchema } from "@/lib/validations/employee"
 import { Employee } from "@prisma/client"
 
-// TODO: Patch not working
-
-// const genders = [
-//   { label: "Male", value: "Male" },
-//   { label: "Female", value: "Female" },
-//   { label: "Other", value: "Other" },
-// ] as const
-
-// const departments = [
-//   { labe:"Science", value: "Science"},
-//   { labe:"Mathematics", value: "Mathematics"},
-//   { labe:"English", value: "English"},
-//   { label:"Arts", value: "Arts"},
-//   { label: "language", value: "language"},
-//   { label: "Social Studies", value: "Social Studies"},
-//   { label: "Physical Education", value: "Physical Education"},
-//   { label: "Music", value: "Music"},
-//   { label: "Computer Science", value: "Computer Science"},
-//   { label: "Other", value: "Other" },
-// ]
 interface EmployeeEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   employee: Employee;
 }
@@ -65,9 +47,6 @@ export function EmployeeEditForm({
       phone: employee?.phone,
       email: employee?.email || "",
       address: employee?.address,
-      gender: employee?.gender,
-      ssn: employee?.ssn || "",
-      department: employee?.department,
     }
   })
 

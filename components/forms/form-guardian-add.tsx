@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+import { useRouter } from 'next/navigation'
 import {
   Form,
   FormControl,
@@ -25,7 +26,6 @@ import { toast } from "@/components/ui/use-toast"
 import { guardianCreateSchema } from "@/lib/validations/guardian"
 import React from "react"
 import { Icons } from "@/components/icons"
-import { useRouter } from "next/navigation"
 
 interface GuardianFormProps extends React.HTMLAttributes<HTMLFormElement> {
   studentId?: string;
@@ -54,15 +54,13 @@ export function GuardianAddForm({
       annualIncome: "",
     }
   })
-  const router = useRouter()
+  const router = useRouter();
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   async function onSubmit(data: formData) {
 
     if (studentId) {
       data.students = [studentId];
     }
-
-    console.log(`data: ${JSON.stringify(data, null, 2)}`)
 
     setIsSaving(true);
     const response = await fetch(`${URL}/guardians`,{
@@ -80,10 +78,11 @@ export function GuardianAddForm({
         variant: "destructive",
       })
     }
+
     toast({
       description: "A new guardian has been added.",
     })
-    router.refresh()
+    router.refresh();
   }
 
   return (

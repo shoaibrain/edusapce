@@ -17,7 +17,7 @@ export async function POST(request:Request) {
     const json = await request.json();
     const body = guardianCreateSchema.parse(json);
     const newGuardian = await postGuardian(body);
-    logger.info(`New guardian created: ${newGuardian.id}`);
+
     return new Response(JSON.stringify(newGuardian), { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {

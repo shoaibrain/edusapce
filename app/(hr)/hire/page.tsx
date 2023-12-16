@@ -1,5 +1,5 @@
 
-import { EmployeeHireForm } from "@/components/form-employee-hire"
+import { EmployeeHireForm } from "@/components/forms/form-employee-hire"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {

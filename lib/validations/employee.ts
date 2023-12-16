@@ -16,7 +16,6 @@ export const employeeCreateSchema = z.object({
   firstName: z.string().min(3, {
     message: "Username must be at least 3 characters.",
   }).max(32),
-  middleName: z.string().optional(),
   lastName: z.string().min(3, {
     message: "Username must be at least 3 characters.",
   }).max(32),
@@ -25,8 +24,5 @@ export const employeeCreateSchema = z.object({
   address: z.string().min(5, {
     message: "provide a valid address",
   }).max(32),
-  birthDate: z.date(),
   gender: z.string(),
-  ssn: z.string().min(3).max(32),
-  department: z.string().min(3).max(32)
 })

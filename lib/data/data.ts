@@ -1,5 +1,10 @@
     export const class_grades = [
     {
+      value:"Kindergarten",
+      label:"KINDERGARTEN",
+    },
+
+    {
       value: "One",
       label: "ONE",
     },

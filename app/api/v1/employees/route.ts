@@ -14,13 +14,12 @@ export const GET = async () => {
 export const POST = async (request: Request) => {
   try {
     const json  = await request.json();
-    let dob = new Date(json.birthDate);
-    json.birthDate = dob;
     const body = employeeCreateSchema.parse(json);
     const newEmployee = await postEmployee(body);
     return new Response(JSON.stringify(newEmployee), { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log(`Error: ${error.cause}`)
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }
     return new Response(null, { status: 500 })

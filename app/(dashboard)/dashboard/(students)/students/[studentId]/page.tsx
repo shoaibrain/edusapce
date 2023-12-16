@@ -18,14 +18,15 @@ export const metadata: Metadata = {
   title: "Student Details",
   description: "Student Dashboard",
 }
+
 interface StudentPageProps {
   params: { studentId: string };
 }
-const URL = process.env.API_URL;
+const URL = "http://localhost:3000/api/v1";
 
 async function getStudent(studentId: Student["id"]) {
   try {
-    const res = await fetch(`http://localhost:3000/api/v1/students/${studentId}`,{
+    const res = await fetch(`${URL}/students/${studentId}`,{
       method : 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -52,7 +53,7 @@ export default async function StudentPage({ params }: StudentPageProps) {
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-sm font-medium">
-            {`${student.firstName} ${student.lastName}`}
+            {`Student: ${student.firstName} ${student.lastName}`}
           </h2>
           <div className="flex items-center space-x-2">
             <ProfileOptions student = {student} />
@@ -120,7 +121,7 @@ export default async function StudentPage({ params }: StudentPageProps) {
                     <GuardianCard key={guardian.id} parent={guardian} />
                   ))
                 ) : (
-                  <p className="text-sm font-medium">No guardian for this student.</p>
+                  <p className="text-sm font-medium">No guardian found</p>
                 )}
               <div className="p-4">
                 <Dialog>

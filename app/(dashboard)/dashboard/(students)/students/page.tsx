@@ -59,25 +59,12 @@ export default async function StudentsPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Attendence Rate
-                </CardTitle>
-                <Gauge className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">
-                  +20.1% from last month
-                </p>
-              </CardContent>
-            </Card>
 
           </div>
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3'>
             <div>
             <Link href="/admission" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
-              Some Button
+              Admit New Student
             </Link>
             </div>
           </div>

@@ -219,11 +219,10 @@ model Employee {
   email            String?
   address          String
   role             Role             @default(STAFF)
-  birthDate        DateTime
-  gender           String
+  birthDate        DateTime?
+  gender           String?
   ssn              String?
-  department       String
-  hiredDate        DateTime?        @map("hired_date") // specific date when employee was hired, payroll purposes
+  department       String?
   createdAt        DateTime         @default(now()) @map("created_at")
   updatedAt        DateTime         @default(now()) @map("updated_at")
   employeeSalaries EmployeeSalary[]
@@ -333,8 +332,8 @@ model Guardian {
   guardianType String?
   role         Role      @default(USER)
   students     Student[]
-  isPrimary    Boolean   @default(false) @map("is_primary")
-  canPickup    Boolean   @default(false) @map("can_pickup")
+  isPrimary    Boolean?  @default(false) @map("is_primary")
+  canPickup    Boolean?  @default(false) @map("can_pickup")
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @default(now()) @map("updated_at")
 
