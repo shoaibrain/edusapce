@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import {  useForm } from "react-hook-form"
 import * as z from "zod"
 
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -19,14 +19,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
 import { cn } from "@/lib/utils"
-import { School } from "@prisma/client"
 import React from "react"
 import { Icons } from "./icons"
-
-
-interface SchoolSettingsFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  school: School;
-}
 
 type formData = z.infer<typeof SchoolSettingsPatchSchema>
 
@@ -61,14 +55,8 @@ const defaultValues: Partial<SchoolFormValues> = {
   address: "1234 Main St.",
 }
 
-async function getSchool(schoolId) {
-  // get school data from api
-}
 
 export function SchoolSettingsForm({
-    school,
-    className,
-    ...props
 }) {
   const form = useForm<SchoolFormValues>({
     resolver: zodResolver(SchoolSettingsPatchSchema),
@@ -158,7 +146,7 @@ export function SchoolSettingsForm({
       </div>
       <button
         type="submit"
-        className={cn(buttonVariants(), className)}
+        className={cn(buttonVariants())}
         disabled={isSaving}
       >
         {isSaving && (

@@ -1,8 +1,6 @@
 
-import { schoolCreateSchema, schoolTermCreateSchema, schoolYearCreateSchema } from "@/lib/validations/school";
-import { createResource } from "@/services/service-academic";
+import { schoolCreateSchema } from "@/lib/validations/school";
 import { getSchools, postSchool } from "@/services/service-school";
-import { da } from "date-fns/locale";
 import * as z from "zod"
 
 export async function GET(){
