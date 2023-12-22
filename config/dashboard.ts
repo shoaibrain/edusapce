@@ -20,12 +20,12 @@ export const dashboardConfig: DashboardConfig = {
       disabled: false,
       icon: "dashboard",
     },
-    {
-      title: "Academics",
-      href: "/dashboard/academics",
-      disabled: false,
-      icon: "library"
-    },
+    // {
+    //   title: "Academics",
+    //   href: "/dashboard/academics",
+    //   disabled: true,
+    //   icon: "library"
+    // },
     {
       title: "Students",
       href: "/dashboard/students",

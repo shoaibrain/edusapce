@@ -23,7 +23,6 @@ import {  Student } from "@prisma/client"
 import { studentPatchSchema } from "@/lib/validations/student"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import {CommandItem } from "../ui/command"
-import { student_enrollment_status } from "@/lib/data/data"
 
 const genders = [
   { label: "Male", value: "Male" },
