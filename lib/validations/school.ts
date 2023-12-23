@@ -1,6 +1,4 @@
 import * as z from "zod"
-
-
 export const schoolCreateSchema = z.object({
   name: z.string(),
   address: z.string(),

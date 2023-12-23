@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 const URL = "http://localhost:3000/api/v1";
 
-async function getSchool( schoolId) {
+async function getSchool( schoolId: String) {
   try {
     const res = await fetch(`${URL}/schools/${schoolId}`, {
       method: 'GET',
@@ -40,12 +40,13 @@ export default async function SchoolSettingsPage() {
   if (!user) {
     redirect(authOptions?.pages?.signIn || "/login")
   }
-  //TODO: handle error on school not found on clinet side
-  const school = await getSchool(user.schoolId);
+  const schoolId = user.schoolId;
 
-  if (!school) {
-    notFound();
+  if (!schoolId) {
+    redirect("/org/register");
   }
+
+  const school = await getSchool(schoolId);
 
   return (
     <div className="space-y-6">
