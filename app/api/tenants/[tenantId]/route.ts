@@ -2,11 +2,11 @@ import { getServerSession } from "next-auth/next"
 import { z } from "zod"
 import { authOptions } from "@/lib/auth"
 import prisma from "@/lib/db"
-import { userNameSchema } from "@/lib/validations/user"
+import { tenantNameSchema } from "@/lib/validations/tenant"
 
 const routeContextSchema = z.object({
   params: z.object({
-    userId: z.string(),
+    tenantId: z.string(),
   }),
 })
 
@@ -17,19 +17,19 @@ export async function PATCH(
   try {
     // Validate the route context.
     const { params } = routeContextSchema.parse(context)
-    console.log(params)
-    // Ensure user is authentication and has access to this user.
+
+    // Ensure tenant is authentication a.
     const session = await getServerSession(authOptions)
-    if (!session?.user || params.userId !== session?.user.id) {
+    if (!session?.user || params.tenantId !== session?.user.id) {
       return new Response(null, { status: 403 })
     }
 
     // Get the request body and validate it.
     const body = await req.json()
-    const payload = userNameSchema.parse(body)
+    const payload = tenantNameSchema.parse(body)
 
     // Update the user.
-    await prisma.user.update({
+    await prisma.tenant.update({
       where: {
         id: session.user.id,
       },

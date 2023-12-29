@@ -25,20 +25,20 @@ export const authOptions: NextAuthOptions = {
           if (!credentials || !credentials.email || !credentials.password) {
             throw new Error("Please enter your email and password")
           }
-          const user = await prisma.user.findUnique({
+          const tenant = await prisma.tenant.findUnique({
             where: { email: credentials.email },
           })
-          if (!user || !user?.hashedPassword) {
+          if (!tenant || !tenant?.hashedPassword) {
             throw new Error("No user found")
           }
           const passwordMatch = await bcrypt.compare(
             credentials.password,
-            user.hashedPassword
+            tenant.hashedPassword
           )
           if (!passwordMatch) {
             throw new Error("Incorrect password")
           }
-          return user
+          return tenant
         },
       })
   ],
@@ -59,7 +59,7 @@ export const authOptions: NextAuthOptions = {
     // TODO: aa better way to include schoolId in jwt?
     //@ts-ignore
     async jwt({ token, user }) {
-      const dbUser = await prisma.user.findFirst({
+      const dbUser = await prisma.tenant.findFirst({
         where: {
           email: token.email || "",
         }

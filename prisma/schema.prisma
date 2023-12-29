@@ -24,31 +24,10 @@ model Account {
   session_state     String?
   createdAt         DateTime @default(now()) @map("created_at")
   updatedAt         DateTime @default(now()) @map("updated_at")
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              Tenant   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
-}
-
-model User {
-  id             String    @id @default(cuid())
-  name           String
-  email          String    @unique
-  phone          String?
-  emailVerified  DateTime?
-  phoneVerified  DateTime?
-  hashedPassword String?
-  role           Role      @default(USER)
-  image          String?
-  addres         String?
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @default(now()) @map("updated_at")
-  accounts       Account[]
-  sessions       Session[]
-  schoolId       String?   @map("school_id")
-  school         School?   @relation(fields: [schoolId], references: [id])
-
-  @@map("users")
 }
 
 model VerificationToken {
@@ -65,7 +44,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         Tenant   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
@@ -80,6 +59,34 @@ enum Role {
   USER
 }
 
+// Tenant is a root node for the system usage
+model Tenant {
+  id             String    @id @default(cuid())
+  name           String
+  email          String    @unique
+  phone          String?
+  emailVerified  DateTime?
+  phoneVerified  DateTime?
+  hashedPassword String?
+  role           Role      @default(ADMIN)
+  image          String?
+  addres         String?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @map("updated_at")
+  accounts       Account[]
+  sessions       Session[]
+
+  schoolId String? @unique @map("school_id")
+
+  school School[]
+
+  @@map("tenants")
+}
+
+// tenant logs in, get schools for that tenant
+// on tenant dashboard, tenant have access their school & school's services
+// as well as tenant's services
+
 model School {
   id        String   @id @default(cuid())
   name      String
@@ -89,50 +96,46 @@ model School {
   website   String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
-  users     User[]
+  tenants   Tenant   @relation(fields: [tenantId], references: [id])
 
-  @@index([name])
+  schoolYear SchoolYear @relation(fields: [id], references: [schoolId]) // current school year
+  tenantId   String     @unique
+
   @@map("schools")
 }
 
+// uniquely identifiable by school
+// this table is supposed to be entry point for school-related data, mainly identified by school_id
 model SchoolYear {
-  id                String           @id @default(cuid())
-  name              String
-  schoolId          String           @unique @map("school_id")
+  schoolId  String       @id @unique @default(cuid()) @map("school_id")
   //academic year start and end dates
-  startDate         DateTime
-  endDate           DateTime
+  startDate DateTime
+  endDate   DateTime
   // school_year can have multiple terms (Fall 2020, Spring 2021, Fall 2021 etc.)
-  terms             SchoolTerm[]
-  // class grade levels each academic year
-  yearLevels        YearGradeLevel[]
-  allocatedBudget   Float?
-  expenses          Float            @default(0)
-  // this should allow student enrollment for the school year
-  registrationClose DateTime?
-  createdAt         DateTime         @default(now()) @map("created_at")
-  updatedAt         DateTime         @default(now()) @map("updated_at")
+  terms     SchoolTerm[] // list of current school terms
 
-  @@index([name, startDate, endDate])
+  yearLevels YearGradeLevel[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  School    School[]
+
   @@map("school_years")
 }
 
 // school terms (e.g., Fall 2020, Spring 2021, First_term, N_term etc.)
 model SchoolTerm {
-  id                String     @id @default(cuid())
-  name              String
+  school_id String   @id
+  name      String
   // term cycle start and end dates
-  startDate         DateTime
-  endDate           DateTime
-  schoolYearId      String // Foreign key to SchoolYear
-  // this should allow student enrollment for the school term
-  registrationClose DateTime?
-  enrollmentCount   Int        @default(0)
-  createdAt         DateTime   @default(now()) @map("created_at")
-  updatedAt         DateTime   @default(now()) @map("updated_at")
-  schoolYear        SchoolYear @relation(fields: [schoolYearId], references: [id])
+  startDate DateTime
+  endDate   DateTime
 
-  @@index([name, startDate, endDate, schoolYearId])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  schoolYear SchoolYear @relation(fields: [school_id], references: [schoolId])
+
   @@map("school_terms")
 }
 
@@ -149,7 +152,7 @@ model YearGradeLevel {
   classePeriods ClassPeriod[] // Classes belonging to this grade level
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @default(now()) @map("updated_at")
-  SchoolYear    SchoolYear?   @relation(fields: [schoolYearId], references: [id])
+  SchoolYear    SchoolYear?   @relation(fields: [schoolYearId], references: [schoolId])
   schoolYearId  String?
 
   @@index([name])
@@ -160,39 +163,48 @@ model YearGradeLevel {
 // First Period, Second Period, etc.
 model ClassPeriod {
   id           String          @id @default(cuid())
-  name         String
-  classType    String? // e.g., Regular, Lab, etc.
-  capacity     Int?
-  department   String
-  description  String?
-  // class period schedule
-  startTime    DateTime
-  endTime      DateTime
-  // class can be taught by multiple teachers
-  teachers     Employee[]
-  createdAt    DateTime        @default(now()) @map("created_at")
-  updatedAt    DateTime        @default(now()) @map("updated_at")
   gradeLevelId String? // foreign key to YearGradeLevel
   gradeLevel   YearGradeLevel? @relation(fields: [gradeLevelId], references: [id])
   subjectId    String? // foreign key to Subject assigned to this class
   subject      Subject?        @relation(fields: [subjectId], references: [id])
 
-  @@index([department, startTime, endTime, gradeLevelId])
+  name        String
+  classType   String? // e.g., Regular, Lab, etc.
+  capacity    Int?
+  department  String
+  description String?
+
+  // class period schedule
+  startTime DateTime
+  endTime   DateTime
+  // class can be taught by multiple teachers
+  teachers  Employee[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @default(now()) @map("updated_at")
+
   @@map("class_periods")
 }
 
+// tenant cannot create Student without having existing school
+// tenant ceates student in context of school
+// students exists in School
+// Student have access to School's services (these services are provided by school using eduSpace)
 model Student {
   id               String          @id @default(cuid())
+  schoolId         String          @map("school_id")
+  // basic attributes
   firstName        String
   middleName       String?
   lastName         String
   birthDate        DateTime
   gender           String
+  // identity related attributes
   nationality      String?
-  ssn              String?
-  email            String?
-  phone            String?
+  ssn              String?         @unique
+  email            String?         @unique
+  phone            String? // current phone number
   address          String
+  // school related attributes
   enrollmentStatus String?
   role             Role            @default(STUDENT)
   gradeLevel       String // foreign key to Class Grade Level
@@ -203,38 +215,43 @@ model Student {
   attendance       Attendance[] // attendence records for this student
   createdAt        DateTime        @default(now()) @map("created_at")
   updatedAt        DateTime        @default(now()) @map("updated_at")
-  TestResults      TestResult[] // test results for this student
+  TestResults      TestResult[] // list of test results for this student
 
-  @@index([firstName, lastName, gender])
+  @@index([schoolId, ssn, firstName, lastName])
   @@map("students")
 }
 
+// Employees are users of the system
+// Employees are provisioned by the tenant in context of school
 model Employee {
-  id               String           @id @default(cuid())
-  firstName        String
-  middleName       String?
-  lastName         String
-  phone            String
-  email            String?
-  address          String
-  role             Role             @default(STAFF)
-  birthDate        DateTime?
-  gender           String?
-  ssn              String?
-  department       String?
-  createdAt        DateTime         @default(now()) @map("created_at")
-  updatedAt        DateTime         @default(now()) @map("updated_at")
-  employeeSalaries EmployeeSalary[]
-  ClassPeriods     ClassPeriod[] // teacher can teach multiple classes
-  gradedTests      TestResult[] // teacher can grade multiple tests
-  medicalRecordId  String?          @unique
-  medicalRecord    MedicalRecord?   @relation(fields: [medicalRecordId], references: [id])
-  attendance       Attendance[]
+  id       String @id @default(cuid())
+  tenantId String @map("tenant_id")
+  schoolId String @map("school_id")
 
-  @@index([firstName])
-  @@index([lastName])
-  @@index([gender])
-  @@index([department])
+  firstName  String
+  middleName String?
+  lastName   String
+  phone      String
+  email      String?   @unique
+  address    String
+  role       Role      @default(STAFF)
+  birthDate  DateTime?
+  gender     String?
+  ssn        String?
+  department String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  employeeSalaries EmployeeSalary[]
+
+  ClassPeriods ClassPeriod[] // employee can teach multiple classes
+  gradedTests  TestResult[] // teacher can grade multiple tests
+  attendance   Attendance[]
+
+  medicalRecordId String?        @unique
+  medicalRecord   MedicalRecord? @relation(fields: [medicalRecordId], references: [id])
+
   @@map("employees")
 }
 
@@ -289,67 +306,80 @@ model TestResult {
   @@map("test_results")
 }
 
-// Math, English, Chemistry, etc.
+// Subjects are textbooks/papers/articels ,etc used in classes
+// eduSpace provides access to online textbooks(presumably)
+// Subjects are digital resources, and can be printed out as well
+
 model Subject {
-  id           String        @id @default(cuid())
+  id       String @id @default(cuid())
+  schoolId String @map("school_id")
+
   subjectName  String
   textbookName String?
   textbookUrl  String?
   description  String?
   department   String?
-  classPeriods ClassPeriod[] // classes that teach this subject
-  tests        Test[] // all tests for this subject
+
+  tests       Test[] // all tests for this subject
+  ClassPeriod ClassPeriod[]
 
   @@index([subjectName, department])
   @@map("subjects")
 }
 
+// TODO: design relations with other
 model MedicalRecord {
   id         String    @id @default(cuid())
   bloodType  String?
   doctorName String?
   notes      String?
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @default(now()) @map("updated_at")
-  employee   Employee?
-  student    Student?
+  Student    Student?
+  Employee   Employee?
 
-  @@index([doctorName])
   @@map("medical_records")
 }
 
 model Guardian {
-  id           String    @id @default(cuid())
-  firstName    String
-  middleName   String?
-  lastName     String
-  phone        String
-  address      String
-  email        String?
+  id       String @id @default(cuid())
+  schoolId String @map("school_id")
+
+  firstName  String
+  middleName String?
+  lastName   String
+  phone      String
+  address    String
+  email      String?
+
   profession   String?
   annualIncome String?
-  guardianType String?
-  role         Role      @default(USER)
-  students     Student[]
-  isPrimary    Boolean?  @default(false) @map("is_primary")
-  canPickup    Boolean?  @default(false) @map("can_pickup")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @default(now()) @map("updated_at")
 
-  @@index([phone, email, guardianType, isPrimary])
+  guardianType String?
+  role         Role?
+  students     Student[]
+
+  canPickup Boolean? @default(false) @map("can_pickup")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@index([phone, email, guardianType])
   @@map("guardians")
 }
 
 model Attendance {
-  id         String    @id @default(cuid())
-  date       DateTime
-  status     String
+  id       String @id @default(cuid())
+  schoolId String @map("school_id")
+
+  date   DateTime // date of attendance
+  status String
+
   student    Student?  @relation(fields: [studentId], references: [id])
   studentId  String?
   employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId String?
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @default(now()) @map("updated_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 
   @@index([date, studentId, employeeId])
   @@map("attendances")

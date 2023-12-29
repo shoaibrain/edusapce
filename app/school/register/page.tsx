@@ -1,16 +1,23 @@
 import { SchoolRegisterForm } from "@/components/forms/form-school-register"
+import { getCurrentUser } from "@/lib/session"
+
 
 export const metadata = {
-  title: "School Register",
+  title: "Register School",
   description: "Register School to get started.",
 }
 
-export default function SchoolRegisterPage() {
+
+
+export default async function SchoolRegisterPage() {
+
+
   return (
     <>
       <div className="space-y-6">
       <div className="flex-1 space-y-4 p-8 pt-6">
-         <SchoolRegisterForm />
+        <p className="text-md font-bold underline">Register School </p>
+         <SchoolRegisterForm tenantId="123"/>
       </div>
     </div>
 

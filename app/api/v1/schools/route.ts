@@ -1,7 +1,9 @@
 
 import { schoolCreateSchema } from "@/lib/validations/school";
+import { logger } from "@/logger";
 import { getSchools, postSchool } from "@/services/service-school";
 import * as z from "zod"
+import { Logger } from "winston";
 
 export async function GET(){
  try {
@@ -20,8 +22,9 @@ export const POST = async (request: Request) => {
     return new Response(JSON.stringify(newSchool), { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return new Response(JSON.stringify(error.issues), { status: 422 })
+      return new Response(JSON.stringify(error.message), { status: 422 })
     }
+    logger.warn(`Failed to create school: ${error.message}`)
     return new Response(null, { status: 500 })
   }
 }

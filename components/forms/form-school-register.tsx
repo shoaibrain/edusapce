@@ -21,13 +21,13 @@ import { Icons } from "@/components/icons"
 import { schoolCreateSchema } from "@/lib/validations/school"
 
 interface SchoolFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  userId?: string;
+  tenantId;
 }
 type formData = z.infer<typeof schoolCreateSchema>
 const URL = 'http://localhost:3000/api/v1';
 
 export function SchoolRegisterForm({
-  userId,
+  tenantId: tenantId,
   className,
   ...props
 }: SchoolFormProps) {
@@ -36,9 +36,9 @@ export function SchoolRegisterForm({
     mode: "onChange",
     defaultValues: {
       name: "",
-      email: "",
-      phone: "",
       address: "",
+      phone: "",
+      email: "",
       website: "",
     }
   })
@@ -46,8 +46,8 @@ export function SchoolRegisterForm({
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   async function onSubmit(data: formData) {
 
-    if (userId) {
-      data.users = [userId];
+    if (tenantId) {
+      data.tenants = [tenantId];
     }
 
     setIsSaving(true);
@@ -56,6 +56,7 @@ export function SchoolRegisterForm({
       headers: {
         'Content-Type': 'application/json',
       },
+
       body: JSON.stringify(data)
     })
     setIsSaving(false);
@@ -92,21 +93,7 @@ export function SchoolRegisterForm({
                 )}
               />
             </div>
-            <div  className="sm:col-span-3">
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Physical Address</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+
             <div  className="sm:col-span-2">
               <FormField
                 control={form.control}

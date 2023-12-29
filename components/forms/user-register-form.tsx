@@ -24,7 +24,7 @@ export function UserRegisterForm({className, ...props}:UserRegisterFormProps ) {
 
   const {register, handleSubmit, formState:{errors}} = useForm<FormData>({resolver: zodResolver(userRegisterSchema)})
 
-  async function registerUser(data: FormData) {
+  async function registerTenant(data: FormData) {
     try {
       const response = await fetch("/api/register", {
         method: "POST",
@@ -70,7 +70,7 @@ export function UserRegisterForm({className, ...props}:UserRegisterFormProps ) {
 
   return (
     <Card className="w-full">
-       <form  onSubmit={handleSubmit(registerUser)}>
+       <form  onSubmit={handleSubmit(registerTenant)}>
         <CardHeader>
           <CardTitle>Create an account</CardTitle>
           <CardDescription>

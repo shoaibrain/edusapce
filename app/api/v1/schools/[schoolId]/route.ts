@@ -61,9 +61,7 @@ export async function PATCH(
     if (body.phone) data.phone = body.phone;
     if (body.email) data.email = body.email;
     if (body.website) data.website = body.website;
-    if (body.users) data.users = {
-      connect: body.users.map((userId: string) => ({ id: userId })),
-    };
+
     const school = await patchSchool(params.schoolId as string, data);
     return new Response(JSON.stringify(school), { status: 200 });
   } catch(error) {

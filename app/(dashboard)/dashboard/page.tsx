@@ -44,7 +44,7 @@ export default async function DashboardPage() {
                       You do not have school registered yet.
                     </p>
                     <Link
-                      href="/org/register"
+                      href="/school/register"
                       className={cn(buttonVariants({ size: "lg" }))}
                     >
                       Register School

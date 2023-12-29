@@ -46,19 +46,19 @@ export const dashboardConfig: DashboardConfig = {
     },
     {
       title: "School Settings",
-      href: "/org",
+      href: "/school",
       disabled: false,
       icon: "school",
       // TODO: show sub items under accordion
       subItems: [
         {
           title: "Academic Settings",
-          href: "/org/academics",
+          href: "/school/academics",
           disabled: false,
         },
         {
           title: "Class & Grade Settings",
-          href: "/org/grades",
+          href: "/school/grades",
           disabled: false,
         },
       ],

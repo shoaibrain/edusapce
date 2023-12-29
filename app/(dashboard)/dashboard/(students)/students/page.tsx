@@ -16,6 +16,7 @@ export const metadata: Metadata = {
 }
 const URL = process.env.API_URL;
 
+// TODO: getStudent for School, for tenant
 async function getStudents() {
   try {
     const res = await fetch(`http://localhost:3000/api/v1/students`, {

@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 }
 const URL = "http://localhost:3000/api/v1";
 
+// TODO: get Employees for school, for tenant
 const getEmployees = async () => {
   try {
     const res = await fetch(`${URL}/employees`,{

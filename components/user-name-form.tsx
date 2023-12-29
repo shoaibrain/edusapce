@@ -3,12 +3,12 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { User } from "@prisma/client"
+import { Tenant } from "@prisma/client"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
 import { cn } from "@/lib/utils"
-import { userNameSchema } from "@/lib/validations/user"
+import { tenantNameSchema } from "@/lib/validations/tenant"
 import { buttonVariants } from "@/components/ui/button"
 import {
   Card,
@@ -24,10 +24,10 @@ import { toast } from "@/components/ui/use-toast"
 import { Icons } from "./icons"
 
 interface UserNameFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  user: Pick<User, "id" | "name">
+  user: Pick<Tenant, "id" | "name">
 }
 
-type FormData = z.infer<typeof userNameSchema>
+type FormData = z.infer<typeof tenantNameSchema>
 
 export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
   const router = useRouter()
@@ -36,7 +36,7 @@ export function UserNameForm({ user, className, ...props }: UserNameFormProps) {
     register,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(userNameSchema),
+    resolver: zodResolver(tenantNameSchema),
     defaultValues: {
       name: user?.name || "",
     },

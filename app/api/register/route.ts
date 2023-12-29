@@ -9,7 +9,7 @@ export async function POST(request) {
   if (!name || !email || !password) {
     return new NextResponse("Missing Fields", { status: 400 })
   }
-  const exist = await prisma.user.findUnique({
+  const exist = await prisma.tenant.findUnique({
     where: {
       email,
     },
@@ -24,7 +24,7 @@ export async function POST(request) {
 
   const hashedPassword = await bcrypt.hash(password, 10)
 
-  const user = await prisma.user.create({
+  const tenant = await prisma.tenant.create({
     data: {
       name,
       email,
@@ -32,5 +32,5 @@ export async function POST(request) {
     },
   })
 
-  return NextResponse.json(user)
+  return NextResponse.json(tenant)
 }

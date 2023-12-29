@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Metadata } from "next";
 import { SchoolSettingsForm } from "@/components/forms/form-school-general-settings";
 import {SchoolAcademicSettingsForm} from "@/components/forms/form-school-academic-settings";
-import { notFound, redirect } from "next/navigation";
+import {  redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { authOptions } from "@/lib/auth";
 
@@ -43,7 +43,7 @@ export default async function SchoolSettingsPage() {
   const schoolId = user.schoolId;
 
   if (!schoolId) {
-    redirect("/org/register");
+    redirect("/school/register");
   }
 
   const school = await getSchool(schoolId);

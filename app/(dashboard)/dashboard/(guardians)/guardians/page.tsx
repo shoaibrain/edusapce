@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: "Guardians Dashboard",
 }
 const URL = process.env.API_URL;
-
+// TODO: get guardians for school, for tenant
 async function getGuardians() {
     try {
       const res = await fetch(`http://localhost:3000/api/v1/guardians`, {
