@@ -9,13 +9,29 @@ export const getTenants = async () => {
   }
 }
 
+export const getTenant = async (tenantId: string) => {
+  try {
+    const tenant = await prisma.tenant.findUnique({
+      where: {
+        id: tenantId,
+      },
+      include:{
+        schools: true
+      }
+    });
+    return tenant;
+  } catch (error) {
+    throw new Error(`Error getting tenant: ${error.message}`);
+  }
+}
 
-export const getSchoolsForTenant = async (tenantId) => {
+export const getSchoolsForTenant = async (tenantId: string) => {
   try {
     const schools = await prisma.school.findMany({
       //bug: this is not filtering by tenantId
-      // where: { tenantId: tenantId },
-
+      where: {
+        tenantId: tenantId,
+      },
     });
     return schools;
   } catch (error) {

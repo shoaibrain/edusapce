@@ -16,13 +16,14 @@ export const getSchoolsByTenant = async (tenantId: string) => {
     const schools = await prisma.school.findMany({
       where: {
         tenantId: tenantId,
-      }
+      },
     });
     return schools;
   } catch (error) {
     throw new Error(`Error getting schools: ${error.message}`);
     }
 }
+
 export const getSchool = async(schoolId : string) => {
     try{
         const school =  await prisma.school.findUnique({
