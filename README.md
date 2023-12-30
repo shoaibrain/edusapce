@@ -1,15 +1,4 @@
 # eduSpace
 
-Incentive to build a free School Management System
-
-## Technologies Used
-
-- Next.js
-- TypeScript
-- React
-- shadcn/ui & Tailwind
-- MySQL on PlanetScale
-
-```
-
-```
+This is an open-source attempt to build a comprehensive
+school management application
