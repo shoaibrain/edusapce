@@ -7,58 +7,42 @@ import {SchoolAcademicSettingsForm} from "@/components/forms/form-school-academi
 import {  redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { authOptions } from "@/lib/auth";
+import { getSchoolsForTenant } from "@/services/service-tenant";
+import { json } from "stream/consumers";
 
 export const metadata: Metadata = {
   title: "School Settings",
   description: "School and Academic Settings",
 };
 
-const URL = "http://localhost:3000/api/v1";
+const API_URL = "http://localhost:3000/api/v1";
 
-async function getSchool( schoolId: String) {
-  try {
-    const res = await fetch(`${URL}/schools/${schoolId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      next: { revalidate: 5 },
-    });
-
-    if (!res.ok) {
-      throw new Error('Failed to fetch school data')
-    }
-    return res.json();
-  } catch (error) {
-    console.error('Error fetching school:', error);
-    throw error;
-  }
-}
 
 export default async function SchoolSettingsPage() {
-  const user = await getCurrentUser()
-  if (!user) {
+  const tenant = await getCurrentUser()
+  if (!tenant) {
     redirect(authOptions?.pages?.signIn || "/login")
   }
-  const schoolId = user.schoolId;
+  const schools = await getSchoolsForTenant(tenant.id);
 
-  if (!schoolId) {
-    redirect("/school/register");
-  }
-
-  const school = await getSchool(schoolId);
-
+  console.log(`Schols: ${schools}`)
+const sc = schools[0]
   return (
     <div className="space-y-6">
       <div className="flex-1 space-y-4 p-8 pt-6">
         <h3 className="mb-4 text-lg font-medium">School Settings</h3>
+
+        <h4 className="mb-4 text-lg font-medium">
+
+        {JSON.stringify(sc)}
+        </h4>
         <Tabs defaultValue="school profile" className="space-y-4">
           <TabsList className="p-5">
             <TabsTrigger value="school profile" >General Settings</TabsTrigger>
             <TabsTrigger value="school academic" >Academic Settings</TabsTrigger>
           </TabsList>
           <TabsContent value="school profile" className="space-y-4">
-            <SchoolSettingsForm school={school}/>
+            <SchoolSettingsForm school={schools[0]}/>
           </TabsContent>
           <TabsContent value="school academic" className="space-y-4">
             <SchoolAcademicSettingsForm />

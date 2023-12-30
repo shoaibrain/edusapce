@@ -11,11 +11,11 @@ export const metadata: Metadata = {
   title: "Guardians",
   description: "Guardians Dashboard",
 }
-const URL = process.env.API_URL;
-// TODO: get guardians for school, for tenant
+const API_URL = process.env.API_URL;
+
 async function getGuardians() {
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/guardians`, {
+      const res = await fetch(`${API_URL}/guardians`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

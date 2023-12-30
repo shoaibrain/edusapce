@@ -9,7 +9,7 @@ const routeContextSchema = z.object({
     tenantId: z.string(),
   }),
 })
-
+//BUG: PATCH dont work
 export async function PATCH(
   req: Request,
   context: z.infer<typeof routeContextSchema>

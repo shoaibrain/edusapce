@@ -21,13 +21,16 @@ import { Icons } from "@/components/icons"
 import { schoolCreateSchema } from "@/lib/validations/school"
 
 interface SchoolFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  tenantId;
+  tenantId: string;
 }
 type formData = z.infer<typeof schoolCreateSchema>
-const URL = 'http://localhost:3000/api/v1';
+// TODO: BUG: getting undefined for API_URL in client component
+// export const API_URL = "https://project-eduspace.vercel.app/api/v1";
+export const API_URL = "http://localhost:3000/api/v1";
+
 
 export function SchoolRegisterForm({
-  tenantId: tenantId,
+  tenantId,
   className,
   ...props
 }: SchoolFormProps) {
@@ -44,21 +47,18 @@ export function SchoolRegisterForm({
   })
   const router = useRouter();
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
+
   async function onSubmit(data: formData) {
 
-    if (tenantId) {
-      data.tenants = [tenantId];
-    }
-
     setIsSaving(true);
-    const response = await fetch(`${URL}/schools`,{
+    const response = await fetch(`${API_URL}/schools`,{
       method : 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-
       body: JSON.stringify(data)
     })
+
     setIsSaving(false);
     if (!response?.ok) {
       return toast({
@@ -71,6 +71,7 @@ export function SchoolRegisterForm({
     toast({
       description: "A school has been registered",
     })
+    // BUG: page does not refresh
     router.refresh();
   }
 

@@ -13,12 +13,12 @@ export const metadata: Metadata = {
   title: "Employees",
   description: "Employees Dashboard",
 }
-const URL = "http://localhost:3000/api/v1";
+const API_URL = process.env.API_URL;
 
 // TODO: get Employees for school, for tenant
 const getEmployees = async () => {
   try {
-    const res = await fetch(`${URL}/employees`,{
+    const res = await fetch(`${API_URL}/employees`,{
       method : 'GET',
       headers: {
         'Content-Type': 'application/json'

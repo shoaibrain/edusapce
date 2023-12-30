@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
             where: { email: credentials.email },
           })
           if (!tenant || !tenant?.hashedPassword) {
-            throw new Error("No user found")
+            throw new Error("No tenant found")
           }
           const passwordMatch = await bcrypt.compare(
             credentials.password,
@@ -56,8 +56,7 @@ export const authOptions: NextAuthOptions = {
       return session
     },
 
-    // TODO: aa better way to include schoolId in jwt?
-    //@ts-ignore
+    // TODO: add schoolId to token?
     async jwt({ token, user }) {
       const dbUser = await prisma.tenant.findFirst({
         where: {
@@ -77,7 +76,6 @@ export const authOptions: NextAuthOptions = {
         name: dbUser.name,
         email: dbUser.email,
         picture: dbUser.image,
-        schoolId: dbUser.schoolId,
       };
 
       return Promise.resolve(updatedToken);

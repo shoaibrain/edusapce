@@ -7,42 +7,41 @@ import { DashboardHeader } from "@/components/header"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+import { te } from "date-fns/locale"
+import { getSchoolsForTenant } from "@/services/service-tenant"
 
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "eduSpace Dashboard",
 }
+const API_URL = process.env.API_URL;
 
 export default async function DashboardPage() {
-
-  const user = await getCurrentUser()
-
-  if (!user) {
+  const tenant = await getCurrentUser()
+  if (!tenant) {
     redirect(authOptions?.pages?.signIn || "/login")
   }
-
-  const hasSchoolRegistered = () => {
-    return !!user.schoolId;
-  };
+  const schools = await getSchoolsForTenant(tenant.id);
 
   return (
     <>
       <DashboardShell>
         <DashboardHeader
-          text={`Welcome ${user.name}`}
+          text={`Welcome ${tenant.name}`}
         />
         <div className="flex-col md:flex">
           <div className="flex-1 space-y-4 p-8 pt-6">
             <div className="flex items-center justify-between space-y-2">
 
               <h2 className="content-center text-3xl font-bold tracking-tight">
-              {hasSchoolRegistered() ? (
-                  `School ID: ${user.schoolId}`
-                ) : (
+                  {
+                    schools[0] ? (
+                      schools[0].name
+                    ) : (
+                      'Something seems wrong, contact support.'
+                    )
+                  }
                   <div className="container ">
-                    <p className="py-4 text-sm font-medium">
-                      You do not have school registered yet.
-                    </p>
                     <Link
                       href="/school/register"
                       className={cn(buttonVariants({ size: "lg" }))}
@@ -50,7 +49,6 @@ export default async function DashboardPage() {
                       Register School
                   </Link>
                   </div>
-                )}
               </h2>
             </div>
           </div>

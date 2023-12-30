@@ -14,6 +14,7 @@ export async function GET(){
  }
 }
 
+
 export const POST = async (request: Request) => {
   try {
     const json = await request.json();
@@ -22,6 +23,7 @@ export const POST = async (request: Request) => {
     return new Response(JSON.stringify(newSchool), { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log(`Error creating school: ${error.message}`);
       return new Response(JSON.stringify(error.message), { status: 422 })
     }
     logger.warn(`Failed to create school: ${error.message}`)

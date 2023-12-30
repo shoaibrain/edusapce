@@ -9,42 +9,17 @@ export const getTenants = async () => {
   }
 }
 
-export const getTenant = async (tenantId: string) => {
-  try {
-    const tenant = await prisma.tenant.findUnique({
-      where: {
-        id: tenantId,
-      }
-    })
-    if (tenant) {
-      return tenant;
-    }
-    return null;
-  } catch (error) {
-    throw new Error(`Error getting tenant: ${error.message}`);
-  }
-}
 
-export const postTenant = async (tenant) => {
+export const getSchoolsForTenant = async (tenantId) => {
   try {
-    const tenantData = {
-      name: tenant.name,
-      address: tenant.address,
-      phone: tenant.phone,
-      email: tenant.email,
-      website: tenant.website,
-      users: tenant.users,
-    };
-    if (tenant.users && tenant.users.length > 0) {
-      tenantData.users = {
-        connect: tenant.users.map((userId) => ({ id: userId })),
-      };
-    }
-    const newTenant = await prisma.tenant.create({
-      data: tenantData,
-    })
-    return newTenant;
+    const schools = await prisma.school.findMany({
+      //bug: this is not filtering by tenantId
+      // where: { tenantId: tenantId },
+
+    });
+    return schools;
   } catch (error) {
-    throw new Error(`Error creating tenant: ${error.message}`);
+    console.log(`Error getting schools: ${error}`)
+    throw new Error(`Error getting schools: ${error.message}`);
   }
 }

@@ -8,6 +8,7 @@ export const env = createEnv({
     NEXTAUTH_URL: z.string().url().optional(),
     NEXTAUTH_SECRET: z.string().min(1),
     DATABASE_URL: z.string().min(1),
+    API_URL: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().min(1),

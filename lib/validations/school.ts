@@ -5,7 +5,7 @@ export const schoolCreateSchema = z.object({
   phone: z.string(),
   email: z.string().optional(),
   website: z.string().url().optional(),
-  tenants: z.array(z.string()).optional(),
+  tenantId: z.string(),
 })
 
 export const schoolPatchSchema = z.object({
@@ -14,7 +14,6 @@ export const schoolPatchSchema = z.object({
   phone: z.string().optional(),
   email: z.string().optional(),
   website: z.string().url().optional(),
-  tenants: z.array(z.string()).optional(),
 })
 
 

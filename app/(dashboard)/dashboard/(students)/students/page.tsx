@@ -14,12 +14,13 @@ export const metadata: Metadata = {
   title: "Students",
   description: "Students Dashboard",
 }
-const URL = process.env.API_URL;
 
+const API_URL = process.env.API_URL;
 // TODO: getStudent for School, for tenant
 async function getStudents() {
   try {
-    const res = await fetch(`http://localhost:3000/api/v1/students`, {
+    // TODO: why can't I use /foos to get all foos?
+    const res = await fetch(`${API_URL}/students`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

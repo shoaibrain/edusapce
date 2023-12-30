@@ -1,3 +1,4 @@
+// TODO: indexing, optimization
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
@@ -59,7 +60,6 @@ enum Role {
   USER
 }
 
-// Tenant is a root node for the system usage
 model Tenant {
   id             String    @id @default(cuid())
   name           String
@@ -68,17 +68,16 @@ model Tenant {
   emailVerified  DateTime?
   phoneVerified  DateTime?
   hashedPassword String?
-  role           Role      @default(ADMIN)
-  image          String?
-  addres         String?
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @default(now()) @map("updated_at")
-  accounts       Account[]
-  sessions       Session[]
 
-  schoolId String? @unique @map("school_id")
+  role      Role      @default(ADMIN)
+  image     String?
+  addres    String?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @map("updated_at")
+  accounts  Account[]
+  sessions  Session[]
 
-  school School[]
+  schools School[]
 
   @@map("tenants")
 }
@@ -88,19 +87,21 @@ model Tenant {
 // as well as tenant's services
 
 model School {
-  id        String   @id @default(cuid())
-  name      String
-  address   String
-  phone     String
-  email     String?
-  website   String?
+  id String @id @default(cuid())
+
+  name    String
+  address String
+  phone   String
+  email   String?
+  website String?
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
-  tenants   Tenant   @relation(fields: [tenantId], references: [id])
 
-  schoolYear SchoolYear @relation(fields: [id], references: [schoolId]) // current school year
-  tenantId   String     @unique
+  tenantId String // Foreign key referencing Tenant
+  tenant   Tenant @relation(fields: [tenantId], references: [id]) // Each School belongs to one Tenant
 
+  @@index([tenantId])
   @@map("schools")
 }
 
@@ -118,7 +119,6 @@ model SchoolYear {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
-  School    School[]
 
   @@map("school_years")
 }

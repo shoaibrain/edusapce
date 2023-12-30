@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 interface EmployeePageProps {
   params: { employeeId: string };
 }
-const URL = process.env.API_URL;
+const API_URL = process.env.API_URL;
 
 async function getEmployee(employeeId: Employee["id"]) {
   try {
-    const res = await fetch(`http://localhost:3000/api/v1/employees/${employeeId}`,{
+    const res = await fetch(`${API_URL}/employees/${employeeId}`,{
       method: "GET",
       headers: {
         "Content-Type": "application/json"

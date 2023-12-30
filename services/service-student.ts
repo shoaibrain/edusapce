@@ -50,6 +50,7 @@ export const postStudent = async (student) => {
       })
         return newStudent;
       } catch (error) {
+        console.log(`Error creating student: ${error.message}`)
        throw new Error(`Error creating student: ${error.message}`);
       }
 }

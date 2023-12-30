@@ -1,4 +1,4 @@
-/// @ts-nocheck
+
 
 import prisma from "@/lib/db"
 
@@ -9,6 +9,19 @@ export const getSchools = async () => {
     } catch (error) {
       throw new Error(`Error getting schools: ${error.message}`);
       }
+}
+
+export const getSchoolsByTenant = async (tenantId: string) => {
+  try {
+    const schools = await prisma.school.findMany({
+      where: {
+        tenantId: tenantId,
+      }
+    });
+    return schools;
+  } catch (error) {
+    throw new Error(`Error getting schools: ${error.message}`);
+    }
 }
 export const getSchool = async(schoolId : string) => {
     try{
@@ -25,26 +38,26 @@ export const getSchool = async(schoolId : string) => {
       throw new Error(`Error getting school: ${error.message}`);
     }
 }
+
 export const postSchool = async (school) => {
+
     try {
-      const schoolData = {
-        name: school.name,
-        address: school.address,
-        phone: school.phone,
-        email: school.email,
-        website: school.website,
-        users: school.users,
-      };
-      if (school.users && school.users.length > 0) {
-        schoolData.users = {
-          connect: school.users.map((userId) => ({ id: userId })),
-        };
-      }
-        const newSchool = await prisma.school.create({
-          data: schoolData,
-      })
-        return newSchool;
+          // create new school record & connect it to existing Tenant via tenantId
+
+          const newSchool = await prisma.school.create({
+            data: {
+              ...school,  // Assuming schoolData contains name, address, phone, etc.
+              tenantId: school.tenantId  // Connect the school to the tenant using the tenant's ID
+            }
+          });
+          return newSchool;
+
+
+
+
+
       } catch (error) {
+        console.log(`Error creating school: ${error.message}`)
        throw new Error(`Error creating school: ${error.message}`);
       }
 }

@@ -1,12 +1,12 @@
 import { schoolPatchSchema } from "@/lib/validations/school";
-import { deleteSchool, getSchool, patchSchool } from "@/services/service-school";
+import { deleteSchool, getSchool, getSchoolsByTenant, patchSchool } from "@/services/service-school";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 
 const routeContextSchema = z.object({
     params: z.object({
-      schoolId: z.string(),
+      tenantId: z.string(),
     }),
   });
 
@@ -16,11 +16,12 @@ export async function GET(
 ) {
   try {
     const {params } = routeContextSchema.parse(context);
-    const school = await getSchool(params.schoolId as string);
-    if (!school) {
+    // get all schools for this tenant
+    const schools = await getSchoolsByTenant(params.tenantId as string);
+    if (!schools) {
       return new Response(JSON.stringify("Not Found"), { status: 404 });
     }
-    return new Response(JSON.stringify(school), { status: 200 });
+    return new Response(JSON.stringify(schools), { status: 200 });
   } catch(error) {
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 })
@@ -35,7 +36,7 @@ export async function DELETE(
 ) {
   try {
     const { params } = routeContextSchema.parse(context);
-    await deleteSchool(params.schoolId as string);
+    await deleteSchool(params.tenantId as string);
     return new Response(null, { status: 204, statusText: "School deleted" })
   } catch(error) {
     if (error instanceof z.ZodError) {
@@ -62,7 +63,7 @@ export async function PATCH(
     if (body.email) data.email = body.email;
     if (body.website) data.website = body.website;
 
-    const school = await patchSchool(params.schoolId as string, data);
+    const school = await patchSchool(params.tenantId as string, data);
     return new Response(JSON.stringify(school), { status: 200 });
   } catch(error) {
     if (error instanceof z.ZodError) {
