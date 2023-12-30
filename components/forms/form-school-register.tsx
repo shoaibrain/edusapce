@@ -25,8 +25,8 @@ interface SchoolFormProps extends React.HTMLAttributes<HTMLFormElement> {
 }
 type formData = z.infer<typeof schoolCreateSchema>
 // TODO: BUG: getting undefined for API_URL in client component
-// export const API_URL = "https://project-eduspace.vercel.app/api/v1";
-export const API_URL = "http://localhost:3000/api/v1";
+
+const API_URL='https://project-eduspace.vercel.app/api/v1'
 
 
 export function SchoolRegisterForm({

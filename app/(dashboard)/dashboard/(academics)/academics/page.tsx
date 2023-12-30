@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "Academics",
   description: "Academics Dashboard",
 }
-const URL = process.env.API_URL;
+const API_URL = process.env.API_URL;
 
 
 export default async function StudentsPage() {

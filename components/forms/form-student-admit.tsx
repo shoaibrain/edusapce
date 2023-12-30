@@ -50,7 +50,7 @@ const gradeLevels = [
 ]
 
 type formData = z.infer<typeof studentCreateSchema>
-
+const API_URL='https://project-eduspace.vercel.app/api/v1'
 export function StudentAdmissionForm({
   guardianId,
   className,
@@ -84,7 +84,7 @@ export function StudentAdmissionForm({
     // })
 
     setIsSaving(true);
-      const res = await fetch(`http://localhost:3000/api/v1/students/`, {
+      const res = await fetch(`${API_URL}/students`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -52,7 +52,7 @@ interface SchoolGeneralSettingsFormProps extends React.HTMLAttributes<HTMLFormEl
 type formData = z.infer<typeof SchoolSettingsPatchSchema>
 
 
-const URL = 'http://localhost:3000/api/v1'
+const API_URL='https://project-eduspace.vercel.app/api/v1'
 
 export function SchoolSettingsForm({
   school,

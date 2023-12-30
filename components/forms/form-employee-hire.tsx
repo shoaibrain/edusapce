@@ -34,7 +34,8 @@ interface EmployeeHireFormProps extends React.HTMLAttributes<HTMLFormElement> {
 }
 
 type formData = z.infer<typeof employeeCreateSchema>
-const URL = 'https://project-eduspace.vercel.app/api/v1';
+
+const API_URL='https://project-eduspace.vercel.app/api/v1';
 
 export function EmployeeHireForm({
   className,
@@ -57,7 +58,7 @@ export function EmployeeHireForm({
   async function onSubmit(data: formData) {
     console.log(JSON.stringify(data, null, 2))
     setIsSaving(true);
-      const res = await fetch(`${URL}/employees`, {
+      const res = await fetch(`${API_URL}/employees`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

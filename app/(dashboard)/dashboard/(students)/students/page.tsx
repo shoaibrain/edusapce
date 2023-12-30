@@ -3,7 +3,7 @@ import React from 'react'
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Gauge, Users } from 'lucide-react'
+import {  Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { columns } from '@/components/data-tables/columns-student-data-table'
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 const API_URL = process.env.API_URL;
-// TODO: getStudent for School, for tenant
+
 async function getStudents() {
   try {
     // TODO: why can't I use /foos to get all foos?
@@ -27,7 +27,6 @@ async function getStudents() {
       },
       next: { revalidate: 5 },
     });
-
     if (!res.ok) {
       throw new Error('Failed to fetch student data')
     }

@@ -16,12 +16,12 @@ interface GuardianPageProps {
   params: { guardianId: string };
 }
 
-const URL = "http://localhost:3000/api";
+const API_URL = process.env.API_URL;
 
 async function getGuardian(guardianId: Guardian["id"]) {
   console.log(URL)
   try {
-    const res =  await fetch(`${URL}/guardians/${guardianId}`, {
+    const res =  await fetch(`${API_URL}/guardians/${guardianId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

@@ -31,8 +31,9 @@ interface GuardianFormProps extends React.HTMLAttributes<HTMLFormElement> {
   studentId?: string;
 }
 type formData = z.infer<typeof guardianCreateSchema>
-// const URL = process.env.API_URL;
-const URL = 'http://localhost:3000/api/v1';
+
+
+const API_URL='https://project-eduspace.vercel.app/api/v1';
 
 export function GuardianAddForm({
   studentId,
@@ -64,7 +65,7 @@ export function GuardianAddForm({
     }
 
     setIsSaving(true);
-    const response = await fetch(`${URL}/guardians`,{
+    const response = await fetch(`${API_URL}/guardians`,{
       method : 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -36,8 +36,8 @@ interface GuardianEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
 }
 
 type FormData = z.infer<typeof guardianPatchSchema>
-// TODO: replace with env variable
-const URL = 'http://localhost:3000/api/v1'
+
+const API_URL='https://project-eduspace.vercel.app/api/v1'
 
 export function GuardianEditForm({
   guardian,
@@ -64,7 +64,7 @@ export function GuardianEditForm({
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
-    const response = await fetch(`${URL}/guardians/${guardian.id}`,{
+    const response = await fetch(`${API_URL}/guardians/${guardian.id}`,{
       method : 'PATCH',
       headers: {
         'Content-Type': 'application/json',
