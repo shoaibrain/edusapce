@@ -1,5 +1,3 @@
-//@ts-nocheck
-
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -29,7 +27,7 @@ interface EmployeeEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
 
 type FormData = z.infer<typeof employeePatchSchema>
 
-const API_URL='https://project-eduspace.vercel.app/api/v1';
+// const API_URL='https://project-eduspace.vercel.app/api/v1';
 
 export function EmployeeEditForm({
   employee,
@@ -54,7 +52,7 @@ export function EmployeeEditForm({
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
-    const response = await fetch(`${API_URL}/employees/${employee.id}`,{
+    const response = await fetch(`/v1/employees/${employee.id}`,{
       method : 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -69,7 +67,6 @@ export function EmployeeEditForm({
         variant: "destructive",
       })
     }
-
     toast({
       title:"Successfully updated",
       description: "Information has been updated.",

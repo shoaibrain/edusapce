@@ -8,14 +8,14 @@ import {  redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { authOptions } from "@/lib/auth";
 import { getSchoolsForTenant } from "@/services/service-tenant";
-import { json } from "stream/consumers";
+
 
 export const metadata: Metadata = {
   title: "School Settings",
-  description: "School and Academic Settings",
+  description: "School specific settings",
 };
 
-const API_URL = "http://localhost:3000/api/v1";
+const API_URL = process.env.API_URL;
 
 
 export default async function SchoolSettingsPage() {
@@ -24,9 +24,6 @@ export default async function SchoolSettingsPage() {
     redirect(authOptions?.pages?.signIn || "/login")
   }
   const schools = await getSchoolsForTenant(tenant.id);
-
-  console.log(`Schols: ${schools}`)
-const sc = schools[0]
   return (
     <div className="space-y-6">
       <div className="flex-1 space-y-4 p-8 pt-6">
@@ -34,7 +31,7 @@ const sc = schools[0]
 
         <h4 className="mb-4 text-lg font-medium">
 
-        {JSON.stringify(sc)}
+        {JSON.stringify(schools)}
         </h4>
         <Tabs defaultValue="school profile" className="space-y-4">
           <TabsList className="p-5">

@@ -1,10 +1,10 @@
-import { getServerSession } from "next-auth/next"
+
 import { z } from "zod"
+
+import { tenantPatchSchema } from "@/lib/validations/tenant"
+import {  getTenant, patchTenant } from "@/services/service-tenant"
+import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import prisma from "@/lib/db"
-import { tenantNameSchema } from "@/lib/validations/tenant"
-import { getSchoolsForTenant, getTenant } from "@/services/service-tenant"
-import { te } from "date-fns/locale"
 
 const routeContextSchema = z.object({
   params: z.object({
@@ -18,30 +18,18 @@ export async function PATCH(
   context: z.infer<typeof routeContextSchema>
 ) {
   try {
-    // Validate the route context.
     const { params } = routeContextSchema.parse(context)
 
-    // Ensure tenant is authentication a.
-    // const session = await getServerSession(authOptions)
-    // if (!session?.user || params.tenantId !== session?.user.id) {
-    //   return new Response(null, { status: 403 })
-    // }
-
+    const session = await getServerSession(authOptions)
+    if (!session?.user || params.tenantId !== session?.user.id) {
+      return new Response(null, { status: 403 })
+    }
     // Get the request body and validate it.
     const body = await req.json()
-    const payload = tenantNameSchema.parse(body)
-
+    const payload = tenantPatchSchema.parse(body)
     // Update the user.
-    await prisma.tenant.update({
-      where: {
-        id: params.tenantId,
-      },
-      data: {
-        name: payload.name,
-      },
-    })
+   const patchedTenant = patchTenant(params.tenantId, payload);
     return new Response(null, { status: 200 })
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 })
@@ -60,12 +48,12 @@ export async function GET(
     const { params } = routeContextSchema.parse(context)
 
     // Ensure client is authenticated
-    // const session = await getServerSession(authOptions)
-    // console.log(`session: ${JSON.stringify(session)}`)
-    // if (!session?.user || params.tenantId !== session?.user.id) {
-    //   console.log(``)
-    //   return new Response(null, { status: 403 })
-    // }
+    const session = await getServerSession(authOptions)
+    console.log(`session: ${JSON.stringify(session)}`)
+    if (!session?.user || params.tenantId !== session?.user.id) {
+      console.log(`session.user: ${JSON.stringify(session?.user)}`)
+      return new Response(null, { status: 403 })
+    }
 
     // Get the tenant details.
     const tenant = await getTenant(params.tenantId);

@@ -22,6 +22,7 @@ async function getGuardians() {
         },
       });
       if (!res.ok) {
+        console.log(`Error fetching guardians: ${res.status}`)
         throw new Error('Failed to fetch guardian data')
       }
       return res.json();
@@ -34,6 +35,7 @@ async function getGuardians() {
 export default async function GuardiansPage() {
    const guardians = await getGuardians();
     if (!guardians) {
+      console.log(`No guardians found`)
       notFound()
     }
 

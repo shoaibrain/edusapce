@@ -35,16 +35,19 @@ async function getStudent(studentId: Student["id"]) {
       next: { revalidate: 5 },
     });
     if (!res.ok) {
+      console.log(`Error fetching student: ${res.status}`)
       throw new Error('Failed to fetch student data')
     }
     return res.json();
   } catch(error) {
+    console.error('Error fetching student:', error);
     throw error;
   }
 }
 export default async function StudentPage({ params }: StudentPageProps) {
   const student = await getStudent(params.studentId);
   if (!student) {
+    console.log(`No student found with id: ${params.studentId}`)
     notFound();
   }
   const guardians = student.guardians || [];

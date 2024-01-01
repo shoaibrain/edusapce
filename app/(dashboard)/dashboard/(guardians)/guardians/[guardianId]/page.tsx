@@ -19,7 +19,7 @@ interface GuardianPageProps {
 const API_URL = process.env.API_URL;
 
 async function getGuardian(guardianId: Guardian["id"]) {
-  console.log(URL)
+
   try {
     const res =  await fetch(`${API_URL}/guardians/${guardianId}`, {
       method: 'GET',
@@ -29,6 +29,7 @@ async function getGuardian(guardianId: Guardian["id"]) {
       next: { revalidate: 5 },
     });
     if (!res.ok) {
+      console.log(`Error fetching guardian: ${res.status} guardianId: ${guardianId}`)
       throw new Error('Failed to fetch guardian data')
     }
     return res.json();
@@ -43,6 +44,7 @@ export default async function GuardianPage({ params }: GuardianPageProps) {
   const guardian = await getGuardian(params.guardianId);
 
   if (!guardian) {
+    console.log(`No guardian found with id: ${params.guardianId}`)
     notFound();
   }
   const students = guardian.students || [];

@@ -1,4 +1,3 @@
-// TODO: indexing, optimization
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
@@ -61,7 +60,8 @@ enum Role {
 }
 
 model Tenant {
-  id             String    @id @default(cuid())
+  id String @id @default(cuid())
+
   name           String
   email          String    @unique
   phone          String?
@@ -69,15 +69,15 @@ model Tenant {
   phoneVerified  DateTime?
   hashedPassword String?
 
-  role      Role      @default(ADMIN)
+  role      Role     @default(ADMIN)
   image     String?
-  addres    String?
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @default(now()) @map("updated_at")
-  accounts  Account[]
-  sessions  Session[]
+  address   String?  @map("addres")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 
-  schools School[]
+  accounts Account[]
+  sessions Session[] // can this manage its user sessions?
+  schools  School[]
 
   @@map("tenants")
 }
@@ -87,7 +87,9 @@ model Tenant {
 // as well as tenant's services
 
 model School {
-  id String @id @default(cuid())
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
 
   name    String
   address String
@@ -98,8 +100,9 @@ model School {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  tenantId String // Foreign key referencing Tenant
-  tenant   Tenant @relation(fields: [tenantId], references: [id]) // Each School belongs to one Tenant
+  classGrades YearGradeLevel[] // list of class grades for this school
+  Test        Test[]
+  Subject     Subject[]
 
   @@index([tenantId])
   @@map("schools")
@@ -154,6 +157,8 @@ model YearGradeLevel {
   updatedAt     DateTime      @default(now()) @map("updated_at")
   SchoolYear    SchoolYear?   @relation(fields: [schoolYearId], references: [schoolId])
   schoolYearId  String?
+  School        School?       @relation(fields: [schoolId], references: [id])
+  schoolId      String?
 
   @@index([name])
   @@index([levelCategory])
@@ -191,7 +196,8 @@ model ClassPeriod {
 // Student have access to School's services (these services are provided by school using eduSpace)
 model Student {
   id               String          @id @default(cuid())
-  schoolId         String          @map("school_id")
+  schoolId         String
+  tenantId         String
   // basic attributes
   firstName        String
   middleName       String?
@@ -225,15 +231,16 @@ model Student {
 // Employees are provisioned by the tenant in context of school
 model Employee {
   id       String @id @default(cuid())
-  tenantId String @map("tenant_id")
-  schoolId String @map("school_id")
+  tenantId String
+  schoolId String
 
   firstName  String
   middleName String?
   lastName   String
   phone      String
-  email      String?   @unique
+  email      String? @unique
   address    String
+
   role       Role      @default(STAFF)
   birthDate  DateTime?
   gender     String?
@@ -256,7 +263,11 @@ model Employee {
 }
 
 model EmployeeSalary {
-  id         String    @id @default(cuid())
+  id         String @id @default(cuid())
+  schoolId   String
+  tenantId   String
+  employeeId String @unique
+
   salaryType String
   amount     Float
   currency   String
@@ -265,9 +276,9 @@ model EmployeeSalary {
   endDate    DateTime?
   notes      String?
   employee   Employee  @relation(fields: [employeeId], references: [id])
-  employeeId String
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @default(now()) @map("updated_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 
   @@index([employeeId])
   @@map("employee_salaries")
@@ -275,16 +286,21 @@ model EmployeeSalary {
 
 // Exam, Quiz, Homework, etc.
 model Test {
-  id            String       @id @default(cuid())
+  id        String @id @default(cuid())
+  schoolId  String
+  subjectId String
+
   name          String
   description   String?
   testType      String // Homework, Quiz, Exam, etc.
   question      String? // URL to the test questions
   classPeriodId String? // foreign key to ClassPeriod this test belongs to
-  Subject       Subject?     @relation(fields: [subjectId], references: [id])
-  subjectId     String? // foreign key to Subject this test belongs to
-  testDate      DateTime
-  testResults   TestResult[]
+
+  Subject Subject? @relation(fields: [subjectId], references: [id])
+  school  School?  @relation(fields: [schoolId], references: [id])
+
+  testDate    DateTime
+  testResults TestResult[]
 
   @@index([name, testType, classPeriodId, subjectId])
   @@map("tests")
@@ -312,7 +328,7 @@ model TestResult {
 
 model Subject {
   id       String @id @default(cuid())
-  schoolId String @map("school_id")
+  schoolId String
 
   subjectName  String
   textbookName String?
@@ -322,6 +338,7 @@ model Subject {
 
   tests       Test[] // all tests for this subject
   ClassPeriod ClassPeriod[]
+  School      School        @relation(fields: [schoolId], references: [id])
 
   @@index([subjectName, department])
   @@map("subjects")

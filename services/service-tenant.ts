@@ -39,3 +39,24 @@ export const getSchoolsForTenant = async (tenantId: string) => {
     throw new Error(`Error getting schools: ${error.message}`);
   }
 }
+
+export const patchTenant = async (tenantId: string, payload: any) => {
+  try {
+    const tenant = await prisma.tenant.update({
+      where: {
+        id: tenantId,
+      },
+      data: {
+        name: payload.name,
+        email: payload.email,
+        phone: payload.phone,
+        address: payload.address,
+        image: payload.image,
+      },
+    });
+    return tenant;
+  } catch (error) {
+    console.log(`Error updating tenant: ${error}`)
+    throw new Error(`Error updating tenant: ${error.message}`);
+  }
+}

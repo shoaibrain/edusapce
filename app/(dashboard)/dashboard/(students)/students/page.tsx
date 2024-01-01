@@ -9,6 +9,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { columns } from '@/components/data-tables/columns-student-data-table'
 import { DataTable } from '@/components/data-tables/data-table'
 import { Metadata } from 'next'
+import { Logger  } from 'winston'
 
 export const metadata: Metadata = {
   title: "Students",
@@ -17,9 +18,12 @@ export const metadata: Metadata = {
 
 const API_URL = process.env.API_URL;
 
+// TODO: get students for the current tenant
+// How should student be retrieved on cline side?
+// student exist in schoo, school exist in tenant context
+
 async function getStudents() {
   try {
-    // TODO: why can't I use /foos to get all foos?
     const res = await fetch(`${API_URL}/students`, {
       method: 'GET',
       headers: {
@@ -28,6 +32,7 @@ async function getStudents() {
       next: { revalidate: 5 },
     });
     if (!res.ok) {
+      console.log(`Error fetching students: ${res.status}`)
       throw new Error('Failed to fetch student data')
     }
     return res.json();
@@ -40,9 +45,9 @@ async function getStudents() {
 export default async function StudentsPage() {
   const students = await getStudents();
   if (!students) {
+    console.log(`No students found`)
     notFound()
   }
-  const admissionRate = students.length;
 
   return (
     <>
@@ -56,11 +61,10 @@ export default async function StudentsPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">
-                  {`${admissionRate} new admissions`}
+                  {` admissions`}
                 </p>
               </CardContent>
             </Card>
-
           </div>
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3'>
             <div>

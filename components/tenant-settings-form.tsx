@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 
 import { cn } from "@/lib/utils"
-import { tenantNameSchema } from "@/lib/validations/tenant"
+import { tenantPatchSchema } from "@/lib/validations/tenant"
 import { buttonVariants } from "@/components/ui/button"
 import {
   Card,
@@ -26,7 +26,7 @@ interface TenantSettingsFormProps extends React.HTMLAttributes<HTMLFormElement> 
 
 }
 
-type FormData = z.infer<typeof tenantNameSchema>
+type FormData = z.infer<typeof tenantPatchSchema>
 
 export function TenantSettingsForm({ className, ...props }: TenantSettingsFormProps) {
   const router = useRouter()
@@ -35,7 +35,7 @@ export function TenantSettingsForm({ className, ...props }: TenantSettingsFormPr
     register,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(tenantNameSchema),
+    resolver: zodResolver(tenantPatchSchema),
     defaultValues: {
     },
   })

@@ -50,7 +50,7 @@ const gradeLevels = [
 ]
 
 type formData = z.infer<typeof studentCreateSchema>
-const API_URL='https://project-eduspace.vercel.app/api/v1'
+
 export function StudentAdmissionForm({
   guardianId,
   className,
@@ -59,6 +59,7 @@ export function StudentAdmissionForm({
   const form = useForm<formData>({
     resolver: zodResolver(studentCreateSchema),
     mode: "onChange",
+
     defaultValues: {
       firstName: "",
       middleName: "",
@@ -69,6 +70,7 @@ export function StudentAdmissionForm({
       gradeLevel: "",
     }
   })
+
   const router = useRouter()
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   async function onSubmit(data: formData) {
@@ -84,7 +86,7 @@ export function StudentAdmissionForm({
     // })
 
     setIsSaving(true);
-      const res = await fetch(`${API_URL}/students`, {
+      const res = await fetch(`/students`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -7,8 +7,9 @@ import { DashboardHeader } from "@/components/header"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
-import { te } from "date-fns/locale"
+
 import { getSchoolsForTenant } from "@/services/service-tenant"
+
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -30,26 +31,25 @@ export default async function DashboardPage() {
           text={`Welcome ${tenant.name}`}
         />
         <div className="flex-col md:flex">
-          <div className="flex-1 space-y-4 p-8 pt-6">
-            <div className="flex items-center justify-between space-y-2">
+          <div className="flex-1  space-y-4 p-8 pt-6">
 
-              <h2 className="content-center text-3xl font-bold tracking-tight">
-                  {
-                    schools[0] ? (
-                      schools[0].name
-                    ) : (
-                      'Something seems wrong, contact support.'
-                    )
-                  }
-                  <div className="container ">
+            {schools.length > 0 ? (
+                  schools.map((school) => (
+                    <h4 className="mb-4 text-lg font-medium">
+                    {JSON.stringify(school)}
+                    </h4>
+                  ))
+                ) : (
+                  <p className="text-sm font-medium">No school found</p>
+                )}
+
+            <div className="container ">
                     <Link
                       href="/school/register"
                       className={cn(buttonVariants({ size: "lg" }))}
                     >
                       Register School
                   </Link>
-                  </div>
-              </h2>
             </div>
           </div>
         </div>

@@ -9,7 +9,7 @@ export default function NotFound() {
       <EmptyPlaceholder.Icon name="warning" />
       <EmptyPlaceholder.Title>Uh oh! Not Found</EmptyPlaceholder.Title>
       <EmptyPlaceholder.Description>
-        This student cound not be found. Please try again.
+        This guardian cound not be found. Please try again.
       </EmptyPlaceholder.Description>
       <Link href="/dashboard" className={buttonVariants({ variant: "ghost" })}>
         Go to Dashboard

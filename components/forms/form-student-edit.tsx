@@ -37,7 +37,7 @@ interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
 
 type FormData = z.infer<typeof studentPatchSchema>
 // TODO: replace with env variable
-const API_URL='https://project-eduspace.vercel.app/api/v1';
+// const API_URL='https://project-eduspace.vercel.app/api/v1';
 
 
 export function StudentEditForm({
@@ -69,7 +69,7 @@ export function StudentEditForm({
   async function onSubmit(data: FormData) {
     console.log(`Valid data: ${JSON.stringify(data, null, 2)}`)
     setIsSaving(true)
-    const response = await fetch(`${API_URL}/students/${student.id}`,{
+    const response = await fetch(`/students/${student.id}`,{
       method : 'PATCH',
       headers: {
         'Content-Type': 'application/json',

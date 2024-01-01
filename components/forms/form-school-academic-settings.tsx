@@ -25,7 +25,7 @@ interface SchoolGeneralSettingsProps extends React.HTMLAttributes<HTMLFormElemen
   school: School;
 }
 
-const API_URL='https://project-eduspace.vercel.app/api/v1'
+// const API_URL='https://project-eduspace.vercel.app/api/v1'
 
 const academicSettingPatchSchema = z.object({
   academic_year: z
@@ -87,7 +87,7 @@ export function SchoolAcademicSettingsForm() {
 
   async function onSubmit(data: SchoolAcademicFormValues) {
     setIsSaving(true)
-    const response = await fetch(`${API_URL}/school/123}`,{
+    const response = await fetch(`/school/123}`,{
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
