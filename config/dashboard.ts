@@ -64,4 +64,30 @@ export const dashboardConfig: DashboardConfig = {
       ],
     }
   ],
+  tenantSettingsNav: [
+    {
+    title: "Profile",
+    href: "/settings",
+    disabled: false,
+    icon: "employee",
+    },
+    {
+      title: "Notifications",
+      href: "/settings/notifications",
+      disabled: false,
+      icon: "email",
+    },
+    {
+      title: "Manage Schools",
+      href: "/settings/schools",
+      disabled: false,
+      icon: "school",
+    },
+    {
+      title: "Account",
+      href: "/settings/account",
+      disabled: false,
+      icon: "settings",
+    }
+  ]
 }

@@ -36,6 +36,7 @@ interface DataTableProps<TData, TValue> {
   student?: boolean
   guardian?: boolean
   empolyee?: boolean
+  school?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -44,6 +45,7 @@ export function DataTable<TData, TValue>({
   student,
   guardian,
   empolyee,
+  school,
 }: DataTableProps<TData, TValue>) {
 
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -138,14 +140,15 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results 🐷
+                  Nothing to see here
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      {/* No pagination needed for school list */}
+      {!school && <DataTablePagination table={table} />}
     </div>
   )
 }
