@@ -2,20 +2,21 @@ import { Metadata } from "next"
 import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
 import { getCurrentUser } from "@/lib/session"
-import { DashboardShell } from "@/components/shell"
-import { DashboardHeader } from "@/components/header"
+
+import { getSchoolsForTenant } from "@/services/service-tenant"
+import { Suspense } from "react"
+
+import SchoolCard from "@/components/school-card"
+import Image from 'next/image'
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
-
-import { getSchoolsForTenant } from "@/services/service-tenant"
 
 
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "eduSpace Dashboard",
 }
-const API_URL = process.env.API_URL;
 
 export default async function DashboardPage() {
   const tenant = await getCurrentUser()
@@ -25,35 +26,44 @@ export default async function DashboardPage() {
   const schools = await getSchoolsForTenant(tenant.id);
 
   return (
-    <>
-      <DashboardShell>
-        <DashboardHeader
-          text={`Welcome ${tenant.name}`}
-        />
-        <div className="flex-col md:flex">
-          <div className="flex-1  space-y-4 p-8 pt-6">
-
-            {schools.length > 0 ? (
-                  schools.map((school) => (
-                    <h4 className="mb-4 text-lg font-medium">
-                    {JSON.stringify(school)}
-                    </h4>
-                  ))
-                ) : (
-                  <p className="text-sm font-medium">No school found</p>
-                )}
-
-            <div className="container ">
-                    <Link
-                      href="/school/register"
-                      className={cn(buttonVariants({ size: "lg" }))}
-                    >
-                      Register School
-                  </Link>
-            </div>
-          </div>
+    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
+      <div className="flex flex-col space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="font-cal text-3xl font-bold dark:text-white">
+            your schools
+          </h1>
+          <Link href="/school/register" className={cn(buttonVariants({ size: "lg" }))}>
+              Register School
+          </Link>
         </div>
-      </DashboardShell>
-    </>
+        <Suspense
+          fallback={
+            null
+          }
+        >
+            {schools.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {schools.map((school) => (
+                  <SchoolCard key={school.id} data={school} />
+                ))}
+              </div>
+            ): (
+              <div className="mt-20 flex flex-col items-center space-x-4">
+                <h1 className="font-cal text-4xl">No Sites Yet</h1>
+                <Image
+                  alt="missing site"
+                  src="https://illustrations.popsy.co/gray/web-design.svg"
+                  width={400}
+                  height={400}
+                />
+                <p className="text-lg text-stone-500">
+                  You do not have any schools yet. Create one to get started.
+                </p>
+              </div>
+            )
+            }
+        </Suspense>
+      </div>
+    </div>
   )
 }

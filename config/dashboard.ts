@@ -1,3 +1,5 @@
+
+import { tr } from "date-fns/locale"
 import { DashboardConfig } from "types"
 
 export const dashboardConfig: DashboardConfig = {
@@ -13,66 +15,37 @@ export const dashboardConfig: DashboardConfig = {
       disabled: true,
     },
   ],
-  sidebarNav: [
+  // sidebar navs
+  tenantDashboardSidebarNav: [
     {
       title: "Dashboard",
       href: "/dashboard",
       disabled: false,
       icon: "dashboard",
     },
-    // {
-    //   title: "Academics",
-    //   href: "/dashboard/academics",
-    //   disabled: true,
-    //   icon: "library"
-    // },
     {
-      title: "Students",
-      href: "/dashboard/students",
+      title: "Settings",
+      href: "/settings",
       disabled: false,
-      icon: "student"
+      icon: "settings",
     },
-    {
-      title: "Employees",
-      href: "/dashboard/employees",
-      disabled: false,
-      icon: "employee"
-    },
-    {
-      title: "Guardians",
-      href: "/dashboard/guardians",
-      disabled: false,
-      icon: "users"
-    },
-    {
-      title: "School Settings",
-      href: "/school",
-      disabled: false,
-      icon: "school",
-      // TODO: show sub items under accordion
-      subItems: [
-        {
-          title: "Academic Settings",
-          href: "/school/academics",
-          disabled: false,
-        },
-        {
-          title: "Class & Grade Settings",
-          href: "/school/grades",
-          disabled: false,
-        },
-      ],
-    }
+
   ],
   tenantSettingsNav: [
     {
-    title: "Profile",
+      title: "Dashboard",
+      href: "/dashboard",
+      disabled: false,
+      icon: "dashboard",
+    },
+    {
+    title: "Profile Settings",
     href: "/settings",
     disabled: false,
     icon: "employee",
     },
     {
-      title: "Notifications",
+      title: "Emails & Notifications",
       href: "/settings/notifications",
       disabled: false,
       icon: "email",
@@ -89,5 +62,31 @@ export const dashboardConfig: DashboardConfig = {
       disabled: false,
       icon: "settings",
     }
+  ],
+  schoolDashboardSidebarNav: [
+      {
+        title: "Dashboard",
+        href: `/dashboard`,
+        disabled: false,
+        icon: "dashboard",
+      },
+      {
+        title: "Students",
+        href: "/dashboard/students",
+        disabled: true,
+        icon: "student",
+      },
+      {
+        title: "Employees",
+        href: "/dashboard/teachers",
+        disabled: true,
+        icon: "user",
+      },
+      {
+        title: "Classes",
+        href: "/dashboard/classes",
+        disabled: true,
+        icon: "class",
+      },
   ]
 }
