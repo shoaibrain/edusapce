@@ -3,6 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: {
     appDir: true,
+    serverActions: {
+      allowedOrigins: ["app.localhost:3000"],
+    },
   },
 }
 

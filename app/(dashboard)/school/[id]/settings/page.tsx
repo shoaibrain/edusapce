@@ -1,20 +1,19 @@
-import prisma from "@/lib/db";
-import { Form } from "react-hook-form";
 
-export default async function SchoolSettingsIndex({
+// @ts-nocheck
+import { SchoolSettingsForm } from "@/components/forms/form-school-general-settings";
+import { getSchool } from "@/services/service-school";
+
+export default async function SiteSettingsIndex({
   params,
 }: {
   params: { id: string };
 }) {
-  const data = await prisma.school.findUnique({
-    where: {
-      id: decodeURIComponent(params.id),
-    },
-  });
-
+  const school = await getSchool(decodeURIComponent(params.id))
   return (
     <div className="flex flex-col space-y-6">
-      <h1 className="font-cal text-3xl font-bold dark:text-white">Schol Settings Page</h1>
+     <SchoolSettingsForm school={school} />
     </div>
+
+
   );
 }

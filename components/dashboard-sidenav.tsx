@@ -43,13 +43,19 @@ export default function DashboardSideNav() {
           icon: <User width={18} />,
         },
         {
+          name: "Employees",
+          href: `/school/${id}/employees`,
+          isActive: segments.includes("employees"),
+          icon: <User width={18} />,
+        },
+        {
           name: "Guardians",
           href: `/school/${id}/guardians`,
           isActive: segments.includes("guardians"),
           icon: <User width={18} />,
         },
         {
-          name: "Analytics",
+          name: "Analytics & Reports",
           href: `/school/${id}/analytics`,
           isActive: segments.includes("analytics"),
           icon: <BarChart3 width={18} />,

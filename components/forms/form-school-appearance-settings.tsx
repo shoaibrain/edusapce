@@ -20,7 +20,7 @@ import React from "react"
 import { Icons } from "../icons"
 import { School } from "@prisma/client"
 
-const SchoolSettingsPatchSchema = z.object({
+const SchoolAppearanceSettingsPatchSchema = z.object({
   name: z
     .string()
     .min(2, {
@@ -49,17 +49,14 @@ interface SchoolGeneralSettingsFormProps extends React.HTMLAttributes<HTMLFormEl
   school: School;
 }
 
-type formData = z.infer<typeof SchoolSettingsPatchSchema>
-
-
-// const API_URL='https://project-eduspace.vercel.app/api/v1'
+type formData = z.infer<typeof SchoolAppearanceSettingsPatchSchema>
 
 export function SchoolSettingsForm({
   school,
   ...props
 }: SchoolGeneralSettingsFormProps) {
   const form = useForm<formData>({
-    resolver: zodResolver(SchoolSettingsPatchSchema),
+    resolver: zodResolver(SchoolAppearanceSettingsPatchSchema),
     mode: "onChange",
     defaultValues: {
       name: school.name,

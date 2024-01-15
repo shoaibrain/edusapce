@@ -43,7 +43,6 @@ export const getSchool = async(schoolId : string) => {
 export const postSchool = async (school) => {
 
     try {
-          // create new school record & connect it to existing Tenant via tenantId
 
           const newSchool = await prisma.school.create({
             data: {
