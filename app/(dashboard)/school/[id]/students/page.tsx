@@ -1,7 +1,7 @@
 import prisma from "@/lib/db";
 import { Form } from "react-hook-form";
 
-export default async function SiteSettingsIndex({
+export default async function SchoolStudentsIndex({
   params,
 }: {
   params: { id: string };
@@ -14,7 +14,7 @@ export default async function SiteSettingsIndex({
 
   return (
     <div className="flex flex-col space-y-6">
-      <h1>Schol Settings Page</h1>
+      <h1 className="font-cal text-3xl font-bold dark:text-white">School Students Index Page</h1>
     </div>
   );
 }

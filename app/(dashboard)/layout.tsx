@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation"
 
-import { dashboardConfig } from "@/config/dashboard"
 import { UserAccountNav } from "@/components/user-account-nav"
 import { MainNav } from "@/components/main-nav"
 import { SiteFooter } from "@/components/site-footer"
 import { getCurrentUser } from "@/lib/session"
-import { TenantSettingsSideNav } from "@/components/tenant-settings-side-nav"
+import DashboardSideNav from "@/components/dashboard-sidenav"
+
+
 
 interface DashboardLayoutProps {
   children?: React.ReactNode
@@ -14,6 +15,7 @@ interface DashboardLayoutProps {
 export default async function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
+
   const user = await getCurrentUser()
 
   if (!user) {
@@ -26,7 +28,7 @@ export default async function DashboardLayout({
         <div className="container flex h-16 items-center justify-between py-4">
           <MainNav />
           <UserAccountNav
-            user={{
+            user = {{
               name: user.name,
               image: user.image,
               email: user.email,
@@ -36,11 +38,11 @@ export default async function DashboardLayout({
       </header>
       <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
         <aside className="hidden w-[200px] flex-col md:flex">
-          <TenantSettingsSideNav items={dashboardConfig.tenantSettingsNav} />
+          <DashboardSideNav />
         </aside>
-        <main className="flex w-full flex-1 flex-col overflow-hidden">
+        <div className="flex w-full flex-1 flex-col overflow-hidden">
           {children}
-        </main>
+        </div>
       </div>
       <SiteFooter className="border-t" />
     </div>
