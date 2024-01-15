@@ -6,8 +6,6 @@ import { SiteFooter } from "@/components/site-footer"
 import { getCurrentUser } from "@/lib/session"
 import DashboardSideNav from "@/components/dashboard-sidenav"
 
-
-
 interface DashboardLayoutProps {
   children?: React.ReactNode
 }

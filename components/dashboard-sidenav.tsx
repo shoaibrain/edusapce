@@ -4,10 +4,11 @@ import Link from "next/link";
 import {
   ArrowLeft,
   BarChart3,
-  Globe,
   User,
   LayoutDashboard,
   Settings,
+  GraduationCap,
+  Contact,
 } from "lucide-react";
 import {
   useParams,
@@ -21,6 +22,11 @@ export default function DashboardSideNav() {
   const { id } = useParams() as { id?: string };
 
   const [schoolId, setSchoolId] = useState<string | null>();
+  console.log(
+    `
+    segments: ${JSON.stringify(segments)}
+    `
+  )
 
   const tabs = useMemo(() => {
     if (segments[0] === "school" && id) {
@@ -34,13 +40,13 @@ export default function DashboardSideNav() {
           name: "Academics",
           href: `/school/${id}/academics`,
           isActive: segments.includes("academics"),
-          icon: <LayoutDashboard width={18} />,
+          icon: <GraduationCap width={18} />,
         },
         {
           name: "Students",
           href: `/school/${id}/students`,
           isActive: segments.includes("students"),
-          icon: <User width={18} />,
+          icon: <Contact width={18} />,
         },
         {
           name: "Employees",
@@ -67,11 +73,19 @@ export default function DashboardSideNav() {
           icon: <Settings width={18} />,
         },
       ];
+    } else if (segments[2] == "admission" && id) {
+      return [
+        {
+          name: "Back to Students",
+          href: `/school/${id}/students`,
+          icon: <ArrowLeft width={18} />,
+        },
+      ];
     }
     return [
       {
-        name: "Home",
-        href: "/",
+        name: "Dashboard",
+        href: "/dashboard",
         isActive: segments.length === 0,
         icon: <LayoutDashboard width={18} />,
       },

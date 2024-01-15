@@ -82,10 +82,6 @@ model Tenant {
   @@map("tenants")
 }
 
-// tenant logs in, get schools for that tenant
-// on tenant dashboard, tenant have access their school & school's services
-// as well as tenant's services
-
 model School {
   id       String @id @default(cuid())
   tenantId String
@@ -95,8 +91,14 @@ model School {
   address    String
   phone      String
   email      String?
-  website    String?
+  website    String? @unique
   schoolType String? // public, private, charter, etc.
+
+  description   String? @db.Text
+  logo          String? @db.Text
+  font          String  @default("font-cal")
+  image         String? @db.Text
+  imageBlurhash String? @db.Text
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
@@ -191,10 +193,6 @@ model ClassPeriod {
   @@map("class_periods")
 }
 
-// tenant cannot create Student without having existing school
-// tenant ceates student in context of school
-// students exists in School
-// Student have access to School's services (these services are provided by school using eduSpace)
 model Student {
   id               String          @id @default(cuid())
   schoolId         String

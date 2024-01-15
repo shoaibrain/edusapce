@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 
 import { notFound, redirect } from "next/navigation";
-import SiteSettingsNav from "./nav";
+import SchoolSettingsNav from "./nav";
 import { getServerSession } from "next-auth/next"
 import prisma from "@/lib/db";
 import { authOptions } from "@/lib/auth";
@@ -42,7 +42,7 @@ export default async function SchoolSettingsLayout({
           Settings for {data.name}
         </h1>
       </div>
-      <SiteSettingsNav />
+      <SchoolSettingsNav />
       {children}
     </>
   );

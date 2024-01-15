@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useParams, useSelectedLayoutSegment } from "next/navigation";
 
-export default function SiteSettingsNav() {
+export default function SchoolSettingsNav() {
   const { id } = useParams() as { id?: string };
   const segment = useSelectedLayoutSegment();
 
@@ -13,11 +13,6 @@ export default function SiteSettingsNav() {
       name: "General",
       href: `/school/${id}/settings`,
       segment: null,
-    },
-    {
-      name: "Appearance",
-      href: `/school/${id}/settings/appearance`,
-      segment: "appearance",
     },
   ];
 

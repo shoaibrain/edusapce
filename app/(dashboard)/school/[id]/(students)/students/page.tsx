@@ -53,7 +53,7 @@ export default async function StudentsPage({
     <>
         <div className="container mx-auto  py-10">
           <div className="pb-8">
-          <Link href="/school/admission" className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
+          <Link href={`/school/${schoolId}/admission`} className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
               Admit New Student
           </Link>
           </div>
