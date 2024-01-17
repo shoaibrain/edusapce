@@ -1,12 +1,13 @@
 import { schoolPatchSchema } from "@/lib/validations/school";
-import { deleteSchool, getSchool, getSchoolsByTenant, patchSchool } from "@/services/service-school";
+import { deleteSchool, getSchoolsByTenant, patchSchool } from "@/services/service-school";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
+import { logger } from "@/logger";
 
 
 const routeContextSchema = z.object({
     params: z.object({
-      tenantId: z.string(),
+      schoolId: z.string(),
     }),
   });
 
@@ -17,12 +18,14 @@ export async function GET(
   try {
     const {params } = routeContextSchema.parse(context);
     // get all schools for this tenant
-    const schools = await getSchoolsByTenant(params.tenantId as string);
+    const schools = await getSchoolsByTenant(params.schoolId as string);
     if (!schools) {
+      logger.info(`No schools found for id ${params.schoolId}`)
       return new Response(JSON.stringify("Not Found"), { status: 404 });
     }
     return new Response(JSON.stringify(schools), { status: 200 });
   } catch(error) {
+    logger.warn(`Failed to get schools: ${error.message}`)
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }
@@ -36,10 +39,12 @@ export async function DELETE(
 ) {
   try {
     const { params } = routeContextSchema.parse(context);
-    await deleteSchool(params.tenantId as string);
+    logger.info(`Deleting school ${params.schoolId}`)
+    await deleteSchool(params.schoolId as string);
     return new Response(null, { status: 204, statusText: "School deleted" })
   } catch(error) {
     if (error instanceof z.ZodError) {
+      logger.warn(`Failed to delete school: ${error.message}`)
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }
     return new Response(null, { status: 500 })
@@ -50,7 +55,6 @@ export async function PATCH(
   request: Request,
   context: z.infer<typeof routeContextSchema>
 ) {
-
   try {
     const {params } = routeContextSchema.parse(context);
     const json = await request.json();
@@ -62,10 +66,11 @@ export async function PATCH(
     if (body.phone) data.phone = body.phone;
     if (body.email) data.email = body.email;
     if (body.website) data.website = body.website;
-
-    const school = await patchSchool(params.tenantId as string, data);
+    logger.info(`Updating school ${JSON.stringify(data)} `)
+    const school = await patchSchool(params.schoolId as string, data);
     return new Response(JSON.stringify(school), { status: 200 });
   } catch(error) {
+    logger.warn(`Failed to update school: ${error.message}`)
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }

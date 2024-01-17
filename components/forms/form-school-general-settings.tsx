@@ -2,6 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import {  useForm } from "react-hook-form"
 import * as z from "zod"
+import { useRouter } from "next/navigation"
 import { buttonVariants } from "@/components/ui/button"
 import {
   Form,
@@ -21,6 +22,7 @@ import { Icons } from "../icons"
 import { School } from "@prisma/client"
 
 const SchoolSettingsPatchSchema = z.object({
+  id: z.string(),
   name: z
     .string()
     .min(2, {
@@ -62,6 +64,7 @@ export function SchoolSettingsForm({
     resolver: zodResolver(SchoolSettingsPatchSchema),
     mode: "onChange",
     defaultValues: {
+      id: school.id,
       name: school.name,
       address: school.address,
       phone: school.phone ,
@@ -69,22 +72,41 @@ export function SchoolSettingsForm({
       website: school.website || "",
     },
   })
+  const router = useRouter()
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
-  function onSubmit(data: formData) {
 
-    console.log("updaing school settings.....")
+  async function onSubmit(data: formData) {
     setIsSaving(true)
-    console.log("done updaing school settings.....")
+    console.log(`data: ${JSON.stringify(data)}`)
+    const response = await fetch(`/api/v1/schools/${data.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: data.name,
+        address: data.address,
+        phone: data.phone,
+        email: data.email,
+        website: data.website,
+      }),
+    })
+
     setIsSaving(false)
 
+    if (!response?.ok) {
+      return toast({
+        title: "Something went wrong.",
+        description: "Your name was not updated. Please try again.",
+        variant: "destructive",
+      })
+    }
+
     toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+      description: "Your name has been updated.",
     })
+
+    router.refresh()
   }
 
   return (
