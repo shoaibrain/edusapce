@@ -1,0 +1,25 @@
+= eduSpace
+
+== Overview
+
+This is a school management application built using NextJS, RSC & other latest technologies.
+A database is hosted on PlanetScale with Prisma ORM
+
+== Getting Started
+
+To get started with this Next.js app, make sure to get the environment
+variables right, and then follow the steps below:
+
+=== Prerequisites
+
+Make sure you have Node.js and npm installed on your machine.
+
+=== Installation
+
+```bash
+npm install
+
+npm run build
+
+npm run dev
+```
