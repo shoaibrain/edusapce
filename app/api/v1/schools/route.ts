@@ -17,6 +17,9 @@ export async function GET(){
 
 
 export const POST = async (request: Request) => {
+
+  console.log(`request: ${JSON.stringify(request)} in POST school`)
+
   try {
     const json = await request.json();
     const body = schoolCreateSchema.parse(json);

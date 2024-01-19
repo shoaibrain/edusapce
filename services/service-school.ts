@@ -41,21 +41,12 @@ export const getSchool = async(schoolId : string) => {
 }
 
 export const postSchool = async (school) => {
-
+    console.log(`school: ${JSON.stringify(school)}`)
     try {
-
           const newSchool = await prisma.school.create({
-            data: {
-              ...school,  // Assuming schoolData contains name, address, phone, etc.
-              tenantId: school.tenantId  // Connect the school to the tenant using the tenant's ID
-            }
+            data: school,
           });
           return newSchool;
-
-
-
-
-
       } catch (error) {
         console.log(`Error creating school: ${error.message}`)
        throw new Error(`Error creating school: ${error.message}`);

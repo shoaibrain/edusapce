@@ -26,7 +26,7 @@ interface SchoolFormProps extends React.HTMLAttributes<HTMLFormElement> {
 type formData = z.infer<typeof schoolCreateSchema>
 
 // TODO: BUG: getting undefined for API_URL in client component
-// const API_URL='https://project-eduspace.vercel.app/api/v1'
+const API_URL='https://project-eduspace.vercel.app/api/v1'
 
 
 export function SchoolRegisterForm({
@@ -52,7 +52,7 @@ export function SchoolRegisterForm({
   async function onSubmit(data: formData) {
 
     setIsSaving(true);
-    const response = await fetch(`/schools`,{
+    const response = await fetch(`${API_URL}/schools`,{
       method : 'POST',
       headers: {
         'Content-Type': 'application/json',

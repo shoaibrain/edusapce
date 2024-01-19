@@ -11,10 +11,12 @@ const routeContextSchema = z.object({
     }),
   });
 
+
 export async function GET(
   request: Request,
   context: z.infer<typeof routeContextSchema>
 ) {
+
   try {
     const {params } = routeContextSchema.parse(context);
     // get all schools for this tenant
