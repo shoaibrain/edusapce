@@ -19,9 +19,8 @@ import {  useEffect, useMemo, useState } from "react";
 
 export default function DashboardSideNav() {
   const segments = useSelectedLayoutSegments();
-  const { id } = useParams() as { id?: string };
 
-  const [schoolId, setSchoolId] = useState<string | null>();
+  const { id } = useParams() as { id?: string }; // school id
   console.log(
     `
     segments: ${JSON.stringify(segments)}
@@ -96,7 +95,7 @@ export default function DashboardSideNav() {
         icon: <Settings width={18} />,
       },
     ];
-  }, [segments, id, schoolId]);
+  }, [segments, id]);
 
   const [showSidebar, setShowSidebar] = useState(false);
 
