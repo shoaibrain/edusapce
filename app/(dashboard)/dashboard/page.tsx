@@ -49,9 +49,9 @@ export default async function DashboardPage() {
               </div>
             ): (
               <div className="mt-20 flex flex-col items-center space-x-4">
-                <h1 className="font-cal text-4xl">No Sites Yet</h1>
+                <h1 className="font-cal text-4xl">No Schools Yet</h1>
                 <Image
-                  alt="missing site"
+                  alt="missing school"
                   src="https://illustrations.popsy.co/gray/web-design.svg"
                   width={400}
                   height={400}

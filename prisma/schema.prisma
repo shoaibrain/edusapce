@@ -121,8 +121,6 @@ model SchoolYear {
   // school_year can have multiple terms (Fall 2020, Spring 2021, Fall 2021 etc.)
   terms     SchoolTerm[] // list of current school terms
 
-  yearLevels YearGradeLevel[]
-
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
@@ -147,25 +145,73 @@ model SchoolTerm {
 
 // Kindergarten, First grade, second grade, etc.
 model YearGradeLevel {
-  id            String        @id @default(cuid())
-  name          String        @unique
+  id       String  @id @default(cuid())
+  schoolId String  @unique
+  School   School? @relation(fields: [schoolId], references: [id])
+
+  name          String  @unique
   description   String?
   levelCategory String // Elementary, Middle, High
   levelOrder    Int
   capacity      Int?
   classRoom     String?
-  students      Student[]
+
+  students StudentYearGradeLevel[] // association between Student & YearGradeLevel N:N
+
   classePeriods ClassPeriod[] // Classes belonging to this grade level
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @default(now()) @map("updated_at")
-  SchoolYear    SchoolYear?   @relation(fields: [schoolYearId], references: [schoolId])
-  schoolYearId  String?
-  School        School?       @relation(fields: [schoolId], references: [id])
-  schoolId      String?
 
   @@index([name])
   @@index([levelCategory])
   @@map("grade_levels")
+}
+
+// Association table to represent the relationship between students and grade levels
+model StudentYearGradeLevel {
+  student_id     String @unique
+  grade_level_id String @unique
+
+  enrolledAt DateTime @default(now())
+
+  student    Student        @relation(fields: [student_id], references: [id])
+  gradeLevel YearGradeLevel @relation(fields: [grade_level_id], references: [id])
+
+  @@index([student_id], name: "student_idx")
+  @@index([grade_level_id], name: "gradeLevel_idx")
+}
+
+model Student {
+  id               String                  @id @default(cuid())
+  schoolId         String
+  tenantId         String
+  // basic attributes
+  firstName        String
+  middleName       String?
+  lastName         String
+  birthDate        DateTime
+  gender           String
+  // identity related attributes
+  nationality      String?
+  ssn              String?                 @unique
+  email            String?                 @unique
+  phone            String? // current phone number
+  address          String
+  // school related attributes
+  enrollmentStatus String?
+  role             Role                    @default(STUDENT)
+  // Reference to the StudentYearGradeLevel association table
+  gradeLevels      StudentYearGradeLevel[]
+  guardians        Guardian[] // can have multiple guardians
+  medicalRecordId  String?                 @unique
+  medicalRecord    MedicalRecord?          @relation(fields: [medicalRecordId], references: [id])
+  attendance       Attendance[] // attendence records for this student
+  createdAt        DateTime                @default(now()) @map("created_at")
+  updatedAt        DateTime                @default(now()) @map("updated_at")
+  TestResults      TestResult[] // list of test results for this student
+
+  @@index([schoolId, ssn, firstName, lastName])
+  @@map("students")
 }
 
 // First Period, Second Period, etc.
@@ -191,39 +237,6 @@ model ClassPeriod {
   updatedAt DateTime   @default(now()) @map("updated_at")
 
   @@map("class_periods")
-}
-
-model Student {
-  id               String          @id @default(cuid())
-  schoolId         String
-  tenantId         String
-  // basic attributes
-  firstName        String
-  middleName       String?
-  lastName         String
-  birthDate        DateTime
-  gender           String
-  // identity related attributes
-  nationality      String?
-  ssn              String?         @unique
-  email            String?         @unique
-  phone            String? // current phone number
-  address          String
-  // school related attributes
-  enrollmentStatus String?
-  role             Role            @default(STUDENT)
-  gradeLevel       String // foreign key to Class Grade Level
-  classGradeLevel  YearGradeLevel? @relation(fields: [gradeLevel], references: [id])
-  guardians        Guardian[] // can have multiple guardians
-  medicalRecordId  String?         @unique
-  medicalRecord    MedicalRecord?  @relation(fields: [medicalRecordId], references: [id])
-  attendance       Attendance[] // attendence records for this student
-  createdAt        DateTime        @default(now()) @map("created_at")
-  updatedAt        DateTime        @default(now()) @map("updated_at")
-  TestResults      TestResult[] // list of test results for this student
-
-  @@index([schoolId, ssn, firstName, lastName])
-  @@map("students")
 }
 
 // Employees are users of the system

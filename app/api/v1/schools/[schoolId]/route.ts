@@ -1,16 +1,24 @@
-import { schoolPatchSchema } from "@/lib/validations/school";
-import { deleteSchool, getSchoolsByTenant, patchSchool } from "@/services/service-school";
-import { Prisma } from "@prisma/client";
+import {
+  addGradeLevels,
+  deleteSchool,
+  getSchool as getSchoolById,
+  patchGradeLevel,
+  patchSchoolProfile
+} from "@/services/service-school";
+
 import { z } from "zod";
 import { logger } from "@/logger";
-
+import { NextRequest } from "next/server";
+import {
+  YearGradeLevelCreateSchema,
+  gradeLevelPatchSchema
+} from "@/lib/validations/school";
 
 const routeContextSchema = z.object({
     params: z.object({
-      schoolId: z.string(),
+      schoolId: z.string()
     }),
   });
-
 
 export async function GET(
   request: Request,
@@ -20,7 +28,7 @@ export async function GET(
   try {
     const {params } = routeContextSchema.parse(context);
     // get all schools for this tenant
-    const schools = await getSchoolsByTenant(params.schoolId as string);
+    const schools = await getSchoolById(params.schoolId as string);
     if (!schools) {
       logger.info(`No schools found for id ${params.schoolId}`)
       return new Response(JSON.stringify("Not Found"), { status: 404 });
@@ -53,29 +61,59 @@ export async function DELETE(
   }
 }
 
+//TODO: Define Schema of payload,
+// If, Schema is incorrect, return the
+// right api response with message
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   context: z.infer<typeof routeContextSchema>
 ) {
   try {
     const {params } = routeContextSchema.parse(context);
+    const searchParams = request.nextUrl.searchParams
+    const action = searchParams.get('action');
     const json = await request.json();
-    const body = schoolPatchSchema.parse(json);
-    // data object for partial updates.
-    const data: Prisma.SchoolUpdateInput = {};
-    if (body.name) data.name = body.name;
-    if (body.address) data.address = body.address;
-    if (body.phone) data.phone = body.phone;
-    if (body.email) data.email = body.email;
-    if (body.website) data.website = body.website;
-    logger.info(`Updating school ${JSON.stringify(data)} `)
-    const school = await patchSchool(params.schoolId as string, data);
-    return new Response(JSON.stringify(school), { status: 200 });
+    // Centralized handling for different update types
+    // based on payload data,and request-params
+    // various patch related operations performed
+    // on school, which is an individual data intity
+    // with unique identifier
+    await handleUpdates(params.schoolId as string, action, json);
+    return new Response(null, { status: 200 });
   } catch(error) {
     logger.warn(`Failed to update school: ${error.message}`)
     if (error instanceof z.ZodError) {
-      return new Response(JSON.stringify(error.issues), { status: 422 })
+      return new Response(JSON.stringify(error.message), { status: 422 })
     }
-    return new Response(null, { status: 500 })
+    return new Response(JSON.stringify(error.message), { status: 500 })
   }
+}
+
+async function handleUpdates(schoolId: string,
+  action: string | null,
+  payload: any) {
+    if (action === 'grade') {
+      await handleSchoolGradeLevelAdd(schoolId, payload);
+    } else if (action === 'profile') {
+      await handleSchoolProfilePatch(schoolId, payload);
+    } else if (action === 'grade-patch') {
+      await handleSchoolGradeLevelPatch(schoolId,payload);
+    }
+}
+
+async function handleSchoolGradeLevelPatch(schoolId: string, data: any) {
+  // patch in existig grade level.
+  // patch include operations like enrollment, class periods and subject related
+  // changes for that grade
+  const gradeLevelPatchData = gradeLevelPatchSchema.parse(data.grade);
+  await patchGradeLevel(schoolId, gradeLevelPatchData);
+}
+
+async function handleSchoolGradeLevelAdd(schoolId: string, data: any) {
+  const gradeLevelAddData = YearGradeLevelCreateSchema.parse(data.grade)
+  await addGradeLevels(schoolId, gradeLevelAddData);
+}
+
+async function handleSchoolProfilePatch(schoolId: string, data: any) {
+  await patchSchoolProfile(schoolId, data.profile);
 }
