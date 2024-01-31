@@ -87,3 +87,33 @@ export async function PATCH(
     return new Response(null, { status: 500 });
   }
 }
+
+// Two main type of PATCH on existing student.
+// Patch related to Student profile
+// patch related to academics
+async function handleUpdates(
+  studentId: string,
+  schoolId: string,
+  action: string | null,
+  payload: any) {
+    if (action === 'student-patch') { // create grade_level in school
+      await handleStudentProfilePatch(schoolId, payload);
+    } else if (action === 'enrollment') {
+      await handleStudentEnrollment( studentId,schoolId, payload);
+    }
+}
+
+async function handleStudentProfilePatch(
+  studentId: string,
+  payload: any
+ ) {
+  // handle student profile patch operations
+ }
+
+ async function handleStudentEnrollment(
+  studentId: string,
+  schoolId: string,
+  payload: any
+ ) {
+  // handle student enrollment & patch opearations in school
+ }

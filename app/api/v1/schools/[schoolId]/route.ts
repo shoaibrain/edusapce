@@ -11,7 +11,6 @@ import { logger } from "@/logger";
 import { NextRequest } from "next/server";
 import {
   YearGradeLevelCreateSchema,
-  gradeLevelPatchSchema
 } from "@/lib/validations/school";
 
 const routeContextSchema = z.object({
@@ -61,9 +60,7 @@ export async function DELETE(
   }
 }
 
-//TODO: Define Schema of payload,
-// If, Schema is incorrect, return the
-// right api response with message
+
 export async function PATCH(
   request: NextRequest,
   context: z.infer<typeof routeContextSchema>
@@ -89,24 +86,16 @@ export async function PATCH(
   }
 }
 
+// YearGradeLevel are created through
+// school patch operations.
 async function handleUpdates(schoolId: string,
   action: string | null,
   payload: any) {
-    if (action === 'grade') {
+    if (action === 'grade-add') { // create grade_level in school
       await handleSchoolGradeLevelAdd(schoolId, payload);
-    } else if (action === 'profile') {
+    } else if (action === 'profile-patch') {
       await handleSchoolProfilePatch(schoolId, payload);
-    } else if (action === 'grade-patch') {
-      await handleSchoolGradeLevelPatch(schoolId,payload);
     }
-}
-
-async function handleSchoolGradeLevelPatch(schoolId: string, data: any) {
-  // patch in existig grade level.
-  // patch include operations like enrollment, class periods and subject related
-  // changes for that grade
-  const gradeLevelPatchData = gradeLevelPatchSchema.parse(data.grade);
-  await patchGradeLevel(schoolId, gradeLevelPatchData);
 }
 
 async function handleSchoolGradeLevelAdd(schoolId: string, data: any) {

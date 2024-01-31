@@ -4,20 +4,19 @@ export const getStudents = async () => {
     try {
         const students = await prisma.student.findMany(
         {
-            select: {
-                id: true,
-                firstName: true,
-                middleName: true,
-                lastName: true,
-                birthDate: true,
-                gender: true,
-                enrollmentStatus: true,
-                email: true,
-                phone: true,
-                address: true,
-                gradeLevel: true,
-              },
-
+          select: {
+              id: true,
+              firstName: true,
+              middleName: true,
+              lastName: true,
+              birthDate: true,
+              gender: true,
+              enrollmentStatus: true,
+              email: true,
+              phone: true,
+              address: true,
+              gradeLevel: true,
+            },
         });
         return students;
       } catch (error) {

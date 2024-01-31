@@ -92,7 +92,7 @@ model School {
   phone      String
   email      String?
   website    String? @unique
-  schoolType String? // public, private, charter, etc.
+  schoolType String? // public, private, etc.
 
   description   String? @db.Text
   logo          String? @db.Text
@@ -111,38 +111,6 @@ model School {
   @@map("schools")
 }
 
-// uniquely identifiable by school
-// this table is supposed to be entry point for school-related data, mainly identified by school_id
-model SchoolYear {
-  schoolId  String       @id @unique @default(cuid()) @map("school_id")
-  //academic year start and end dates
-  startDate DateTime
-  endDate   DateTime
-  // school_year can have multiple terms (Fall 2020, Spring 2021, Fall 2021 etc.)
-  terms     SchoolTerm[] // list of current school terms
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  @@map("school_years")
-}
-
-// school terms (e.g., Fall 2020, Spring 2021, First_term, N_term etc.)
-model SchoolTerm {
-  school_id String   @id
-  name      String
-  // term cycle start and end dates
-  startDate DateTime
-  endDate   DateTime
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  schoolYear SchoolYear @relation(fields: [school_id], references: [schoolId])
-
-  @@map("school_terms")
-}
-
 // Kindergarten, First grade, second grade, etc.
 model YearGradeLevel {
   id       String  @id @default(cuid())
@@ -156,7 +124,7 @@ model YearGradeLevel {
   capacity      Int?
   classRoom     String?
 
-  students StudentYearGradeLevel[] // association between Student & YearGradeLevel N:N
+  students StudentYearGradeLevel[] // association between Student & YearGradeLevel
 
   classePeriods ClassPeriod[] // Classes belonging to this grade level
   createdAt     DateTime      @default(now()) @map("created_at")
@@ -167,8 +135,9 @@ model YearGradeLevel {
   @@map("grade_levels")
 }
 
-// Association table to represent the relationship between students and grade levels
+// Facilitates the many-to-many relationship between students and grade levels.
 model StudentYearGradeLevel {
+  id             String @id @default(cuid())
   student_id     String @unique
   grade_level_id String @unique
 
@@ -237,6 +206,38 @@ model ClassPeriod {
   updatedAt DateTime   @default(now()) @map("updated_at")
 
   @@map("class_periods")
+}
+
+// uniquely identifiable by school
+// this table is supposed to be entry point for school-related data, mainly identified by school_id
+model SchoolYear {
+  schoolId  String       @id @unique @default(cuid()) @map("school_id")
+  //academic year start and end dates
+  startDate DateTime
+  endDate   DateTime
+  // school_year can have multiple terms (Fall 2020, Spring 2021, Fall 2021 etc.)
+  terms     SchoolTerm[] // list of current school terms
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("school_years")
+}
+
+// school terms (e.g., Fall 2020, Spring 2021, First_term, N_term etc.)
+model SchoolTerm {
+  school_id String   @id
+  name      String
+  // term cycle start and end dates
+  startDate DateTime
+  endDate   DateTime
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  schoolYear SchoolYear @relation(fields: [school_id], references: [schoolId])
+
+  @@map("school_terms")
 }
 
 // Employees are users of the system
