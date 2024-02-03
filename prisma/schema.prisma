@@ -103,21 +103,18 @@ model School {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  classGrades YearGradeLevel[] // list of class grades for this school
-  Test        Test[]
-  Subject     Subject[]
+  yearGradeLevels YearGradeLevel[]
 
-  @@index([tenantId])
   @@map("schools")
 }
 
-// Kindergarten, First grade, second grade, etc.
+// Kindergarten, First grade, second grade, etc
 model YearGradeLevel {
   id       String  @id @default(cuid())
   schoolId String  @unique
   School   School? @relation(fields: [schoolId], references: [id])
 
-  name          String  @unique
+  name          String
   description   String?
   levelCategory String // Elementary, Middle, High
   levelOrder    Int
@@ -130,8 +127,6 @@ model YearGradeLevel {
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @default(now()) @map("updated_at")
 
-  @@index([name])
-  @@index([levelCategory])
   @@map("grade_levels")
 }
 
@@ -145,15 +140,11 @@ model StudentYearGradeLevel {
 
   student    Student        @relation(fields: [student_id], references: [id])
   gradeLevel YearGradeLevel @relation(fields: [grade_level_id], references: [id])
-
-  @@index([student_id], name: "student_idx")
-  @@index([grade_level_id], name: "gradeLevel_idx")
 }
 
 model Student {
   id               String                  @id @default(cuid())
   schoolId         String
-  tenantId         String
   // basic attributes
   firstName        String
   middleName       String?
@@ -164,26 +155,21 @@ model Student {
   nationality      String?
   ssn              String?                 @unique
   email            String?                 @unique
-  phone            String? // current phone number
+  phone            String?
   address          String
   // school related attributes
-  enrollmentStatus String?
+  enrollmentStatus String?                 @default("ADMITTED")
   role             Role                    @default(STUDENT)
   // Reference to the StudentYearGradeLevel association table
   gradeLevels      StudentYearGradeLevel[]
   guardians        Guardian[] // can have multiple guardians
-  medicalRecordId  String?                 @unique
-  medicalRecord    MedicalRecord?          @relation(fields: [medicalRecordId], references: [id])
-  attendance       Attendance[] // attendence records for this student
   createdAt        DateTime                @default(now()) @map("created_at")
   updatedAt        DateTime                @default(now()) @map("updated_at")
-  TestResults      TestResult[] // list of test results for this student
 
-  @@index([schoolId, ssn, firstName, lastName])
   @@map("students")
 }
 
-// First Period, Second Period, etc.
+// First Period, Second Period, etc
 model ClassPeriod {
   id           String          @id @default(cuid())
   gradeLevelId String? // foreign key to YearGradeLevel
@@ -200,10 +186,9 @@ model ClassPeriod {
   // class period schedule
   startTime DateTime
   endTime   DateTime
-  // class can be taught by multiple teachers
-  teachers  Employee[]
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @default(now()) @map("updated_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 
   @@map("class_periods")
 }
@@ -263,76 +248,7 @@ model Employee {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  employeeSalaries EmployeeSalary[]
-
-  ClassPeriods ClassPeriod[] // employee can teach multiple classes
-  gradedTests  TestResult[] // teacher can grade multiple tests
-  attendance   Attendance[]
-
-  medicalRecordId String?        @unique
-  medicalRecord   MedicalRecord? @relation(fields: [medicalRecordId], references: [id])
-
   @@map("employees")
-}
-
-model EmployeeSalary {
-  id         String @id @default(cuid())
-  schoolId   String
-  tenantId   String
-  employeeId String @unique
-
-  salaryType String
-  amount     Float
-  currency   String
-  // salary start and end dates
-  startDate  DateTime
-  endDate    DateTime?
-  notes      String?
-  employee   Employee  @relation(fields: [employeeId], references: [id])
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  @@index([employeeId])
-  @@map("employee_salaries")
-}
-
-// Exam, Quiz, Homework, etc.
-model Test {
-  id        String @id @default(cuid())
-  schoolId  String
-  subjectId String
-
-  name          String
-  description   String?
-  testType      String // Homework, Quiz, Exam, etc.
-  question      String? // URL to the test questions
-  classPeriodId String? // foreign key to ClassPeriod this test belongs to
-
-  Subject Subject? @relation(fields: [subjectId], references: [id])
-  school  School?  @relation(fields: [schoolId], references: [id])
-
-  testDate    DateTime
-  testResults TestResult[]
-
-  @@index([name, testType, classPeriodId, subjectId])
-  @@map("tests")
-}
-
-model TestResult {
-  id         String    @id @default(cuid())
-  testId     String
-  studentId  String
-  employeeId String? // employee->teacher grades the test
-  scores     Int
-  takenAt    DateTime
-  gradedAt   DateTime
-  test       Test      @relation(fields: [testId], references: [id])
-  student    Student   @relation(fields: [studentId], references: [id])
-  grader     Employee? @relation(fields: [employeeId], references: [id])
-
-  @@index([testId, studentId, employeeId])
-  @@map("test_results")
 }
 
 // Subjects are textbooks/papers/articels ,etc used in classes
@@ -349,24 +265,10 @@ model Subject {
   description  String?
   department   String?
 
-  tests       Test[] // all tests for this subject
   ClassPeriod ClassPeriod[]
-  School      School        @relation(fields: [schoolId], references: [id])
 
   @@index([subjectName, department])
   @@map("subjects")
-}
-
-// TODO: design relations with other
-model MedicalRecord {
-  id         String    @id @default(cuid())
-  bloodType  String?
-  doctorName String?
-  notes      String?
-  Student    Student?
-  Employee   Employee?
-
-  @@map("medical_records")
 }
 
 model Guardian {
@@ -392,25 +294,5 @@ model Guardian {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  @@index([phone, email, guardianType])
   @@map("guardians")
-}
-
-model Attendance {
-  id       String @id @default(cuid())
-  schoolId String @map("school_id")
-
-  date   DateTime // date of attendance
-  status String
-
-  student    Student?  @relation(fields: [studentId], references: [id])
-  studentId  String?
-  employee   Employee? @relation(fields: [employeeId], references: [id])
-  employeeId String?
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  @@index([date, studentId, employeeId])
-  @@map("attendances")
 }

@@ -22,7 +22,7 @@ export const addGradeLevels = async (
     await prisma.school.update({
       where: { id: schoolId },
       data: {
-        classGrades: {
+        yearGradeLevels: {
           connect: { id: createdGradeLevel.id },
         },
       },
@@ -44,22 +44,6 @@ export const patchGradeLevel = async (
 
   try{
 
-  gradeLevelPatchSchema.parse(gradeLevelPatchData);
-
-    // Extract the students from the payload
-  const { students: studentsData, ...restData } = gradeLevelPatchData;
-
-      // Perform the grade level update without students
-      await prisma.yearGradeLevel.update({
-        where: {
-          schoolId: { const first = useRef(second) },
-        },
-        data: restData,
-      });
-      // If there are students in the payload, add them to the grade level
-      if (studentsData && studentsData.length > 0) {
-        await addStudentsToGradeLevel(schoolId, restData.name, studentsData);
-      }
         logger.info(`Successfully patched grade level for school ${schoolId}`);
   } catch(error) {
     logger.warn(`Failed to patch grade levels: ${error.message}`);
@@ -74,18 +58,7 @@ export const addStudentsToGradeLevel = async (
   studentsData: { student_id: string }[],
 ): Promise<void> => {
   try {
-    await prisma.yearGradeLevel.update({
-      where: {
-        schoolId_name: { schoolId, name: gradeLevelName },
-      },
-      data: {
-        students: {
-          connect: studentsData.map((student) => ({
-            student_id: student.student_id,
-          })),
-        },
-      },
-    });
+    console.log(`schoolId: ${schoolId}`)
 
     logger.info(`Successfully added students to grade level for school ${schoolId}`);
   } catch (error) {

@@ -60,7 +60,6 @@ export function StudentEditForm({
       phone: student?.phone || "",
       address: student?.address,
       enrollmentStatus: student?.enrollmentStatus || "status",
-      gradeLevel: student?.gradeLevel || "",
     }
   })
 

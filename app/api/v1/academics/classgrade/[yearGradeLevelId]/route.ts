@@ -2,6 +2,7 @@ import { z } from "zod";
 import { logger } from "@/logger";
 import { gradeLevelPatchSchema } from "@/lib/validations/academics";
 import { patchGradeLevel } from "@/services/service-school";
+import { NextRequest } from "next/server";
 
 
 const routeContextSchema = z.object({

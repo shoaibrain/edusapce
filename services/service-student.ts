@@ -15,7 +15,7 @@ export const getStudents = async () => {
               email: true,
               phone: true,
               address: true,
-              gradeLevel: true,
+              gradeLevels: true,
             },
         });
         return students;
@@ -31,7 +31,7 @@ export const getStudent = async(studentId : string) => {
           },
           include:{
               guardians: true,
-              classGradeLevel: true,
+              gradeLevels: true,
           }
       })
       if (student) {
@@ -66,7 +66,7 @@ export const deleteStudent = async (studentId: string) => {
     }
 
 }
-export const patchStudent = async (studentId: string, studentUpdates) => {
+export const patchStudentProfile = async (studentId: string, studentUpdates) => {
     try {
       const patchedStudent = await prisma.student.update({
         where: {
@@ -79,3 +79,20 @@ export const patchStudent = async (studentId: string, studentUpdates) => {
       throw new Error(`Error updating student: ${error.message}`);
     }
   };
+export const patchStudentEnrollmentn = async (
+  studentId: string,
+  schoolId: string,
+  enrollmentUpdates) =>{
+  try {
+    const patchedStudent = await prisma.student.update({
+      where: {
+        id: studentId,
+        schoolId:schoolId,
+      },
+      data:enrollmentUpdates
+    });
+    return patchedStudent;
+    } catch( error ) {
+      throw new Error(`Error updating student: ${error.message}`);
+    }
+  }

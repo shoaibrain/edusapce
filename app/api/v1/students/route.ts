@@ -3,6 +3,7 @@ import { getStudents, postStudent } from "@/services/service-student"
 import {  studentCreateSchema } from "@/lib/validations/student"
 import { logger } from "@/logger";
 
+// get All students for School
 export async function GET(){
   try {
     const students = await getStudents();

@@ -1,12 +1,13 @@
 import * as z from "zod"
-import { studentPatchSchema} from "@/lib/validations/student";
 import { Prisma } from "@prisma/client";
-import { deleteStudent, getStudent, patchStudent } from "@/services/service-student";
-
+import { deleteStudent, getStudent, patchStudentProfile } from "@/services/service-student";
+import { NextRequest } from "next/server";
+import { logger } from "@/logger";
 
 const routeContextSchema = z.object({
     params: z.object({
       studentId: z.string(),
+      schoolId: z.string(), // todo: make this optional
     }),
   })
 
@@ -29,6 +30,7 @@ export async function GET (
   }
 }
 
+// TODO: Soft delete
 export async function DELETE(
   req: Request,
   context: z.infer<typeof routeContextSchema>
@@ -46,32 +48,21 @@ export async function DELETE(
 }
 
 export async function PATCH(
-  req: Request,
+  req: NextRequest,
   context: z.infer<typeof routeContextSchema>
 ) {
   try {
     const { params } = routeContextSchema.parse(context);
+    const searchParams = req.nextUrl.searchParams
+    const action = searchParams.get('action');
     const json = await req.json();
-    const body = studentPatchSchema.parse(json);
-    // data object for partial updates.
-    const data: Prisma.StudentUpdateInput = {};
-
-    if (body.firstName) data.firstName = body.firstName;
-    if (body.middleName && body.middleName !== "") data.middleName = body.middleName;
-    if (body.lastName) data.lastName = body.lastName;
-    if (body.gender) data.gender = body.gender;
-    if (body.nationality) data.nationality = body.nationality;
-    if (body.ssn) data.ssn = body.ssn;
-    if (body.email) data.email = body.email;
-    if (body.phone) data.phone = body.phone;
-    if (body.address) data.address = body.address;
-    if (body.enrollmentStatus) data.enrollmentStatus = body.enrollmentStatus;
-    if (body.guardians) data.guardians = {
-      connect: body.guardians.map((guardianId: string) => ({ id: guardianId })),
-    };
-
-
-    await patchStudent(params.studentId as string, data);
+    await handleUpdates(
+      params.studentId,
+      params.schoolId,
+      action,
+      json
+    );
+    logger.info(`student ${params.studentId} was patched.`)
     return new Response(null, { status: 200 });
   } catch (error) {
     console.log(`Error in PATCH route: ${error}`)
@@ -88,18 +79,18 @@ export async function PATCH(
   }
 }
 
-// Two main type of PATCH on existing student.
-// Patch related to Student profile
-// patch related to academics
+// Two type of PATCH on existing student.
+// Patch related to profile
+// patch related to enrollment
 async function handleUpdates(
   studentId: string,
   schoolId: string,
   action: string | null,
   payload: any) {
-    if (action === 'student-patch') { // create grade_level in school
+    if (action === 'profile') {
       await handleStudentProfilePatch(schoolId, payload);
     } else if (action === 'enrollment') {
-      await handleStudentEnrollment( studentId,schoolId, payload);
+      await handleStudentEnrollmentPatch( studentId,schoolId, payload);
     }
 }
 
@@ -107,13 +98,50 @@ async function handleStudentProfilePatch(
   studentId: string,
   payload: any
  ) {
-  // handle student profile patch operations
+   try{
+  // handle a partial student profile patch operation
+  const data: Prisma.StudentUpdateInput = {};
+  if (payload.firstName) data.firstName = payload.firstName;
+  if (payload.lastName) data.lastName = payload.lastName;
+  if (payload.middleName) data.middleName = payload.middleName;
+  if (payload.gender) data.gender = payload.gender;
+  if (payload.ssn) data.ssn = payload.ssn;
+  if (payload.email) data.email = payload.email;
+  if (payload.phone) data.phone = payload.phone;
+  if (payload.address) data.address = payload.address;
+  if (payload.enrollmentStatus) data.enrollmentStatus = payload.enrollmentStatus;
+  if (payload.guardians) data.guardians = {
+    connect: payload.guardians.map((guardianId: string) => ({ id: guardianId })),
+  };
+
+  const patchedStudent =  await patchStudentProfile(studentId , payload);
+  return patchedStudent;
+    }  catch(error) {
+      console.log(`Error in student profile PATCH route: ${error}`)
+      if (error instanceof z.ZodError) {
+        const validationErrors = error.issues.map((issue) => {
+          return {
+            field: issue.path.join('.'),
+            message: issue.message,
+          };
+        });
+        return new Response(JSON.stringify(validationErrors), { status: 422 });
+      }
+    }
  }
 
- async function handleStudentEnrollment(
+ async function handleStudentEnrollmentPatch(
   studentId: string,
   schoolId: string,
   payload: any
  ) {
   // handle student enrollment & patch opearations in school
+
+  // Student & YearGradeLevel exist.
+  // we're enrolling existing Student into
+  // existing YearGradeLevel
+  const data: Prisma.StudentUpdateInput = {};
+  if (payload.gradeLevels) data.gradeLevels = {
+    connect: payload.gradeLevels.map((yearGradeLevelId: string) => ({id: yearGradeLevelId})),
+  }
  }
