@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { logger } from "@/logger";
 
 export const getEmployees = async () => {
   try {
@@ -20,6 +21,19 @@ export const getEmployees = async () => {
 catch (error) {
   throw new Error(`Error getting all employees: ${error.message}`);
 }
+}
+
+export const getEmployeesForSchool =async (schoolId:string) => {
+    try {
+      const employees = await prisma.employee.findMany({
+        where:{
+          schoolId: schoolId
+        }
+      })
+      return employees;
+    }catch (error){
+      logger.warn(`failed to read employees for school: ${schoolId}`)
+    }
 }
 
 export const getEmployee = async (employeeId: string) => {

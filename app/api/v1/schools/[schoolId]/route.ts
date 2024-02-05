@@ -1,6 +1,7 @@
 import {
   addGradeLevels,
   deleteSchool,
+  getSchool,
   getSchool as getSchoolById,
   patchGradeLevel,
   patchSchoolProfile
@@ -12,33 +13,54 @@ import { NextRequest } from "next/server";
 import {
   YearGradeLevelCreateSchema,
 } from "@/lib/validations/school";
+import { getStudents, getStudentsForSchool } from "@/services/service-student";
+import { getEmployees, getEmployeesForSchool } from "@/services/service-employee";
 
 const routeContextSchema = z.object({
     params: z.object({
-      schoolId: z.string()
+      schoolId: z.string(),
+      dataTag: z.string().optional()
     }),
   });
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   context: z.infer<typeof routeContextSchema>
 ) {
 
   try {
     const {params } = routeContextSchema.parse(context);
-    // get all schools for this tenant
-    const schools = await getSchoolById(params.schoolId as string);
-    if (!schools) {
-      logger.info(`No schools found for id ${params.schoolId}`)
+    const searchParams = request.nextUrl.searchParams
+    const nextResource = searchParams.get('nextResource');
+
+    const response = await handleRead(params.schoolId, nextResource);
+
+    if (!response) {
+      logger.info(`No response found for id ${params.schoolId}`)
       return new Response(JSON.stringify("Not Found"), { status: 404 });
     }
-    return new Response(JSON.stringify(schools), { status: 200 });
+    return new Response(JSON.stringify(response), { status: 200 });
   } catch(error) {
-    logger.warn(`Failed to get schools: ${error.message}`)
+    logger.warn(`Failed to get response: ${error.message}`)
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }
     return new Response(null, { status: 500 })
+  }
+}
+
+async function handleRead(schoolId: string | null, nextResource: string | null) {
+  if (schoolId){
+    if (!nextResource) {
+      // return default resource identified by schoolId
+      return await getSchool(schoolId);
+    } else if (nextResource === "students") {
+      return await getStudentsForSchool(schoolId);
+    } else if (nextResource === "employee") {
+      return await getEmployeesForSchool(schoolId);
+    } else {
+      return null;
+    }
   }
 }
 

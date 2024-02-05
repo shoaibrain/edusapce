@@ -1,4 +1,5 @@
 import prisma from "@/lib/db"
+import { logger } from "@/logger";
 
 export const getStudents = async () => {
     try {
@@ -22,6 +23,23 @@ export const getStudents = async () => {
       } catch (error) {
        throw new Error(`Error getting students: ${error.message}`);
       }
+}
+
+export const getStudentsForSchool = async(schoolId: string) => {
+  try {
+    const students = await prisma.student.findMany({
+      where: {
+        schoolId: schoolId
+      }
+    })
+    if (students) {
+      return students;
+    } else {
+      return null;
+    }
+  } catch (error){
+    logger.warn(`failed to read students for school: ${schoolId}`)
+  }
 }
 export const getStudent = async(studentId : string) => {
     try{
