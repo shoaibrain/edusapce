@@ -147,7 +147,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {/* No pagination needed for school list */}
+
       {!school && <DataTablePagination table={table} />}
     </div>
   )

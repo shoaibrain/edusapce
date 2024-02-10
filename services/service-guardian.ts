@@ -56,6 +56,7 @@ export const postGuardian = async (guardian) => {
         profession: guardian.profession,
         annualIncome: guardian.annualIncome,
         guardianType: guardian.guardianType,
+        schoolId: guardian.schoolId,
         students: guardian.students,
       };
 

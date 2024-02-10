@@ -49,7 +49,7 @@ export const getStudent = async(studentId : string) => {
           },
           include:{
               guardians: true,
-              gradeLevels: true,
+
           }
       })
       if (student) {

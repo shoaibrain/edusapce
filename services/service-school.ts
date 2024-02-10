@@ -3,8 +3,6 @@ import { Prisma, YearGradeLevel } from "@prisma/client";
 import { logger } from "@/logger";
 import { gradeLevelPatchSchema } from "@/lib/validations/academics";
 
-
-
 export const addGradeLevels = async (
   schoolId: string,
   // assuing data coming to service layer should always be type safe
@@ -36,6 +34,21 @@ export const addGradeLevels = async (
   }
 };
 
+export const getGradeLevelsForSchool = async (
+  schoolId: string,
+): Promise<any> =>{
+  try {
+    const grade_levels = await prisma.yearGradeLevel.findMany({
+      where:{
+        schoolId:schoolId
+      }
+    })
+    return grade_levels;
+  } catch (error) {
+    logger.warn(`Error retrieving gradeLevels for school ${schoolId}`)
+    throw new Error('Failed to get grade levels');
+  }
+}
 
 export const patchGradeLevel = async (
   schoolId: string,

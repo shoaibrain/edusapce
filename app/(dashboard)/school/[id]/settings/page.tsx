@@ -13,7 +13,5 @@ export default async function SiteSettingsIndex({
     <div className="flex flex-col space-y-6">
      <SchoolSettingsForm school={school} />
     </div>
-
-
   );
 }

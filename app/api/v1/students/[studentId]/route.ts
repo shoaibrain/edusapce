@@ -7,16 +7,19 @@ import { logger } from "@/logger";
 const routeContextSchema = z.object({
     params: z.object({
       studentId: z.string(),
-      schoolId: z.string(), // todo: make this optional
     }),
   })
 
 export async function GET (
-  req: Request,
+  req: NextRequest,
   context: z.infer<typeof routeContextSchema>
 ){
   try {
     const { params } = routeContextSchema.parse(context)
+
+    const searchParams = req.nextUrl.searchParams
+    const schoolId = searchParams.get('schoolId');
+
     const student = await getStudent(params.studentId as string);
     if (!student) {
       return new Response(JSON.stringify("Not Found"), { status: 404 });
@@ -53,12 +56,15 @@ export async function PATCH(
 ) {
   try {
     const { params } = routeContextSchema.parse(context);
+
     const searchParams = req.nextUrl.searchParams
+    const schoolId = searchParams.get('schoolId');
+
     const action = searchParams.get('action');
     const json = await req.json();
     await handleUpdates(
       params.studentId,
-      params.schoolId,
+      schoolId,
       action,
       json
     );
@@ -84,12 +90,12 @@ export async function PATCH(
 // patch related to enrollment
 async function handleUpdates(
   studentId: string,
-  schoolId: string,
+  schoolId: string | null,
   action: string | null,
   payload: any) {
-    if (action === 'profile') {
+    if (action === 'profile' && schoolId) {
       await handleStudentProfilePatch(schoolId, payload);
-    } else if (action === 'enrollment') {
+    } else if (action === 'enrollment' && schoolId && studentId) {
       await handleStudentEnrollmentPatch( studentId,schoolId, payload);
     }
 }

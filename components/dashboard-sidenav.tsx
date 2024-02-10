@@ -80,6 +80,19 @@ export default function DashboardSideNav() {
           icon: <ArrowLeft width={18} />,
         },
       ];
+    } else if (segments[0] == "student" && id) {
+      return [
+        {
+          name: "Academics",
+          href: `/student/${id}/academics`,
+          icon: <GraduationCap width={18} />,
+        },
+        {
+          name: "Settings",
+          href: `/student/${id}/settings`,
+          icon: <Settings width={18} />,
+        },
+      ]
     }
     return [
       {

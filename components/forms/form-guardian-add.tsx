@@ -29,6 +29,7 @@ import { Icons } from "@/components/icons"
 
 interface GuardianFormProps extends React.HTMLAttributes<HTMLFormElement> {
   studentId?: string;
+  schoolId: string;
 }
 type formData = z.infer<typeof guardianCreateSchema>
 
@@ -37,6 +38,7 @@ type formData = z.infer<typeof guardianCreateSchema>
 
 export function GuardianAddForm({
   studentId,
+  schoolId,
   className,
   ...props
 }: GuardianFormProps) {
@@ -62,29 +64,39 @@ export function GuardianAddForm({
 
     if (studentId) {
       data.students = [studentId];
+      data.schoolId = schoolId;
     }
 
-    setIsSaving(true);
-    const response = await fetch(`/guardians`,{
-      method : 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
-    setIsSaving(false);
-    if (!response?.ok) {
-      return toast({
-        title: "Something went wrong.",
-        description: `Failed to add guardian for ${data.firstName} ${data.lastName}`,
-        variant: "destructive",
-      })
-    }
+    // setIsSaving(true);
+    // const response = await fetch(`/guardians`,{
+    //   method : 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(data)
+    // })
+    // setIsSaving(false);
+    // if (!response?.ok) {
+    //   return toast({
+    //     title: "Something went wrong.",
+    //     description: `Failed to add guardian for ${data.firstName} ${data.lastName}`,
+    //     variant: "destructive",
+    //   })
+    // }
+
+    // toast({
+    //   description: "A new guardian has been added.",
+    // })
+    // router.refresh();
 
     toast({
-      description: "A new guardian has been added.",
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
     })
-    router.refresh();
   }
 
   return (
@@ -247,7 +259,7 @@ export function GuardianAddForm({
         {isSaving && (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         )}
-        <span>Save Changes</span>
+        <span>Save</span>
       </button>
       </form>
     </Form>

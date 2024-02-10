@@ -37,18 +37,8 @@ export function DataTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem>
-          <Link href={`/dashboard/students/${dataId}`}>
+          <Link href={`/student/${dataId}`}>
               View profile
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link href={`/dashboard/billings/${dataId}`}>
-              View Billings
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link href={`/dashboard/academics/${dataId}`}>
-              Academic Records
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

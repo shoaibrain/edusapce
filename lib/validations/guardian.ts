@@ -21,6 +21,7 @@ students: z.array(z.string()).optional(), // array of student ids
 })
 
 export const guardianCreateSchema = z.object({
+  schoolId: z.string(),
   firstName: z.string().min(2, {
       message: "Username must be at least 2 characters.",
     }).max(30, {

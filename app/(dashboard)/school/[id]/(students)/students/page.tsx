@@ -13,12 +13,13 @@ export const metadata: Metadata = {
   description: "Students Dashboard",
 }
 
-const API_URL = process.env.API_URL;
+const API_URL ="http://localhost:3000/api/v1";
 
 async function getStudents(schoolId: string) {
   try {
-    // Work needed to resolve urls
-    const res = await fetch(`${API_URL}/students`, {
+    // get students for this school
+    console.log(`${API_URL}/schools/${schoolId}/?nextResource=student`)
+    const res = await fetch(`${API_URL}/schools/${schoolId}/?nextResource=student`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

@@ -40,7 +40,7 @@ type FormData = z.infer<typeof studentPatchSchema>
 // const API_URL='https://project-eduspace.vercel.app/api/v1';
 
 
-export function StudentEditForm({
+export function StudentSettingsForm({
   student,
   className,
   ...props
@@ -59,7 +59,6 @@ export function StudentEditForm({
       email: student?.email || "",
       phone: student?.phone || "",
       address: student?.address,
-      enrollmentStatus: student?.enrollmentStatus || "status",
     }
   })
 
@@ -94,7 +93,7 @@ export function StudentEditForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div className="m-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-2">
               <FormField
                 control={form.control}

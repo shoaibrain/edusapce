@@ -3,7 +3,7 @@ import {
   deleteSchool,
   getSchool,
   getSchool as getSchoolById,
-  patchGradeLevel,
+
   patchSchoolProfile
 } from "@/services/service-school";
 
@@ -13,13 +13,12 @@ import { NextRequest } from "next/server";
 import {
   YearGradeLevelCreateSchema,
 } from "@/lib/validations/school";
-import { getStudents, getStudentsForSchool } from "@/services/service-student";
-import { getEmployees, getEmployeesForSchool } from "@/services/service-employee";
+import { getStudentsForSchool } from "@/services/service-student";
+import { getEmployeesForSchool } from "@/services/service-employee";
 
 const routeContextSchema = z.object({
     params: z.object({
       schoolId: z.string(),
-      dataTag: z.string().optional()
     }),
   });
 
@@ -27,7 +26,6 @@ export async function GET(
   request: NextRequest,
   context: z.infer<typeof routeContextSchema>
 ) {
-
   try {
     const {params } = routeContextSchema.parse(context);
     const searchParams = request.nextUrl.searchParams
@@ -50,11 +48,13 @@ export async function GET(
 }
 
 async function handleRead(schoolId: string | null, nextResource: string | null) {
+  // Note: nextResource is all the next data points that is uniquely
+  // identifiable by schoolId
   if (schoolId){
     if (!nextResource) {
-      // return default resource identified by schoolId
+      // return default resource
       return await getSchool(schoolId);
-    } else if (nextResource === "students") {
+    } else if (nextResource === "student") {
       return await getStudentsForSchool(schoolId);
     } else if (nextResource === "employee") {
       return await getEmployeesForSchool(schoolId);
@@ -63,6 +63,56 @@ async function handleRead(schoolId: string | null, nextResource: string | null) 
     }
   }
 }
+
+export async function PATCH(
+  request: NextRequest,
+  context: z.infer<typeof routeContextSchema>
+) {
+  try {
+    const {params } = routeContextSchema.parse(context);
+    const searchParams = request.nextUrl.searchParams
+    const action = searchParams.get('action');
+    const json = await request.json();
+    // Centralized handling for different update types
+    // based on payload data,and request-params
+    // various patch related operations performed
+    // on school, which is an individual data intity
+    // with unique identifier
+    await handlePatch(params.schoolId as string, action, json);
+    return new Response(null, { status: 200 });
+  } catch(error) {
+    logger.warn(`Failed to update school: ${error.message}`)
+    if (error instanceof z.ZodError) {
+      return new Response(JSON.stringify(error.message), { status: 422 })
+    }
+    return new Response(JSON.stringify(error.message), { status: 500 })
+  }
+}
+
+// Two main type of patch for school,
+// patch that is directly on School data table
+// & patch on data-points identifiable by schoolId
+
+async function handlePatch(schoolId: string,
+  action: string | null,
+  payload: any) {
+    if (action === 'grade-add') { // create grade_level in school
+      await handleSchoolGradeLevelAdd(schoolId, payload);
+    } else if (action === 'profile-patch') {
+      await handleSchoolProfilePatch(schoolId, payload);
+    }
+}
+
+async function handleSchoolGradeLevelAdd(schoolId: string, data: any) {
+  const gradeLevelAddData = YearGradeLevelCreateSchema.parse(data.grade)
+  await addGradeLevels(schoolId, gradeLevelAddData);
+}
+
+async function handleSchoolProfilePatch(schoolId: string, data: any) {
+  await patchSchoolProfile(schoolId, data.profile);
+}
+
+
 
 export async function DELETE(
   request: Request,
@@ -80,51 +130,4 @@ export async function DELETE(
     }
     return new Response(null, { status: 500 })
   }
-}
-
-
-export async function PATCH(
-  request: NextRequest,
-  context: z.infer<typeof routeContextSchema>
-) {
-  try {
-    const {params } = routeContextSchema.parse(context);
-    const searchParams = request.nextUrl.searchParams
-    const action = searchParams.get('action');
-    const json = await request.json();
-    // Centralized handling for different update types
-    // based on payload data,and request-params
-    // various patch related operations performed
-    // on school, which is an individual data intity
-    // with unique identifier
-    await handleUpdates(params.schoolId as string, action, json);
-    return new Response(null, { status: 200 });
-  } catch(error) {
-    logger.warn(`Failed to update school: ${error.message}`)
-    if (error instanceof z.ZodError) {
-      return new Response(JSON.stringify(error.message), { status: 422 })
-    }
-    return new Response(JSON.stringify(error.message), { status: 500 })
-  }
-}
-
-// YearGradeLevel are created through
-// school patch operations.
-async function handleUpdates(schoolId: string,
-  action: string | null,
-  payload: any) {
-    if (action === 'grade-add') { // create grade_level in school
-      await handleSchoolGradeLevelAdd(schoolId, payload);
-    } else if (action === 'profile-patch') {
-      await handleSchoolProfilePatch(schoolId, payload);
-    }
-}
-
-async function handleSchoolGradeLevelAdd(schoolId: string, data: any) {
-  const gradeLevelAddData = YearGradeLevelCreateSchema.parse(data.grade)
-  await addGradeLevels(schoolId, gradeLevelAddData);
-}
-
-async function handleSchoolProfilePatch(schoolId: string, data: any) {
-  await patchSchoolProfile(schoolId, data.profile);
 }
