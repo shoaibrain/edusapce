@@ -21,7 +21,6 @@ export const studentPatchSchema = z.object({
   enrollmentStatus: z.string().optional(),
   gradeLevel: z.string().optional(),
   guardians: z.array(z.string()).optional() // array of guardian ids
-
 });
 
 export const studentCreateSchema = z.object({

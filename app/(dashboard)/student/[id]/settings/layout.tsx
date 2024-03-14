@@ -1,8 +1,5 @@
 import { ReactNode } from "react";
-
-
 import { notFound, redirect } from "next/navigation";
-
 import { getServerSession } from "next-auth/next"
 import prisma from "@/lib/db";
 import { authOptions } from "@/lib/auth";
@@ -30,12 +27,11 @@ export default async function StudentSettingsLayout({
     },
   });
 
-
   return (
     <>
       <div className="flex flex-col items-center space-x-4 space-y-2 sm:flex-row sm:space-y-0">
         <h1 className="font-cal text-l font-bold dark:text-white sm:text-3xl">
-          Manage settings for {data?.firstName} {data?.lastName}
+          settings for {data?.firstName} {data?.lastName}
         </h1>
       </div>
       <StudentSettingsNav />

@@ -1,6 +1,4 @@
-// a bunch of loading divs
-
-export default function Loading() {
+export default function StudentIndexLoading() {
   return (
     <>
       <div className="h-10 w-48 animate-pulse rounded-md bg-stone-100 dark:bg-stone-800" />

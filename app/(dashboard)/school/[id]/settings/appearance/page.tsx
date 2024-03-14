@@ -24,7 +24,7 @@ export default async function SchoolSettingsAppearance({
       text="Manage account and website settings."
     />
     <div className="grid gap-10">
-      <h3>School Appearance Form</h3>
+      <h3>School Appearance Settings form</h3>
     </div>
   </DashboardShell>
   );

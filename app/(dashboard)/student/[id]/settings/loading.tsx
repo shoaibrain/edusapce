@@ -1,7 +1,7 @@
 import { DashboardHeader } from "@/components/header"
 import { DashboardShell } from "@/components/shell"
 
-export default function SettingsLoading() {
+export default function StudentSettingsLoading() {
   return (
     <DashboardShell>
       <DashboardHeader heading="Student Settings" text="Manage student settings">

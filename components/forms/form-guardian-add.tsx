@@ -27,76 +27,88 @@ import { guardianCreateSchema } from "@/lib/validations/guardian"
 import React from "react"
 import { Icons } from "@/components/icons"
 
-interface GuardianFormProps extends React.HTMLAttributes<HTMLFormElement> {
+interface GuardianAddFormProps extends React.HTMLAttributes<HTMLFormElement> {
   studentId?: string;
   schoolId: string;
 }
+
 type formData = z.infer<typeof guardianCreateSchema>
 
 
-// const API_URL='https://project-eduspace.vercel.app/api/v1';
+const API_URL='http://localhost:3000/api/v1';
 
 export function GuardianAddForm({
   studentId,
   schoolId,
   className,
   ...props
-}: GuardianFormProps) {
+}: GuardianAddFormProps) {
   const form = useForm<formData>({
     resolver: zodResolver(guardianCreateSchema),
     mode: "onChange",
-    //TODO: better way to handle this?
     defaultValues: {
       firstName: "",
       lastName: "",
-      guardianType: "",
-      email: "",
       phone: "",
       address: "",
+      email: "",
       profession: "",
       annualIncome: "",
+      guardianType: "",
     }
   })
+
   const router = useRouter();
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
   async function onSubmit(data: formData) {
+    console.log(
+      `Inside onSubmit for GuardianAddFrom,
+      form data: ${JSON.stringify(data)}\n
+      student id: ${studentId}
+      school id: ${schoolId}`
+    )
 
     if (studentId) {
+      console.log(`no student id: ${studentId}`)
       data.students = [studentId];
-      data.schoolId = schoolId;
+    }
+    data.schoolId = schoolId;
+
+    setIsSaving(true);
+    console.log(`Right before fetch: data: ${JSON.stringify(data)}`)
+
+    const response = await fetch(`${API_URL}/guardians`,{
+      method : 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+    setIsSaving(false);
+    if (!response?.ok) {
+      console.log(`Error creating guardian for student ${studentId}
+      Error message: ${response.statusText}`)
+      return toast({
+        title: "Something went wrong.",
+        description: `Failed to add guardian for ${data.firstName} ${data.lastName}`,
+        variant: "destructive",
+      })
     }
 
-    // setIsSaving(true);
-    // const response = await fetch(`/guardians`,{
-    //   method : 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(data)
-    // })
-    // setIsSaving(false);
-    // if (!response?.ok) {
-    //   return toast({
-    //     title: "Something went wrong.",
-    //     description: `Failed to add guardian for ${data.firstName} ${data.lastName}`,
-    //     variant: "destructive",
-    //   })
-    // }
+    toast({
+      description: "A new guardian has been added.",
+    })
+    router.refresh();
 
     // toast({
-    //   description: "A new guardian has been added.",
+    //   title: "You submitted the following values:",
+    //   description: (
+    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+    //     </pre>
+    //   ),
     // })
-    // router.refresh();
-
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
   }
 
   return (

@@ -21,7 +21,6 @@ students: z.array(z.string()).optional(), // array of student ids
 })
 
 export const guardianCreateSchema = z.object({
-  schoolId: z.string(),
   firstName: z.string().min(2, {
       message: "Username must be at least 2 characters.",
     }).max(30, {
@@ -47,8 +46,9 @@ export const guardianCreateSchema = z.object({
       required_error: "Please enter a valid email.",
     })
     .email(),
-  profession: z.string(),
-  annualIncome: z.string(),
-  guardianType: z.string(),
+  profession: z.string().optional(),
+  annualIncome: z.string().optional(),
+  guardianType: z.string().optional(),
+  schoolId: z.string(),
   students: z.array(z.string()).optional(), // array of student ids
 })

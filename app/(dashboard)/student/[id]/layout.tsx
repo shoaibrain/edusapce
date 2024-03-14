@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
 
-export default function StudentLayout({ children }: { children: ReactNode }) {
+export default function StudentIndexLayout({ children }: { children: ReactNode }) {
   return <div className="flex flex-col space-y-6 sm:p-10">{children}</div>;
 }

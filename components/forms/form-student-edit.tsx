@@ -67,6 +67,7 @@ export function StudentSettingsForm({
   async function onSubmit(data: FormData) {
     console.log(`Valid data: ${JSON.stringify(data, null, 2)}`)
     setIsSaving(true)
+    console.log(`Student id: ${student.id}`)
     const response = await fetch(`/students/${student.id}`,{
       method : 'PATCH',
       headers: {
@@ -83,7 +84,6 @@ export function StudentSettingsForm({
         variant: "destructive",
       })
     }
-
     toast({
       title:"Successfully updated",
       description: "Information has been updated.",

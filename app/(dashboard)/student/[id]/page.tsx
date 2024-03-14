@@ -1,13 +1,19 @@
-
-
-
 import { GuardianAddForm } from "@/components/forms/form-guardian-add";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogFooter,
+   DialogHeader,
+   DialogTitle,
+   DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 import { getStudent } from "@/services/service-student";
 import { MixerHorizontalIcon } from "@radix-ui/react-icons";
@@ -17,19 +23,17 @@ import { notFound, redirect } from "next/navigation";
 
 export default async function StudentPage({ params }: { params: { id: string } }) {
   const session = await getSession();
-  // if (!session) {
-  //   console.log(`not session, redirecting to /login`)
-  //   redirect("/login");
-  // }
+  if (!session) {
+    console.log(`not session, redirecting to /login`)
+    redirect("/login");
+  }
   const student = await getStudent(params.id as string);
   if (!student) {
     return (
-      <p>No student foound</p>
+      <p>No student found</p>
     )
   }
   const guardians = student.guardians;
-  console.log(guardians)
-
   return (
     <>
       <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-4 py-8 md:px-6">
@@ -47,10 +51,6 @@ export default async function StudentPage({ params }: { params: { id: string } }
       <DropdownMenuContent align="end" className="w-[150px]">
         <DropdownMenuLabel>Options</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {/*
-
-        TODO: this is not functional yet
-        */}
             <DropdownMenuCheckboxItem>
              Option 1
             </DropdownMenuCheckboxItem>
@@ -60,9 +60,6 @@ export default async function StudentPage({ params }: { params: { id: string } }
             <DropdownMenuCheckboxItem>
             Option 3
             </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>
-            Option 4
-            </DropdownMenuCheckboxItem>
       </DropdownMenuContent>
     </DropdownMenu>
          <div className="flex w-full flex-col items-center justify-between rounded-lg p-6 shadow-md md:flex-row">
@@ -71,7 +68,6 @@ export default async function StudentPage({ params }: { params: { id: string } }
                   <AvatarImage alt="Student Name" src="/placeholder-avatar.jpg" />
                   <AvatarFallback>SN</AvatarFallback>
                 </Avatar>
-
                 <div>
                   <h2 className="text-2xl font-bold">{`${student.firstName} ${student.lastName}`}</h2>
                   <p className="text-gray-500 dark:text-gray-400">{`Contact number: ${student.phone}`}</p>
@@ -106,15 +102,12 @@ export default async function StudentPage({ params }: { params: { id: string } }
                       Fill out the information for new guardian. click Save when done.
                     </DialogDescription>
                   </DialogHeader>
-                    <GuardianAddForm schoolId={student.schoolId}/>
-
+                    <GuardianAddForm schoolId={student.schoolId} studentId={student.id} />
                 </DialogContent>
               </Dialog>
-
               </li>
             </ul>
           </div>
-
         </section>
       </div>
     </>

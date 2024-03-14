@@ -18,7 +18,6 @@ const API_URL ="http://localhost:3000/api/v1";
 async function getStudents(schoolId: string) {
   try {
     // get students for this school
-    console.log(`${API_URL}/schools/${schoolId}/?nextResource=student`)
     const res = await fetch(`${API_URL}/schools/${schoolId}/?nextResource=student`, {
       method: 'GET',
       headers: {
