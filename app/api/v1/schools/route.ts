@@ -25,6 +25,7 @@ export const POST = async (request: Request) => {
     const body = schoolCreateSchema.parse(json);
     const newSchool = await postSchool(body);
     logger.info(`Created school: ${newSchool.name}`)
+    console.log(`New School Created: ${JSON.stringify(newSchool)}`)
     return new Response(JSON.stringify(newSchool), { status: 201 })
   } catch (error) {
     logger.warn(`Failed to create school: ${error.message}`)

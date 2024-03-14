@@ -49,7 +49,7 @@ export default async function DashboardPage() {
               </div>
             ): (
               <div className="mt-20 flex flex-col items-center space-x-4">
-                <h1 className="font-cal text-4xl">No Schools Yet</h1>
+                <h1 className="font-cal text-4xl">No School found</h1>
                 <Image
                   alt="missing school"
                   src="https://illustrations.popsy.co/gray/web-design.svg"
@@ -57,7 +57,7 @@ export default async function DashboardPage() {
                   height={400}
                 />
                 <p className="text-lg text-stone-500">
-                  You do not have any schools yet. Create one to get started.
+                  You do not have any school registerd yet. Create one to get started.
                 </p>
               </div>
             )
