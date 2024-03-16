@@ -1,12 +1,10 @@
 import {
   addGradeLevels,
   deleteSchool,
+  getGradeLevelsForSchool,
   getSchool,
-  getSchool as getSchoolById,
-
   patchSchoolProfile
 } from "@/services/service-school";
-
 import { z } from "zod";
 import { logger } from "@/logger";
 import { NextRequest } from "next/server";
@@ -58,7 +56,10 @@ async function handleRead(schoolId: string | null, nextResource: string | null) 
       return await getStudentsForSchool(schoolId);
     } else if (nextResource === "employee") {
       return await getEmployeesForSchool(schoolId);
-    } else {
+    } else if (nextResource === "year-grade-level") {
+      return await getGradeLevelsForSchool(schoolId);
+    }
+    else {
       return null;
     }
   }
@@ -72,7 +73,9 @@ export async function PATCH(
     const {params } = routeContextSchema.parse(context);
     const searchParams = request.nextUrl.searchParams
     const action = searchParams.get('action');
+    console.log(`The patch action: ${action}`)
     const json = await request.json();
+    console.log(`patch payload: ${JSON.stringify(json)}`)
     // Centralized handling for different update types
     // based on payload data,and request-params
     // various patch related operations performed
@@ -99,6 +102,7 @@ async function handlePatch(schoolId: string,
     if (action === 'grade-add') { // create grade_level in school
       await handleSchoolGradeLevelAdd(schoolId, payload);
     } else if (action === 'profile-patch') {
+      console.log(`payload in handlePatch: ${payload}`)
       await handleSchoolProfilePatch(schoolId, payload);
     }
 }
@@ -109,7 +113,8 @@ async function handleSchoolGradeLevelAdd(schoolId: string, data: any) {
 }
 
 async function handleSchoolProfilePatch(schoolId: string, data: any) {
-  await patchSchoolProfile(schoolId, data.profile);
+  console.log(`Payload in handleSchoolProfilePatch: ${JSON.stringify(data)}`)
+  await patchSchoolProfile(schoolId, data);
 }
 
 

@@ -1,4 +1,3 @@
-
 import { schoolCreateSchema } from "@/lib/validations/school";
 import { logger } from "@/logger";
 import { getSchools, postSchool } from "@/services/service-school";
@@ -17,15 +16,11 @@ export async function GET(){
 
 
 export const POST = async (request: Request) => {
-
-  console.log(`request: ${JSON.stringify(request)} in POST school`)
-
   try {
     const json = await request.json();
     const body = schoolCreateSchema.parse(json);
     const newSchool = await postSchool(body);
     logger.info(`Created school: ${newSchool.name}`)
-    console.log(`New School Created: ${JSON.stringify(newSchool)}`)
     return new Response(JSON.stringify(newSchool), { status: 201 })
   } catch (error) {
     logger.warn(`Failed to create school: ${error.message}`)

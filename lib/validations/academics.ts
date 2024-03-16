@@ -1,9 +1,13 @@
 import { z } from "zod";
 
-export const gradeLevelCreateSchema = z.object({
-  name: z.string(),
+export const YearGradeLevelCreateSchema = z.object({
+  schoolId: z.string().min(1),
+  name: z.string().min(1),
+  description: z.string().optional(),
+  levelCategory: z.string().min(1),
   levelOrder: z.number(),
-  description: z.string(),
+  capacity: z.number().optional(),
+  classRoom: z.string().optional(),
 })
 
 export const classPeriodCreateSchema = z.object({

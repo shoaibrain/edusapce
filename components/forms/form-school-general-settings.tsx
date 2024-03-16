@@ -54,7 +54,7 @@ interface SchoolGeneralSettingsFormProps extends React.HTMLAttributes<HTMLFormEl
 type formData = z.infer<typeof SchoolSettingsPatchSchema>
 
 
-// const API_URL='https://project-eduspace.vercel.app/api/v1'
+const API_URL='https://project-eduspace.vercel.app/api/v1'
 
 export function SchoolSettingsForm({
   school,
@@ -74,11 +74,12 @@ export function SchoolSettingsForm({
   })
   const router = useRouter()
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
-
   async function onSubmit(data: formData) {
     setIsSaving(true)
     console.log(`data: ${JSON.stringify(data)}`)
-    const response = await fetch(`/api/v1/schools/${data.id}`, {
+    const queryParams = new URLSearchParams();
+    queryParams.append('action', 'profile-patch');
+    const response = await fetch(`${API_URL}/schools/${data.id}/?${queryParams.toString()}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -91,9 +92,7 @@ export function SchoolSettingsForm({
         website: data.website,
       }),
     })
-
     setIsSaving(false)
-
     if (!response?.ok) {
       return toast({
         title: "Something went wrong.",
@@ -101,14 +100,11 @@ export function SchoolSettingsForm({
         variant: "destructive",
       })
     }
-
     toast({
-      description: "Your name has been updated.",
+      description: "Your school information has been updated.",
     })
-
     router.refresh()
   }
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

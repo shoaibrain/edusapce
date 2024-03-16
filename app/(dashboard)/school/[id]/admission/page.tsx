@@ -1,3 +1,4 @@
+import { StudentAdmissionForm } from "@/components/forms/form-student-admit";
 import prisma from "@/lib/db";
 
 
@@ -15,7 +16,7 @@ export default async function StudentAdmissionPage({
   return (
     <div className="flex flex-col space-y-6">
        <h1 className="font-cal text-3xl font-bold dark:text-white">
-         Student Admission Page
+          <StudentAdmissionForm />
         </h1>
     </div>
   );

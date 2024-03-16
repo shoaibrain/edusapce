@@ -23,6 +23,7 @@ catch (error) {
 }
 }
 
+
 export const getEmployeesForSchool =async (schoolId:string) => {
     try {
       const employees = await prisma.employee.findMany({

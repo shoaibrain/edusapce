@@ -37,7 +37,7 @@ interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
 
 type FormData = z.infer<typeof studentPatchSchema>
 // TODO: replace with env variable
-// const API_URL='https://project-eduspace.vercel.app/api/v1';
+const API_URL='https://project-eduspace.vercel.app/api/v1';
 
 
 export function StudentSettingsForm({

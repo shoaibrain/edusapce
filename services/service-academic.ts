@@ -52,3 +52,13 @@ export const updateResource = async (resourceType: ResourceType, resourceId: str
   }
 }
 
+export const postYearGradeLevel = async (data:any) =>{
+  try {
+    const newYearGradeLevel = await prisma.yearGradeLevel.create({
+      data,
+    });
+    return newYearGradeLevel;
+  } catch(error) {
+    throw new Error(`Error creating Year Grade Level: ${error.message}`);
+  }
+}

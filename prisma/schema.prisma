@@ -110,7 +110,7 @@ model School {
 // Kindergarten, First grade, second grade, etc
 model YearGradeLevel {
   id       String  @id @default(cuid())
-  schoolId String  @unique
+  schoolId String
   School   School? @relation(fields: [schoolId], references: [id])
 
   name          String

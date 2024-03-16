@@ -35,6 +35,7 @@ interface StudentAdmissionFormProps extends React.HTMLAttributes<HTMLFormElement
   guardianId?: string;
 }
 
+// get gradeLevels from api
 const gradeLevels = [
   "Kindergarten",
   "One",
@@ -50,24 +51,16 @@ const gradeLevels = [
 ]
 
 type formData = z.infer<typeof studentCreateSchema>
-
+//Todo: make it multi-step form
 export function StudentAdmissionForm({
   guardianId,
   className,
-  ...props
 }: StudentAdmissionFormProps) {
   const form = useForm<formData>({
     resolver: zodResolver(studentCreateSchema),
     mode: "onChange",
-
     defaultValues: {
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      address: "",
-      gradeLevel: "",
+
     }
   })
 
@@ -76,34 +69,14 @@ export function StudentAdmissionForm({
   async function onSubmit(data: formData) {
 
     data.enrollmentStatus = "Admitted"; // default enrollment status
-    // toast({
-    //   title: "You submitted the following values:",
-    //   description: (
-    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // })
-
-    setIsSaving(true);
-      const res = await fetch(`/students`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-      setIsSaving(false);
-      if (!res.ok) {
-        return toast({
-          title: "Something went wrong.",
-          description: `Student admission failed with ${res.status} ${res.statusText}`,
-          variant: "destructive",
-        })
-      }
-      toast({
-        description: "Student admission successful",
-      })
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    })
       router.refresh()
   }
 

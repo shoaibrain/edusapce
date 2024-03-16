@@ -1,7 +1,7 @@
 import prisma from "@/lib/db"
-import { Prisma, YearGradeLevel } from "@prisma/client";
 import { logger } from "@/logger";
-import { gradeLevelPatchSchema } from "@/lib/validations/academics";
+import { YearGradeLevel } from "@prisma/client";
+
 
 export const addGradeLevels = async (
   schoolId: string,
@@ -34,6 +34,7 @@ export const addGradeLevels = async (
   }
 };
 
+
 export const getGradeLevelsForSchool = async (
   schoolId: string,
 ): Promise<any> =>{
@@ -41,6 +42,15 @@ export const getGradeLevelsForSchool = async (
     const grade_levels = await prisma.yearGradeLevel.findMany({
       where:{
         schoolId:schoolId
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        levelCategory: true,
+        levelOrder: true,
+        capacity: true,
+        classRoom: true,
       }
     })
     return grade_levels;
@@ -63,7 +73,6 @@ export const patchGradeLevel = async (
     throw new Error('Failed to add grade levels');
   }
 }
-
 
 export const addStudentsToGradeLevel = async (
   schoolId: string,
