@@ -28,14 +28,10 @@ import { Icons } from "../icons"
 import { useRouter } from "next/navigation"
 import { employeeCreateSchema } from "@/lib/validations/employee"
 
-
 interface EmployeeHireFormProps extends React.HTMLAttributes<HTMLFormElement> {
 
 }
-
 type formData = z.infer<typeof employeeCreateSchema>
-
-// const API_URL='https://project-eduspace.vercel.app/api/v1';
 
 export function EmployeeHireForm({
   className,
@@ -45,12 +41,12 @@ export function EmployeeHireForm({
     resolver: zodResolver(employeeCreateSchema),
     mode: "onChange",
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      address: "",
-      gender: "",
+      firstName: undefined,
+      lastName: undefined,
+      email: undefined,
+      phone: undefined,
+      address: undefined,
+      gender: undefined,
     }
   })
   const router = useRouter()
@@ -58,7 +54,7 @@ export function EmployeeHireForm({
   async function onSubmit(data: formData) {
     console.log(JSON.stringify(data, null, 2))
     setIsSaving(true);
-      const res = await fetch(`/employees`, {
+      const res = await fetch(`/api/v1/employees`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

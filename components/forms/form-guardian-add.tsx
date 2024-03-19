@@ -31,12 +31,7 @@ interface GuardianAddFormProps extends React.HTMLAttributes<HTMLFormElement> {
   studentId?: string;
   schoolId: string;
 }
-
 type formData = z.infer<typeof guardianCreateSchema>
-
-
-const API_URL='http://localhost:3000/api/v1';
-
 export function GuardianAddForm({
   studentId,
   schoolId,
@@ -47,14 +42,15 @@ export function GuardianAddForm({
     resolver: zodResolver(guardianCreateSchema),
     mode: "onChange",
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      phone: "",
-      address: "",
-      email: "",
-      profession: "",
-      annualIncome: "",
-      guardianType: "",
+      firstName: undefined,
+      lastName: undefined,
+      phone: undefined,
+      address: undefined,
+      email: undefined,
+      profession: undefined,
+      annualIncome: undefined,
+      guardianType: undefined,
+      schoolId: schoolId,
     }
   })
 
@@ -62,23 +58,15 @@ export function GuardianAddForm({
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
   async function onSubmit(data: formData) {
-    console.log(
-      `Inside onSubmit for GuardianAddFrom,
-      form data: ${JSON.stringify(data)}\n
-      student id: ${studentId}
-      school id: ${schoolId}`
-    )
-
     if (studentId) {
-      console.log(`no student id: ${studentId}`)
       data.students = [studentId];
     }
-    data.schoolId = schoolId;
+
 
     setIsSaving(true);
     console.log(`Right before fetch: data: ${JSON.stringify(data)}`)
 
-    const response = await fetch(`${API_URL}/guardians`,{
+    const response = await fetch(`/api/v1/guardians`,{
       method : 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -95,20 +83,10 @@ export function GuardianAddForm({
         variant: "destructive",
       })
     }
-
     toast({
       description: "A new guardian has been added.",
     })
     router.refresh();
-
-    // toast({
-    //   title: "You submitted the following values:",
-    //   description: (
-    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // })
   }
 
   return (

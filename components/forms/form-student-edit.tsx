@@ -31,14 +31,13 @@ const genders = [
 ] as const
 
 
+// TODO: doesnt work as of now
+
 interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   student: Student;
 }
 
 type FormData = z.infer<typeof studentPatchSchema>
-// TODO: replace with env variable
-const API_URL='https://project-eduspace.vercel.app/api/v1';
-
 
 export function StudentSettingsForm({
   student,
@@ -52,12 +51,12 @@ export function StudentSettingsForm({
     mode: "onChange",
     defaultValues: {
       firstName: student?.firstName,
-      middleName: student?.middleName || "",
+      middleName: student?.middleName || undefined,
       lastName: student?.lastName,
       gender: student?.gender,
-      nationality: student?.nationality || "",
-      email: student?.email || "",
-      phone: student?.phone || "",
+      nationality: student?.nationality || undefined,
+      email: student?.email || undefined,
+      phone: student?.phone || undefined,
       address: student?.address,
     }
   })
@@ -68,7 +67,7 @@ export function StudentSettingsForm({
     console.log(`Valid data: ${JSON.stringify(data, null, 2)}`)
     setIsSaving(true)
     console.log(`Student id: ${student.id}`)
-    const response = await fetch(`/students/${student.id}`,{
+    const response = await fetch(`/api/v1/students/${student.id}`,{
       method : 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -268,64 +267,6 @@ export function StudentSettingsForm({
                 )}
               />
             </div>
-
-            {/* <div className="sm:col-span-2">
-              <FormField
-                  control={form.control}
-                  name="enrollmentStatus"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Enrollment Status</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                "w-[200px] justify-between",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value
-                                ? student_enrollment_status.find(
-                                    (enrollmentStatus) => enrollmentStatus.value === field.value
-                                  )?.label
-                                : "status"}
-                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[200px] p-0">
-                                {student_enrollment_status.map((enrollmentStatus) => (
-                                  <CommandItem
-                                    value={enrollmentStatus.value}
-                                    key={enrollmentStatus.label}
-                                    onSelect={() => {
-                                      form.setValue("enrollmentStatus", enrollmentStatus.value);
-                                    }}
-                                  >
-                                    <CheckIcon
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        enrollmentStatus.value === field.value
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                    {enrollmentStatus.label}
-                                  </CommandItem>
-                                ))}
-                        </PopoverContent>
-                      </Popover>
-                      <FormDescription>
-                        Student current enrollment status
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-              />
-            </div> */}
         </div>
         <button
         type="submit"

@@ -53,9 +53,6 @@ interface SchoolGeneralSettingsFormProps extends React.HTMLAttributes<HTMLFormEl
 
 type formData = z.infer<typeof SchoolSettingsPatchSchema>
 
-
-const API_URL='https://project-eduspace.vercel.app/api/v1'
-
 export function SchoolSettingsForm({
   school,
   ...props
@@ -68,8 +65,8 @@ export function SchoolSettingsForm({
       name: school.name,
       address: school.address,
       phone: school.phone ,
-      email: school.email || "",
-      website: school.website || "",
+      email: school.email || undefined,
+      website: school.website || undefined,
     },
   })
   const router = useRouter()
@@ -79,7 +76,7 @@ export function SchoolSettingsForm({
     console.log(`data: ${JSON.stringify(data)}`)
     const queryParams = new URLSearchParams();
     queryParams.append('action', 'profile-patch');
-    const response = await fetch(`${API_URL}/schools/${data.id}/?${queryParams.toString()}`, {
+    const response = await fetch(`/api/v1/schools/${data.id}/?${queryParams.toString()}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

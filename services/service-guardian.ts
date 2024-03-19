@@ -44,6 +44,21 @@ export const getGuardian = async(guardianId : string) => {
     }
 }
 
+export const getGuardiansForSchool = async (schoolId: string) => {
+  try {
+    const guardians = await prisma.guardian.findMany({
+      where: {
+        schoolId: schoolId,
+      },
+    });
+
+    return guardians;
+  } catch (error) {
+    console.error('Error fetching guardians for school:', error);
+    throw error;
+  }
+};
+
 export const postGuardian = async (guardian) => {
     try {
 

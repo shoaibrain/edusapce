@@ -1,12 +1,10 @@
 import { SchoolRegisterForm } from "@/components/forms/form-school-register"
 import { getCurrentUser } from "@/lib/session"
 
-
 export const metadata = {
   title: "Register School",
   description: "Register School to get started.",
 }
- const API_URL = process.env.API_URL;
 
 export default async function SchoolRegisterPage() {
   const tenant = await getCurrentUser()

@@ -62,8 +62,8 @@ export function SchoolSettingsForm({
       name: school.name,
       address: school.address,
       phone: school.phone ,
-      email: school.email || "",
-      website: school.website || "",
+      email: school.email || undefined,
+      website: school.website || undefined,
     },
   })
   const [isSaving, setIsSaving] = React.useState<boolean>(false);

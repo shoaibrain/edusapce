@@ -24,9 +24,6 @@ import React from "react"
 interface SchoolGeneralSettingsProps extends React.HTMLAttributes<HTMLFormElement> {
   school: School;
 }
-
-// const API_URL='https://project-eduspace.vercel.app/api/v1'
-
 const academicSettingPatchSchema = z.object({
   academic_year: z
     .string()
@@ -53,9 +50,6 @@ const academicSettingPatchSchema = z.object({
 
 type SchoolAcademicFormValues = z.infer<typeof academicSettingPatchSchema>
 
-
-// This can come from your database or API.
-// This can come from your database or API.
 const defaultValues: Partial<SchoolAcademicFormValues> = {
   academic_year: "2021-2022",
   class_grades: [{ value: "Kinder" }, { value: "One" }, { value: "Two" }],
@@ -87,7 +81,7 @@ export function SchoolAcademicSettingsForm() {
 
   async function onSubmit(data: SchoolAcademicFormValues) {
     setIsSaving(true)
-    const response = await fetch(`/school/123}`,{
+    const response = await fetch(`/api/v1/school/123}`,{
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

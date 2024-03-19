@@ -34,10 +34,7 @@ interface GuardianEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   guardian: Guardian;
 
 }
-
 type FormData = z.infer<typeof guardianPatchSchema>
-
-// const API_URL='https://project-eduspace.vercel.app/api/v1'
 
 export function GuardianEditForm({
   guardian,
@@ -51,12 +48,12 @@ export function GuardianEditForm({
     defaultValues: {
       firstName: guardian?.firstName,
       lastName: guardian?.lastName,
-      guardianType: guardian?.guardianType || "",
-      email: guardian?.email || "",
-      phone: guardian?.phone || "",
-      address: guardian?.address || "",
-      profession: guardian?.profession || "",
-      annualIncome: guardian?.annualIncome || ""
+      guardianType: guardian?.guardianType || undefined,
+      email: guardian?.email || undefined,
+      phone: guardian?.phone || undefined,
+      address: guardian?.address || undefined,
+      profession: guardian?.profession || undefined,
+      annualIncome: guardian?.annualIncome || undefined
     }
   })
 
@@ -64,7 +61,7 @@ export function GuardianEditForm({
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
-    const response = await fetch(`/guardians/${guardian.id}`,{
+    const response = await fetch(`/api/v1/guardians/${guardian.id}`,{
       method : 'PATCH',
       headers: {
         'Content-Type': 'application/json',

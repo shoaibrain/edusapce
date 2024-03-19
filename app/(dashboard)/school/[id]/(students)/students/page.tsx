@@ -16,12 +16,11 @@ export const metadata: Metadata = {
 
 async function getStudents(schoolId: string) {
   try {
-    // get students for this school
-    const res = await getStudentsForSchool(schoolId)
-    if (!res) {
+    const students = await getStudentsForSchool(schoolId)
+    if (!students) {
       throw new Error(`Failed to get student data for school: ${schoolId}`)
     }
-    return res;
+    return students;
   } catch (error) {
     console.error('Error fetching students:', error);
     throw error;
@@ -40,6 +39,7 @@ export default async function StudentsPage({
     console.log(`No students found`)
     notFound()
   }
+  console.log(`Students:${JSON.stringify(students)}`)
 
   return (
     <>

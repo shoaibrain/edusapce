@@ -1,6 +1,4 @@
 import Link from "next/link"
-
-import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
@@ -13,7 +11,7 @@ export default async function IndexPage() {
           <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
           Streamline your schools administrative tasks
           </h1>
-    
+
           <div className="space-x-4 space-y-4">
             <Link href="/login" className={cn(buttonVariants({ size: "lg" }))}>
               Get Started

@@ -47,12 +47,12 @@ export function GradeLevelAddForm({
     mode: "onChange",
     defaultValues: {
       schoolId: schoolId,
-      name: "",
-      description:"",
-      levelCategory:"",
+      name: undefined,
+      description:undefined,
+      levelCategory:undefined,
       levelOrder: undefined,// should be number
       capacity: undefined,
-      classRoom:""
+      classRoom:undefined
     }
   })
 

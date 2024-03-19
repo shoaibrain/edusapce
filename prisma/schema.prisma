@@ -63,7 +63,7 @@ model Tenant {
 
   name           String
   email          String    @unique
-  phone          String?
+  phone          String?   @unique
   emailVerified  DateTime?
   phoneVerified  DateTime?
   hashedPassword String?
@@ -88,8 +88,8 @@ model School {
 
   name       String
   address    String
-  phone      String
-  email      String?
+  phone      String  @unique
+  email      String? @unique
   website    String? @unique
   schoolType String? // public, private, etc.
 
@@ -139,32 +139,33 @@ model StudentYearGradeLevel {
 
   student    Student        @relation(fields: [student_id], references: [id])
   gradeLevel YearGradeLevel @relation(fields: [grade_level_id], references: [id])
+
+  @@unique([student_id, grade_level_id])
 }
 
 model Student {
-  id                String                  @id @default(cuid())
-  schoolId          String
+  id               String                  @id @default(cuid())
+  schoolId         String
   // basic attributes
-  firstName         String
-  middleName        String?
-  lastName          String
-  birthDate         DateTime
-  gender            String
+  firstName        String
+  middleName       String?
+  lastName         String
+  birthDate        DateTime
+  gender           String
   // identity related attributes
-  nationality       String?
-  ssn               String?                 @unique
-  email             String?                 @unique
-  phone             String?
-  address           String
-  currentGradeLevel String?
+  nationality      String?
+  ssn              String?                 @unique
+  email            String?                 @unique
+  phone            String?                 @unique
+  address          String
   // school related attributes
-  enrollmentStatus  String?                 @default("ADMITTED")
-  role              Role                    @default(STUDENT)
+  enrollmentStatus String?                 @default("ADMITTED")
+  role             Role                    @default(STUDENT)
   // Reference to the StudentYearGradeLevel association table
-  gradeLevels       StudentYearGradeLevel[]
-  guardians         Guardian[] // can have multiple guardians
-  createdAt         DateTime                @default(now()) @map("created_at")
-  updatedAt         DateTime                @default(now()) @map("updated_at")
+  gradeLevels      StudentYearGradeLevel[]
+  guardians        Guardian[] // can have multiple guardians
+  createdAt        DateTime                @default(now()) @map("created_at")
+  updatedAt        DateTime                @default(now()) @map("updated_at")
 
   @@map("students")
 }

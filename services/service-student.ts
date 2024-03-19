@@ -29,7 +29,18 @@ export const getStudentsForSchool = async(schoolId: string) => {
     const students = await prisma.student.findMany({
       where: {
         schoolId: schoolId
-      }
+      },
+      include: {
+        gradeLevels: {
+          include: {
+            gradeLevel: true,
+          },
+          orderBy: {
+            enrolledAt: 'desc',
+          },
+          take: 1, // Get only the most recent grade level
+        },
+      },
     })
     if (students) {
       return students;
@@ -48,7 +59,15 @@ export const getStudent = async(studentId : string) => {
           },
           include:{
               guardians: true,
-
+              gradeLevels: {
+                include: {
+                  gradeLevel: true,
+                },
+                orderBy: {
+                  enrolledAt: 'desc',
+                },
+                take: 1, // Get only the most recent grade level
+              },
           }
       })
       if (student) {

@@ -18,22 +18,22 @@ import { DropdownMenu,
 import { getStudent } from "@/services/service-student";
 import { MixerHorizontalIcon } from "@radix-ui/react-icons";
 import { getSession } from "next-auth/react";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 
 export default async function StudentPage({ params }: { params: { id: string } }) {
-  const session = await getSession();
-  // if (!session) {
-  //   console.log(`not session, redirecting to /login`)
-  //   redirect("/login");
-  // }
+
   const student = await getStudent(params.id as string);
   if (!student) {
     return (
       <p>No student found</p>
     )
   }
+  console.log(`${JSON.stringify(student)}`)
   const guardians = student.guardians;
+  const classGrade = student.gradeLevels[0].gradeLevel;
+
   return (
     <>
       <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-4 py-8 md:px-6">
@@ -51,8 +51,10 @@ export default async function StudentPage({ params }: { params: { id: string } }
       <DropdownMenuContent align="end" className="w-[150px]">
         <DropdownMenuLabel>Options</DropdownMenuLabel>
         <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem>
-             Option 1
+            <DropdownMenuCheckboxItem >
+             <Link href={`/student/${student.id}/settings`}>
+              Profile Settings
+             </Link>
             </DropdownMenuCheckboxItem>
             <DropdownMenuCheckboxItem>
             Option 2
@@ -79,6 +81,10 @@ export default async function StudentPage({ params }: { params: { id: string } }
         <section className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2">
           <div className=" rounded-lg p-6 shadow-md">
               <h3 className="mb-4 text-lg font-bold"> Student Academic performance insights</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{`Class Grade: ${classGrade.name}`}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{`School Level: ${classGrade.levelCategory}`}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{`Class Grade Order: ${classGrade.levelOrder}`}</p>
+
               {/* <BarChart className="w-full aspect-[16/9]" /> */}
           </div>
           <div className="rounded-lg p-6 shadow-md">

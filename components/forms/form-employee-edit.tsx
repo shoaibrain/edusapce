@@ -24,10 +24,7 @@ import { Employee } from "@prisma/client"
 interface EmployeeEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   employee: Employee;
 }
-
 type FormData = z.infer<typeof employeePatchSchema>
-
-// const API_URL='https://project-eduspace.vercel.app/api/v1';
 
 export function EmployeeEditForm({
   employee,
@@ -40,10 +37,10 @@ export function EmployeeEditForm({
     mode: "onChange",
     defaultValues: {
       firstName: employee?.firstName,
-      middleName: employee?.middleName || "",
+      middleName: employee?.middleName || undefined,
       lastName: employee?.lastName,
       phone: employee?.phone,
-      email: employee?.email || "",
+      email: employee?.email || undefined,
       address: employee?.address,
     }
   })
@@ -52,7 +49,7 @@ export function EmployeeEditForm({
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
-    const response = await fetch(`/v1/employees/${employee.id}`,{
+    const response = await fetch(`/api/v1/employees/${employee.id}`,{
       method : 'PATCH',
       headers: {
         'Content-Type': 'application/json',
