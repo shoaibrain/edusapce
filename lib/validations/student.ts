@@ -24,17 +24,20 @@ export const studentPatchSchema = z.object({
 });
 
 export const studentCreateSchema = z.object({
+  schoolId: z.string().min(1),
   firstName: z.string().min(3).max(32),
   middleName: z.string().optional(),
   lastName: z.string().min(3).max(32),
   birthDate: z.date(),
-  schoolId: z.string(),
+  gender: z.string().min(3).max(8),
+
   email: z.string().email().optional(),
   phone: z.string().min(3).max(32).optional(),
-  gender: z.string().min(3).max(8),
+
   address: z.string().min(3).max(32),
-  enrollmentStatus: z.string().optional(),
   guardians: z.array(z.string()).optional(),
-  gradeLevel: z.string().optional(),
+  currentGradeLevel: z.string().optional(),
+  gradeLevelId: z.string(),
+
 })
 

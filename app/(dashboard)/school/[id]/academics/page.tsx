@@ -25,6 +25,7 @@ const yearGradeLevels =  await getGradeLevelsForSchool(params.id);
 
         <div>
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <p className="text-white">TODO: provide feedback within the form, which fields failed?</p>
           <code className="text-white">{JSON.stringify(yearGradeLevels, null, 2)}</code>
         </pre>
         </div>

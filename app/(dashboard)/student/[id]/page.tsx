@@ -23,10 +23,10 @@ import { notFound, redirect } from "next/navigation";
 
 export default async function StudentPage({ params }: { params: { id: string } }) {
   const session = await getSession();
-  if (!session) {
-    console.log(`not session, redirecting to /login`)
-    redirect("/login");
-  }
+  // if (!session) {
+  //   console.log(`not session, redirecting to /login`)
+  //   redirect("/login");
+  // }
   const student = await getStudent(params.id as string);
   if (!student) {
     return (

@@ -29,9 +29,9 @@ export function StudentDataTableToolbar<TData>({
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn("gradeLevel") && (
+        {table.getColumn("currentGradeLevel") && (
           <DataTableFacetedFilter
-            column={table.getColumn("gradeLevel")}
+            column={table.getColumn("currentGradeLevel")}
             title="Grade Level"
             options={class_grades}
           />

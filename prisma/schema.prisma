@@ -132,8 +132,8 @@ model YearGradeLevel {
 // Facilitates the many-to-many relationship between students and grade levels.
 model StudentYearGradeLevel {
   id             String @id @default(cuid())
-  student_id     String @unique
-  grade_level_id String @unique
+  student_id     String
+  grade_level_id String
 
   enrolledAt DateTime @default(now())
 
@@ -142,28 +142,29 @@ model StudentYearGradeLevel {
 }
 
 model Student {
-  id               String                  @id @default(cuid())
-  schoolId         String
+  id                String                  @id @default(cuid())
+  schoolId          String
   // basic attributes
-  firstName        String
-  middleName       String?
-  lastName         String
-  birthDate        DateTime
-  gender           String
+  firstName         String
+  middleName        String?
+  lastName          String
+  birthDate         DateTime
+  gender            String
   // identity related attributes
-  nationality      String?
-  ssn              String?                 @unique
-  email            String?                 @unique
-  phone            String?
-  address          String
+  nationality       String?
+  ssn               String?                 @unique
+  email             String?                 @unique
+  phone             String?
+  address           String
+  currentGradeLevel String?
   // school related attributes
-  enrollmentStatus String?                 @default("ADMITTED")
-  role             Role                    @default(STUDENT)
+  enrollmentStatus  String?                 @default("ADMITTED")
+  role              Role                    @default(STUDENT)
   // Reference to the StudentYearGradeLevel association table
-  gradeLevels      StudentYearGradeLevel[]
-  guardians        Guardian[] // can have multiple guardians
-  createdAt        DateTime                @default(now()) @map("created_at")
-  updatedAt        DateTime                @default(now()) @map("updated_at")
+  gradeLevels       StudentYearGradeLevel[]
+  guardians         Guardian[] // can have multiple guardians
+  createdAt         DateTime                @default(now()) @map("created_at")
+  updatedAt         DateTime                @default(now()) @map("updated_at")
 
   @@map("students")
 }

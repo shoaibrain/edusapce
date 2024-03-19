@@ -7,29 +7,21 @@ import { buttonVariants } from '@/components/ui/button'
 import { columns } from '@/components/data-tables/columns-student-data-table'
 import { DataTable } from '@/components/data-tables/data-table'
 import { Metadata } from 'next'
+import { getStudentsForSchool } from '@/services/service-student'
 
 export const metadata: Metadata = {
   title: "Students",
   description: "Students Dashboard",
 }
 
-const API_URL ="http://localhost:3000/api/v1";
-
 async function getStudents(schoolId: string) {
   try {
     // get students for this school
-    const res = await fetch(`${API_URL}/schools/${schoolId}/?nextResource=student`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      next: { revalidate: 5 },
-    });
-    if (!res.ok) {
-      console.log(`Error fetching students: ${res.status}`)
-      throw new Error('Failed to fetch student data')
+    const res = await getStudentsForSchool(schoolId)
+    if (!res) {
+      throw new Error(`Failed to get student data for school: ${schoolId}`)
     }
-    return res.json();
+    return res;
   } catch (error) {
     console.error('Error fetching students:', error);
     throw error;

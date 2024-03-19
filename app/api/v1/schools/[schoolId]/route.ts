@@ -27,9 +27,9 @@ export async function GET(
   try {
     const {params } = routeContextSchema.parse(context);
     const searchParams = request.nextUrl.searchParams
-    const nextResource = searchParams.get('nextResource');
+    const schoolResource = searchParams.get('schoolResource');
 
-    const response = await handleRead(params.schoolId, nextResource);
+    const response = await handleRead(params.schoolId, schoolResource);
 
     if (!response) {
       logger.info(`No response found for id ${params.schoolId}`)

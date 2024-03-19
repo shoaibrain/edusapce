@@ -16,7 +16,6 @@ export const getStudents = async () => {
               email: true,
               phone: true,
               address: true,
-              gradeLevels: true,
             },
         });
         return students;
@@ -60,17 +59,41 @@ export const getStudent = async(studentId : string) => {
       throw new Error(`Error getting student: ${error.message}`);
     }
 }
-export const postStudent = async (student) => {
-    try {
-        const newStudent = await prisma.student.create({
-          data: student,
-      })
-        return newStudent;
-      } catch (error) {
-        console.log(`Error creating student: ${error.message}`)
-       throw new Error(`Error creating student: ${error.message}`);
-      }
-}
+export const postStudent = async (student, gradeLevelId: string) => {
+  try {
+    const newStudent = await prisma.$transaction(async (tx) => {
+      // Create the new student
+      const createdStudent = await tx.student.create({
+        data: student,
+      });
+
+      // Create the StudentYearGradeLevel record
+      const createdStudentYearGradeLevel = await tx.studentYearGradeLevel.create({
+        data: {
+          student_id: createdStudent.id,
+          grade_level_id: gradeLevelId,
+        },
+      });
+
+      // Connect the student and the StudentYearGradeLevel records
+      const updatedStudent = await tx.student.update({
+        where: { id: createdStudent.id },
+        data: {
+          gradeLevels: {
+            connect: { id: createdStudentYearGradeLevel.id },
+          },
+        },
+      });
+
+      return updatedStudent;
+    });
+
+    return newStudent;
+  } catch (error) {
+    console.log(`Error creating student: ${error.message}`);
+    throw new Error(`Error creating student: ${error.message}`);
+  }
+};
 export const deleteStudent = async (studentId: string) => {
     try {
         const deletedStudent = await prisma.student.delete({

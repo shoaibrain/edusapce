@@ -14,17 +14,17 @@ export async function GET(){
 }
 
 export async function POST(request: Request) {
-    try {
-      const json = await request.json();
-      let dob = new Date(json.birthDate);
-      json.birthDate = dob;
-      const body = studentCreateSchema.parse(json);
-      const newStudent = await postStudent(body);
-      return new Response(JSON.stringify(newStudent), { status: 201 })
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return new Response(JSON.stringify(error.issues), { status: 422 })
-      }
-      return new Response(null, { status: 500 })
+  try {
+    const json = await request.json();
+    let dob = new Date(json.birthDate);
+    json.birthDate = dob;
+    const { gradeLevelId, ...studentData } = studentCreateSchema.parse(json);
+    const newStudent = await postStudent(studentData, gradeLevelId);
+    return new Response(JSON.stringify(newStudent), { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return new Response(JSON.stringify(error.issues), { status: 422 });
     }
+    return new Response(null, { status: 500 });
+  }
 }

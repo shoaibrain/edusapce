@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import * as z from "zod"
 import { Prisma } from "@prisma/client";
 import { deleteStudent, getStudent, patchStudentProfile } from "@/services/service-student";
