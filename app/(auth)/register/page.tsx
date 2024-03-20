@@ -3,9 +3,10 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
-import { UserRegisterForm } from "@/components/forms/user-register-form"
+import { UserRegisterForm } from "@/components/forms/tenant-register-form"
+import { Metadata } from "next"
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Register",
   description: "Create an account to get started.",
 }

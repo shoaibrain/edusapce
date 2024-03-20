@@ -1,7 +1,8 @@
 import { SchoolRegisterForm } from "@/components/forms/form-school-register"
 import { getCurrentUser } from "@/lib/session"
+import { Metadata } from "next"
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Register School",
   description: "Register School to get started.",
 }

@@ -8,7 +8,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link"
+import { Metadata } from "next"
 
+export const metadata: Metadata = {
+  title: "School",
+  description: "School Dashboard",
+}
 export default async function SchoolPage({
   params,
 }: {
@@ -26,7 +31,7 @@ export default async function SchoolPage({
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbLink>
-                    <Link href="/">Home</Link>
+                    <Link href="/" >Home</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
@@ -41,13 +46,32 @@ export default async function SchoolPage({
                 </BreadcrumbItem>
               </BreadcrumbList>
       </Breadcrumb>
-      <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
-        <div className="flex flex-col items-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+      {
+        data && (
+          <div className="school-info-container flex flex-col items-center justify-between sm:flex-row sm:space-y-0">
+      <div className="school-details flex flex-col items-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
+        <h2 className="school-name text-2xl font-semibold mb-2">{data.name}</h2>
+        <div className="school-contact-info">
+          <p className="contact-label">Address:</p>
+          <p className="contact-value">{data.address}</p>
+          <p className="contact-label">Phone:</p>
+          <p className="contact-value">{data.phone}</p>
+          <p className="contact-label">Email:</p>
+          <a href={`mailto:${data.email}`} className="contact-value text-blue-500 hover:underline">{data.email}</a>
+          <p className="contact-label">Website:</p>
+
         </div>
       </div>
+      {/* Additional school information can be added here conditionally if included in data */}
+      {data.description && (
+        <div className="school-description mt-4 sm:mt-0">
+          <p className="description-label">Description:</p>
+          <p className="description-value">{data.description}</p>
+        </div>
+      )}
+    </div>
+        )
+      }
     </>
   );
 }

@@ -7,3 +7,5 @@ const routeContextSchema = z.object({
     gradeLevelId: z.string(),
   }),
 });
+
+// get all students for gradeLevel

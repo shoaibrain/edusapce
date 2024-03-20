@@ -2,7 +2,12 @@
 // @ts-nocheck
 import { SchoolSettingsForm } from "@/components/forms/form-school-general-settings";
 import { getSchool } from "@/services/service-school";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Settings",
+  description: "School Settings Page",
+}
 
 export default async function SiteSettingsIndex({
   params,

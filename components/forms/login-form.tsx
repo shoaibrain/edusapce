@@ -24,7 +24,6 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const searchParams = useSearchParams()
 
-  // TODO: add error handling
   async function loginUser(data: FormData) {
     setIsLoading(true)
     try {

@@ -10,7 +10,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Admission",
+  description: "Student Admission Form",
+}
 
 export default async function StudentAdmissionPage({
   params,
