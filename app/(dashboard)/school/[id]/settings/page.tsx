@@ -3,6 +3,7 @@
 import { SchoolSettingsForm } from "@/components/forms/form-school-general-settings";
 import { getSchool } from "@/services/service-school";
 
+
 export default async function SiteSettingsIndex({
   params,
 }: {

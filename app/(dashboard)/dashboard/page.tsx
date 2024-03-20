@@ -11,6 +11,14 @@ import Image from 'next/image'
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 
 export const metadata: Metadata = {
@@ -26,6 +34,22 @@ export default async function DashboardPage() {
   const schools = await getSchoolsForTenant(tenant.id);
 
   return (
+    <>
+        <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink>
+                    <Link href="/">Home</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+        </Breadcrumb>
+
+
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
         <div className="flex items-center justify-between">
@@ -65,5 +89,6 @@ export default async function DashboardPage() {
         </Suspense>
       </div>
     </div>
+    </>
   )
 }
