@@ -8,7 +8,7 @@ export default function LoadingSchoolIndexPage() {
           {[...Array(8)].map((_, index) => (
             <div key={index} className="animate-pulse rounded-xl bg-white p-4 shadow-md dark:bg-gray-800">
               <div className="mb-2 h-6 rounded-l bg-gray-300 dark:bg-gray-700" />
-              <div className="h-4 rounded-l bg-gray-300 dark:bg-gray-700" />
+
             </div>
           ))}
         </div>

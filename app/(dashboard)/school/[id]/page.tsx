@@ -9,21 +9,25 @@ import {
 } from "@/components/ui/breadcrumb"
 import Link from "next/link"
 import { Metadata } from "next"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { RecentSales } from "@/components/recent";
+import { SchoolEarningOverview } from "@/components/overview-school-earning";
 
 export const metadata: Metadata = {
   title: "School",
   description: "School Dashboard",
 }
-export default async function SchoolPage({
+export default function SchoolDashboard({
   params,
 }: {
   params: { id: string };
 }) {
-  const data = await prisma.school.findUnique({
-    where: {
-      id: decodeURIComponent(params.id),
-    },
-  });
+  // const data = await prisma.school.findUnique({
+  //   where: {
+  //     id: decodeURIComponent(params.id),
+  //   },
+  // });
 
   return (
     <>
@@ -46,32 +50,71 @@ export default async function SchoolPage({
                 </BreadcrumbItem>
               </BreadcrumbList>
       </Breadcrumb>
-      {
-        data && (
-          <div className="school-info-container flex flex-col items-center justify-between sm:flex-row sm:space-y-0">
-      <div className="school-details flex flex-col items-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
-        <h2 className="school-name text-2xl font-semibold mb-2">{data.name}</h2>
-        <div className="school-contact-info">
-          <p className="contact-label">Address:</p>
-          <p className="contact-value">{data.address}</p>
-          <p className="contact-label">Phone:</p>
-          <p className="contact-value">{data.phone}</p>
-          <p className="contact-label">Email:</p>
-          <a href={`mailto:${data.email}`} className="contact-value text-blue-500 hover:underline">{data.email}</a>
-          <p className="contact-label">Website:</p>
-
-        </div>
-      </div>
-      {/* Additional school information can be added here conditionally if included in data */}
-      {data.description && (
-        <div className="school-description mt-4 sm:mt-0">
-          <p className="description-label">Description:</p>
-          <p className="description-value">{data.description}</p>
-        </div>
-      )}
-    </div>
-        )
-      }
+     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Students
+                    </CardTitle>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">123</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Employees
+                    </CardTitle>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">30</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">parents</CardTitle>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">34</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Active Now
+                    </CardTitle>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">23</div>
+                  </CardContent>
+                </Card>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-7">
+                <Card className="col-span-4">
+                  <CardHeader>
+                    <CardTitle>Overview</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pl-2">
+                    <SchoolEarningOverview />
+                  </CardContent>
+                </Card>
+                <Card className="col-span-3">
+                  <CardHeader>
+                    <CardTitle>Recent Activities</CardTitle>
+                    <CardDescription>
+                      341 recent activities in last 24 hours
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <RecentSales />
+                  </CardContent>
+                </Card>
+              </div>
     </>
   );
 }

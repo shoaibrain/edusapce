@@ -9,6 +9,7 @@ import {
   Settings,
   GraduationCap,
   Contact,
+  LucideIcon,
 } from "lucide-react";
 import {
   useParams,
@@ -17,15 +18,11 @@ import {
 } from "next/navigation";
 import {  useEffect, useMemo, useState } from "react";
 
-export default function DashboardSideNav() {
+
+export default function DashboardSideNav(  ) {
   const segments = useSelectedLayoutSegments();
 
   const { id } = useParams() as { id?: string }; // school id
-  console.log(
-    `
-    segments: ${JSON.stringify(segments)}
-    `
-  )
 
   const tabs = useMemo(() => {
     if (segments[0] === "school" && id) {

@@ -5,6 +5,7 @@ import { MainNav } from "@/components/main-nav"
 import { SiteFooter } from "@/components/site-footer"
 import { getCurrentUser } from "@/lib/session"
 import DashboardSideNav from "@/components/dashboard-sidenav"
+import React from "react"
 
 interface DashboardLayoutProps {
   children?: React.ReactNode
@@ -13,7 +14,6 @@ interface DashboardLayoutProps {
 export default async function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
-
   const user = await getCurrentUser()
 
   if (!user) {
@@ -36,7 +36,8 @@ export default async function DashboardLayout({
       </header>
       <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
         <aside className="hidden w-[200px] flex-col md:flex">
-          <DashboardSideNav />
+          <DashboardSideNav
+          />
         </aside>
         <div className="flex w-full flex-1 flex-col overflow-hidden">
           {children}
