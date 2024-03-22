@@ -14,6 +14,11 @@ export default function SchoolSettingsNav() {
       href: `/school/${id}/settings`,
       segment: null,
     },
+    {
+      name: "Academics",
+      href: `/school/${id}/settings/academic`,
+      segment: null,
+    },
   ];
 
   return (

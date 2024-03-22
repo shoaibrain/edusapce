@@ -126,7 +126,7 @@ export async function getSchoolGuardianOverviewData(
   schoolId: string
 ): Promise<{ message: string; guardianMetrics?: GuardianMetrics }> {
   try {
-    // Simulate retrieving guardian data (replace with actual data retrieval logic)
+    // Simulate retrieving guardian data
     const guardianMetrics: GuardianMetrics = {
       averageCommunicationFrequency: Math.random() * 4, // Random between 0-4 for communication frequency
       averageVolunteerRate: Math.random() * 50, // Random between 0-50% for volunteer rate
@@ -143,5 +143,39 @@ interface GuardianMetrics {
   averageCommunicationFrequency: number; // Average communication frequency (monthly)
   averageVolunteerRate: number; // Percentage of guardians volunteering
   meetingAttendanceRate: number; // Percentage of guardians attending meetings
-  // Add other relevant guardian metrics here (e.g., satisfaction surveys)
+}
+
+export async function getSchoolAcademicDetails(
+  schoolId: string
+): Promise<{ message: string; schoolAcademics?: SchoolAcademics }> {
+  try {
+    const gradeLevels = await prisma.yearGradeLevel.findMany({
+      where: {
+        schoolId: schoolId,
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        levelCategory: true,
+        levelOrder: true,
+        capacity: true,
+        classRoom: true,
+      },
+    });
+    //@ts-ignore
+    return {message:"school grade level data retrieved successfully", gradeLevels}
+  } catch (error) {
+    console.error('Error fetching school academic data:', error);
+    return { message: 'Failed to retrieve school academic data' };
+  }
+}
+interface SchoolAcademics {
+  id: string,
+  name: string,
+  description: string,
+  levelCategory: string,
+  levelOrder: number,
+  capacity: number,
+  classRoom: string,
 }
