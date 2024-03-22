@@ -1,7 +1,6 @@
 "use client"
 import { YearGradeLevelCreateSchema } from "@/lib/validations/academics";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,8 +16,7 @@ import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "../ui/button";
 import { Icons } from "../icons";
-
-
+import { yearGradeLevelCreate } from "@/lib/actions/school-actions";
 
 interface GradeLevel {
   id: string;
@@ -50,57 +48,49 @@ export function GradeLevelAddForm({
       name: undefined,
       description:undefined,
       levelCategory:undefined,
-      levelOrder: undefined,// should be number
+      levelOrder: undefined,
       capacity: undefined,
       classRoom:undefined
     }
   })
 
-  const router = useRouter();
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
-
-
   async function onSubmit(data: formData) {
-    console.log(`Existing YearGradeLevels: ${JSON.stringify(yearGradeLevels)}`)
-    setIsSaving(true);
-  // Check for existing name, levelOrder, or classRoom
-  // TODO: Handle this gracefully later
-  const hasDuplicate = yearGradeLevels.some(
-    ({ name, levelOrder, classRoom }) =>
-      name === data.name || levelOrder === data.levelOrder || classRoom === data.classRoom
-  );
-  if (hasDuplicate) {
-    setIsSaving(false);
-    return toast({
-      title: "Duplicate Entry Found",
-      description: `A year grade level already exists with matching data.`,
-      variant: "destructive",
-    });
-  }
 
-    const response = await fetch(`/api/v1/grade-levels`,{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
-    setIsSaving(false);
-    if (!response?.ok) {
-      console.log(`Error creating YearGradeLevel for school ${schoolId}
-      Error message: ${JSON.stringify(response)}`)
-
-      return toast({
+    const hasDuplicate = yearGradeLevels.some(
+      ({ name, levelOrder, classRoom }) =>
+        name === data.name || levelOrder === data.levelOrder || classRoom === data.classRoom
+    );
+    if (hasDuplicate) {
+      toast({
         title: "Something went wrong.",
-        description: `Failed to add yearGradeLevel for ${schoolId}`,
+        description: "Duplicate entry",
         variant: "destructive",
-      })
+      });
+      return;
     }
 
+  setIsSaving(true);
+  try {
+    const response = await yearGradeLevelCreate(data);
+    if(response.message === "ok") {
+      toast({
+        title: "Success",
+        description: "A new year grade level has been added.",
+        variant: "default",
+      });
+    }
+  } catch (error) {
+    console.error('Error creating YearGradeLevel:', error);
+    setIsSaving(false);
     toast({
-      description: "A new year grade level has been added.",
-    })
-    router.refresh();
+      title: "Something went wrong.",
+      description: `Failed to add yearGradeLevel for ${schoolId}`,
+      variant: "destructive",
+    });
+  } finally {
+    setIsSaving(false);
+  }
   }
   return (
     <Form {...form}>

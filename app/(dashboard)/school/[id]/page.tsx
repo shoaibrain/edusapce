@@ -1,4 +1,3 @@
-import prisma from "@/lib/db";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,22 +12,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 import { RecentSales } from "@/components/recent";
 import { SchoolEarningOverview } from "@/components/overview-school-earning";
+import { getSchoolOverviewData } from "@/lib/actions/school-actions";
 
 export const metadata: Metadata = {
   title: "School",
   description: "School Dashboard",
 }
-export default function SchoolDashboard({
+export default async function SchoolDashboard({
   params,
 }: {
   params: { id: string };
 }) {
-  // const data = await prisma.school.findUnique({
-  //   where: {
-  //     id: decodeURIComponent(params.id),
-  //   },
-  // });
-
+  const schoolOverview = await getSchoolOverviewData(params.id);
   return (
     <>
       <Breadcrumb>
@@ -52,45 +47,40 @@ export default function SchoolDashboard({
       </Breadcrumb>
      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
+                  <Link href={`/school/${params.id}/students`}>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
                       Students
                     </CardTitle>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                   </CardHeader>
+                  </Link>
                   <CardContent>
-                    <div className="text-2xl font-bold">123</div>
+                    <div className="text-2xl font-bold">{`${schoolOverview.schoolOverview?.student_count}`}</div>
                   </CardContent>
                 </Card>
                 <Card>
+                <Link href={`/school/${params.id}/employees`}>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
                       Employees
                     </CardTitle>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                   </CardHeader>
+                  </Link>
                   <CardContent>
-                    <div className="text-2xl font-bold">30</div>
+                    <div className="text-2xl font-bold">{`${schoolOverview.schoolOverview?.employee_count}`}</div>
                   </CardContent>
                 </Card>
                 <Card>
+                <Link href={`/school/${params.id}/guardians`}>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">parents</CardTitle>
+                    <CardTitle className="text-sm font-medium">Guardians</CardTitle>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                   </CardHeader>
+                  </Link>
                   <CardContent>
-                    <div className="text-2xl font-bold">34</div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Active Now
-                    </CardTitle>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">23</div>
+                    <div className="text-2xl font-bold">{`${schoolOverview.schoolOverview?.parent_count}`}</div>
                   </CardContent>
                 </Card>
               </div>

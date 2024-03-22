@@ -16,7 +16,6 @@ export const schoolPatchSchema = z.object({
   website: z.string().url().optional(),
 })
 
-
 export const schoolYearCreateSchema = z.object({
   name: z.string(),
   startDate: z.date(),
@@ -44,23 +43,6 @@ export const YearGradeLevelCreateSchema = z.object({
   schoolYearId: z.string().optional(),
 })
 
-
-
-const gradeLevelPatchSchema = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  levelCategory: z.string().optional(),
-  levelOrder: z.number().optional(),
-  capacity: z.number().optional(),
-  classRoom: z.string().optional(),
-  students: z.array(z.object({
-    student_id: z.string(),
-    grade_level_id:z.string()
-  })).optional(),
-  classPeriods: z.array(z.string()).optional(),
-  schoolYearId: z.string().optional(),
-  schoolId: z.string().optional(),
-});
 
 export const ClassPeriodCreateSchema = z.object({
   name: z.string(),
