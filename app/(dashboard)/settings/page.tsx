@@ -5,8 +5,9 @@ import { getCurrentUser } from "@/lib/session"
 import { DashboardHeader } from "@/components/header"
 import { DashboardShell } from "@/components/shell"
 import { TenantPatchForm } from "@/components/tenant-patch-form"
+import { Metadata } from "next"
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Settings",
   description: "Manage account and website settings.",
 }

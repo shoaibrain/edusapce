@@ -2,6 +2,16 @@ import prisma from "@/lib/db"
 import { logger } from "@/logger";
 import { YearGradeLevel } from "@prisma/client";
 
+interface YearGradeLevelWithStudentCount {
+  id: string;
+  name: string;
+  description?: string;
+  levelCategory: string;
+  levelOrder: number;
+  capacity?: number;
+  classRoom?: string;
+  studentCount: number;
+}
 
 export const addGradeLevels = async (
   schoolId: string,
@@ -36,12 +46,12 @@ export const addGradeLevels = async (
 
 
 export const getGradeLevelsForSchool = async (
-  schoolId: string,
-): Promise<any> =>{
+  schoolId: string
+): Promise<YearGradeLevelWithStudentCount[]> => {
   try {
-    const grade_levels = await prisma.yearGradeLevel.findMany({
-      where:{
-        schoolId:schoolId
+    const gradeLevels = await prisma.yearGradeLevel.findMany({
+      where: {
+        schoolId: schoolId,
       },
       select: {
         id: true,
@@ -51,14 +61,21 @@ export const getGradeLevelsForSchool = async (
         levelOrder: true,
         capacity: true,
         classRoom: true,
-      }
-    })
-    return grade_levels;
+        _count: {
+          select: { students: true }, // Include student count in the selection
+        },
+      },
+    });
+    // @ts-ignore
+    return gradeLevels.map((gradeLevel) => ({
+      ...gradeLevel,
+      studentCount: gradeLevel._count.students,
+    }));
   } catch (error) {
-    logger.warn(`Error retrieving gradeLevels for school ${schoolId}`)
+    logger.warn(`Error retrieving gradeLevels for school ${schoolId}`);
     throw new Error('Failed to get grade levels');
   }
-}
+};
 
 export const patchGradeLevel = async (
   schoolId: string,

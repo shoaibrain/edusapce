@@ -6,7 +6,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { Metadata } from "next";
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "Analytics",
+  description: "School Analytics Dashboard",
+}
 
 export default function SchoolOverviewIndexPage({
   params

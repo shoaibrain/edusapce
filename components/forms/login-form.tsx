@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import * as z from "zod"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { signIn } from "next-auth/react"
 import { useForm } from "react-hook-form"
@@ -20,36 +20,56 @@ interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 type FormData = z.infer<typeof userAuthSchema>
 
 export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
+  const router = useRouter()
   const { register, handleSubmit, formState: { errors }} = useForm<FormData>({resolver: zodResolver(userAuthSchema),})
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const searchParams = useSearchParams()
-
-  // TODO: add error handling
   async function loginUser(data: FormData) {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-        const signInResult = await signIn("credentials", {
-          email: data.email.toLowerCase(),
-          password: data.password,
-          redirect: true,
-          callbackUrl: searchParams?.get("from") || "/dashboard",
-        })
-        setIsLoading(false)
-        if (!signInResult?.ok) {
-           toast({
-            title: "Something went wrong.",
-            description: "Your sign in request failed. Please try again.",
+      const signInResult = await signIn("credentials", {
+        email: data.email.toLowerCase(),
+        password: data.password,
+        redirect: false, // Prevent automatic redirection
+      });
+
+      setIsLoading(false);
+
+      if (!signInResult?.ok) {
+        // Handle errors here
+        if (signInResult?.error === 'Signin') {
+          // Likely incorrect email or password
+          toast({
+            title: "Invalid Credentials",
+            description: "The email or password you entered is incorrect. Please try again.",
             variant: "destructive",
-          })
+          });
+        } else {
+          // Handle other potential errors
+          console.error('Unexpected error:', signInResult?.error);
+          toast({
+            title: `Failed to Login`,
+            description: `error: ${signInResult?.error}`,
+            variant: "destructive",
+          });
         }
-         toast({
+      } else {
+        // Login successful (handled below)
+        toast({
           title: "Logged in successfully",
-        })
+        });
+        // Redirect or handle further logic (optional)
+        router.push('/dashboard'); // Example redirection
+      }
     } catch (error) {
-      console.log(error)
+      console.error('Error during login:', error);
+      toast({
+        title: "An unexpected error occurred.",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
     }
   }
-
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={handleSubmit(loginUser)}>

@@ -1,35 +1,43 @@
 
-import { placeholderBlurhash, random } from "@/lib/utils";
-import { School } from "@prisma/client";
 
-import Link from "next/link";
-import BlurImage from "./blur-image";
+interface YearGradeLevel {
+  id: string;
+  name: string;
+  description?: string;
+  levelCategory: string;
+  levelOrder: number;
+  capacity?: number;
+  classRoom?: string;
+  studentCount: number; // Include the student count property
+}
 
-export default function SchoolCard({ data }: { data: School }) {
+
+export default function YearGradeLevelCard({ data }: { data: YearGradeLevel }) {
 
   return (
     <div className="relative rounded-lg border border-stone-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
-      <Link
+      {/* <Link
         href={`school/${data.id}`}
         className="flex flex-col overflow-hidden rounded-lg"
-      >
-        <BlurImage
-          alt={data.name ?? "Card thumbnail"}
-          width={500}
-          height={400}
-          className="h-44 object-cover"
-          // @ts-ignore
-          src={data.image ?? "/placeholder.png"}
-          placeholder="blur"
-          // @ts-ignore
-          blurDataURL={data.imageBlurhash ?? placeholderBlurhash}
-        />
+      > */}
         <div className="border-t border-stone-200 p-4 dark:border-stone-700">
           <h3 className="font-cal my-0 truncate text-xl font-bold tracking-wide dark:text-white">
             {data.name}
           </h3>
           <p className="mt-2 line-clamp-1 text-sm font-normal leading-snug text-stone-500 dark:text-stone-400">
-            {`id: ${data.id}`}
+            {`Description: ${data.description}`}
+          </p>
+          <p className="mt-2 line-clamp-1 text-sm font-normal leading-snug text-stone-500 dark:text-stone-400">
+            {`Category: ${data.levelCategory}`}
+          </p>
+          <p className="mt-2 line-clamp-1 text-sm font-normal leading-snug text-stone-500 dark:text-stone-400">
+            {`Total Students: ${data.studentCount}`}
+          </p>
+          <p className="mt-2 line-clamp-1 text-sm font-normal leading-snug text-stone-500 dark:text-stone-400">
+            {`Capacity: ${data.capacity}`}
+          </p>
+          <p className="mt-2 line-clamp-1 text-sm font-normal leading-snug text-stone-500 dark:text-stone-400">
+            {`Class Room: ${data.classRoom}`}
           </p>
         </div>
 
@@ -45,7 +53,7 @@ export default function SchoolCard({ data }: { data: School }) {
         </Link>
       </div> */
       }
-      </Link>
+      {/* </Link> */}
     </div>
   );
 }

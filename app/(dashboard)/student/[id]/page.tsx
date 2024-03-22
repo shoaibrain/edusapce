@@ -17,25 +17,61 @@ import { DropdownMenu,
 
 import { getStudent } from "@/services/service-student";
 import { MixerHorizontalIcon } from "@radix-ui/react-icons";
-import { getSession } from "next-auth/react";
+import { Metadata } from "next";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
 
+
+
+export const metadata: Metadata = {
+  title: "Student",
+  description: "Student Profile Page",
+}
 
 export default async function StudentPage({ params }: { params: { id: string } }) {
-
   const student = await getStudent(params.id as string);
   if (!student) {
     return (
       <p>No student found</p>
     )
   }
-  console.log(`${JSON.stringify(student)}`)
   const guardians = student.guardians;
   const classGrade = student.gradeLevels[0].gradeLevel;
 
   return (
     <>
+      <Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink>
+        <Link href="/">Home</Link>
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink>
+        <Link href="/dashboard">Dashboard</Link>
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink>
+        <Link href= {`/school/${params.id}/students`}>Students</Link>
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbPage>Student</BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>
       <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-4 py-8 md:px-6">
       <DropdownMenu >
       <DropdownMenuTrigger asChild>
@@ -57,10 +93,10 @@ export default async function StudentPage({ params }: { params: { id: string } }
              </Link>
             </DropdownMenuCheckboxItem>
             <DropdownMenuCheckboxItem>
-            Option 2
+            Option
             </DropdownMenuCheckboxItem>
             <DropdownMenuCheckboxItem>
-            Option 3
+            Option
             </DropdownMenuCheckboxItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -84,8 +120,6 @@ export default async function StudentPage({ params }: { params: { id: string } }
               <p className="text-sm text-gray-500 dark:text-gray-400">{`Class Grade: ${classGrade.name}`}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{`School Level: ${classGrade.levelCategory}`}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{`Class Grade Order: ${classGrade.levelOrder}`}</p>
-
-              {/* <BarChart className="w-full aspect-[16/9]" /> */}
           </div>
           <div className="rounded-lg p-6 shadow-md">
             <h3 className="mb-4 text-lg font-bold">Guardians Contacts:</h3>

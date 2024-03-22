@@ -25,8 +25,10 @@ export function UserRegisterForm({className, ...props}:UserRegisterFormProps ) {
   const {register, handleSubmit, formState:{errors}} = useForm<FormData>({resolver: zodResolver(userRegisterSchema)})
 
   async function registerTenant(data: FormData) {
+
+    data.email =  data.email.toLowerCase();
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch("/api/v1/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

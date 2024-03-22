@@ -1,6 +1,4 @@
 import { ReactNode } from "react";
-
-
 import { notFound, redirect } from "next/navigation";
 import SchoolSettingsNav from "./nav";
 import { getServerSession } from "next-auth/next"
@@ -23,15 +21,10 @@ export default async function SchoolSettingsLayout({
   params: { id: string };
   children: ReactNode;
 }) {
-
   const session = await getServerSession(authOptions)
-
-  console.log(`session: ${JSON.stringify(session)}`)
-
   if (!session) {
     redirect("/login");
   }
-
   const data = await prisma.school.findUnique({
     where: {
       id: decodeURIComponent(params.id),
@@ -41,8 +34,6 @@ export default async function SchoolSettingsLayout({
   if (!data || data.tenantId !== session.user.id) {
     notFound();
   }
-
-  // const url = `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
   return (
     <>

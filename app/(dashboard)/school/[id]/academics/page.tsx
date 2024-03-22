@@ -9,7 +9,7 @@ import {
   DialogTrigger } from "@/components/ui/dialog";
 
 import { getGradeLevelsForSchool } from "@/services/service-school";
-
+import Image from 'next/image'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,6 +19,14 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
+import { Suspense } from "react";
+import YearGradeLevelCard from "@/components/year-grade-level-card";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Academics",
+  description: "School Academics Dashboard",
+}
 
 export default async function SchoolAcademicsIndex({
   params,
@@ -29,7 +37,6 @@ const yearGradeLevels =  await getGradeLevelsForSchool(params.id);
 
   return (
     <div className="flex flex-col space-y-6">
-
         <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
@@ -56,17 +63,32 @@ const yearGradeLevels =  await getGradeLevelsForSchool(params.id);
               </BreadcrumbList>
         </Breadcrumb>
 
-       <h1 className="font-cal text-3xl font-bold dark:text-white">
-          School Academics Index Page
-        </h1>
+        <Suspense
+         fallback= {null}
+        >
+          { yearGradeLevels.length > 0 ?(
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {yearGradeLevels.map((gradeLevel) => (
+                  <YearGradeLevelCard key={gradeLevel.id} data={gradeLevel} />
+                ))}
+              </div>
+          ) :(
+            <div className="mt-20 flex flex-col items-center space-x-4">
+            <h1 className="font-cal text-4xl">No Academic Grade Level found</h1>
+            <Image
+              alt="No Year Grade Level registred"
+              src="https://illustrations.popsy.co/amber/student-with-diploma.svg"
+              width={400}
+              height={400}
+            />
+            <p className="text-lg text-stone-500">
+              You do not have any gradeLevel registerd.
+            </p>
+          </div>
+          )
+          }
 
-        <div>
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <p className="text-white">TODO: provide feedback within the form, which fields failed?</p>
-          <code className="text-white">{JSON.stringify(yearGradeLevels, null, 2)}</code>
-        </pre>
-        </div>
-
+        </Suspense>
         <div>
         <Dialog>
                 <DialogTrigger asChild>
@@ -81,7 +103,7 @@ const yearGradeLevels =  await getGradeLevelsForSchool(params.id);
                   </DialogHeader>
                     <GradeLevelAddForm schoolId={params.id} yearGradeLevels={yearGradeLevels}/>
                 </DialogContent>
-              </Dialog>
+        </Dialog>
         </div>
     </div>
   );
