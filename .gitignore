@@ -38,3 +38,7 @@ tsconfig.tsbuildinfo
 .contentlayer
 .env
 .vscode
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
