@@ -1,3 +1,4 @@
+import { te } from "date-fns/locale"
 import * as z from "zod"
 
 export const employeePatchSchema = z.object({
@@ -25,4 +26,6 @@ export const employeeCreateSchema = z.object({
     message: "provide a valid address",
   }).max(32),
   gender: z.string(),
+  tenantId: z.string(),
+  schoolId: z.string(),
 })

@@ -90,15 +90,10 @@ export const columns: ColumnDef<Employee>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>
-              <Link href={`/dashboard/employees/${employee.id}`}>View Details</Link>
+              <Link href={`/employees/${employee.id}`}>View Details</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link href={`/dashboard/employees/${employee.id}`}>Fees payment</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href={`/dashboard/employees/${employee.id}`}>Contact</Link>
-            </DropdownMenuItem>
+
           </DropdownMenuContent>
         </DropdownMenu>
       )

@@ -112,14 +112,7 @@ export const columns: ColumnDef<Guardian>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>
-              <Link href={`/dashboard/guardians/${guardian.id}`}>View Details</Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link href={`/dashboard/guardians/${guardian.id}`}>Fees payment</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href={`/dashboard/guardians/${guardian.id}`}>Contact</Link>
+              <Link href={`/guardians/${guardian.id}`}>View Details</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

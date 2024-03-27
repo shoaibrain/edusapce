@@ -1,8 +1,11 @@
-
-
-
 import { StudentSettingsForm } from "@/components/forms/form-student-edit";
 import { getStudent } from "@/services/service-student";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Student Settings",
+  description: "Student settings page",
+}
 
 export default async function StudentSettingsIndex({
   params,
@@ -14,7 +17,7 @@ export default async function StudentSettingsIndex({
     return (
       <>
       <div className="flex flex-col space-y-6">
-      <div>Student not found!</div>;
+      <div>Student not found! try refresh</div>;
       </div>
       </>
     )}

@@ -90,6 +90,22 @@ export default function DashboardSideNav(  ) {
           icon: <Settings width={18} />,
         },
       ]
+    } else if (segments[0] == "employees" && id) {
+      return [
+        {
+          name: "Settings",
+          href: `/employees/${id}/settings`,
+          icon: <Settings width={18} />,
+        },
+      ]
+    } else if (segments[0] == "guardians" && id) {
+      return [
+        {
+          name: "Settings",
+          href: `/guardians/${id}/settings`,
+          icon: <Settings width={18} />,
+        },
+      ]
     }
     return [
       {

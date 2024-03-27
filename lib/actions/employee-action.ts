@@ -1,3 +1,9 @@
+"use server";
+import { Employee } from "@prisma/client";
+import { z } from "zod";
+import { employeeCreateSchema } from "../validations/employee";
+import prisma from "../db";
+
 export async function getEmployeeMetricsForSchool(
   schoolId: string
 ): Promise<{ message: string; employeeMetrics?: EmployeeMetrics }> {
@@ -20,7 +26,6 @@ export async function getEmployeeMetricsForSchool(
     return { message: 'Failed to retrieve school employee overview data' };
   }
 }
-
 interface EmployeeMetrics {
   averageTenureYears: number;
   averagePerformanceRating: number;
@@ -30,4 +35,21 @@ interface EmployeeMetrics {
   sickLeaveDaysTaken: number;
   employeeSatisfactionScore: number;
   studentToTeacherRatio: number;
+}
+
+type formData = z.infer<typeof employeeCreateSchema>
+
+export async function createEmployee(employee: formData): Promise<{ message: string; employee?: Employee }> {
+  try {
+    const newEmployee = await prisma.employee.create({
+      data: employee
+    })
+    if (!newEmployee) {
+      return { message: 'Failed to create employee' };
+    }
+    return { message: 'success', employee: newEmployee };
+  } catch (error) {
+    console.error('Error creating employee:', error);
+    return { message: `${error}` };
+  }
 }

@@ -27,7 +27,7 @@ export default function StudentSettingsNav() {
         <Link
           key={item.name}
           href={item.href}
-          // Change style depending on whether the link is active
+
           className={cn(
             "rounded-md px-2 py-1 text-sm font-medium transition-colors active:bg-stone-200 dark:active:bg-stone-600",
             segment === item.segment

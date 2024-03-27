@@ -3,8 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
-import { Button, buttonVariants } from "@/components/ui/button"
-import {  CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
+import { buttonVariants } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -20,71 +19,56 @@ import React from "react"
 
 import { Icons } from "@/components/icons"
 import {  Student } from "@prisma/client"
-import { studentPatchSchema } from "@/lib/validations/student"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import {CommandItem } from "../ui/command"
-
-const genders = [
-  { label: "Male", value: "Male" },
-  { label: "Female", value: "Female" },
-  { label: "Other", value: "Other" },
-] as const
-
-
-// TODO: doesnt work as of now
+import { studentProfilePatchSchema } from "@/lib/validations/student"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { handleStudentProfilePatch } from "@/lib/actions/student-actions"
 
 interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   student: Student;
 }
 
-type FormData = z.infer<typeof studentPatchSchema>
+
+type FormData = z.infer<typeof studentProfilePatchSchema>
 
 export function StudentSettingsForm({
   student,
   className,
   ...props
 }: StudentEditFormProps) {
-
-
   const form = useForm<FormData>({
-    resolver: zodResolver(studentPatchSchema),
+    resolver: zodResolver(studentProfilePatchSchema),
     mode: "onChange",
     defaultValues: {
-      firstName: student?.firstName,
+      id: student.id,
+      firstName: student.firstName,
       middleName: student?.middleName || undefined,
-      lastName: student?.lastName,
-      gender: student?.gender,
+      lastName: student.lastName,
+      gender: student.gender,
+      // BUG: nationality field is not being updated
       nationality: student?.nationality || undefined,
+      ssn: student?.ssn || undefined,
       email: student?.email || undefined,
       phone: student?.phone || undefined,
       address: student?.address,
+      enrollmentStatus: student?.enrollmentStatus || undefined,
     }
   })
 
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
   async function onSubmit(data: FormData) {
-    console.log(`Valid data: ${JSON.stringify(data, null, 2)}`)
     setIsSaving(true)
-    console.log(`Student id: ${student.id}`)
-    const response = await fetch(`/api/v1/students/${student.id}`,{
-      method : 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
+    const response = await handleStudentProfilePatch(student.id, data);
     setIsSaving(false)
-    if (!response?.ok) {
-      console.log(response.statusText)
+    if (response.message !== "success") {
+      console.log(response.message)
       return toast({
-        title: "Something went wrong.",
         description: `Failed to update student information.`,
         variant: "destructive",
       })
     }
     toast({
-      title:"Successfully updated",
+      title:"Successfully!",
       description: "Information has been updated.",
     })
 
@@ -140,59 +124,44 @@ export function StudentSettingsForm({
             </div>
             <div className="sm:col-span-2">
               <FormField
-                  control={form.control}
-                  name="gender"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Gender</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                "w-[200px] justify-between",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value
-                                ? genders.find(
-                                    (gender) => gender.value === field.value
-                                  )?.label
-                                : "Select gender"}
-                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[200px] p-0">
-                                {genders.map((gender) => (
-                                  <CommandItem
-                                    value={gender.label}
-                                    key={gender.value}
-                                    onSelect={() => {
-                                      form.setValue("gender", gender.value);
-                                    }}
-                                  >
-                                    <CheckIcon
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        gender.value === field.value
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                    {gender.label}
-                                  </CommandItem>
-                                ))}
-                        </PopoverContent>
-                      </Popover>
-                      <FormDescription>
-                        Birth gender of student
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                      control={form.control}
+                      name="gender"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Student Gender</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select student gender" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="Female">Female</SelectItem>
+                              <SelectItem value="Male">Male</SelectItem>
+                              <SelectItem value="Other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                />
+            </div>
+            <div  className="sm:col-span-2">
+              <FormField
+                control={form.control}
+                name="ssn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>SSN</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Student SSN
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
             <div  className="sm:col-span-2">
@@ -206,7 +175,7 @@ export function StudentSettingsForm({
                       <Input {...field} />
                     </FormControl>
                     <FormDescription>
-                      Student nationality
+                      Nationality of student
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -261,6 +230,24 @@ export function StudentSettingsForm({
                     </FormControl>
                     <FormDescription>
                       home address
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div  className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="enrollmentStatus"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>enrollmentStatus</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                    enrollmentStatus
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

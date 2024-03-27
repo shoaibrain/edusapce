@@ -1,6 +1,7 @@
 import * as z from "zod"
 
-export const studentPatchSchema = z.object({
+export const studentProfilePatchSchema = z.object({
+  id: z.string(),
   firstName: z.string().min(3).max(32).optional(),
   middleName: z.string().optional(),
   lastName: z.string().min(3).max(32).optional(),
@@ -19,8 +20,7 @@ export const studentPatchSchema = z.object({
   }).optional(),
   address: z.string().optional(),
   enrollmentStatus: z.string().optional(),
-  gradeLevel: z.string().optional(),
-  guardians: z.array(z.string()).optional() // array of guardian ids
+  guardians: z.array(z.string()).optional(),
 });
 
 export const studentCreateSchema = z.object({

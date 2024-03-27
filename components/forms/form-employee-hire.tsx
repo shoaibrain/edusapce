@@ -27,9 +27,11 @@ import React from "react"
 import { Icons } from "../icons"
 import { useRouter } from "next/navigation"
 import { employeeCreateSchema } from "@/lib/validations/employee"
+import { createEmployee } from "@/lib/actions/employee-action"
 
 interface EmployeeHireFormProps extends React.HTMLAttributes<HTMLFormElement> {
-
+    schoolId: string;
+    tenantId: string;
 }
 type formData = z.infer<typeof employeeCreateSchema>
 
@@ -47,25 +49,20 @@ export function EmployeeHireForm({
       phone: undefined,
       address: undefined,
       gender: undefined,
+      tenantId: props.tenantId,
+      schoolId: props.schoolId,
     }
   })
   const router = useRouter()
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   async function onSubmit(data: formData) {
-    console.log(JSON.stringify(data, null, 2))
     setIsSaving(true);
-      const res = await fetch(`/api/v1/employees`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
+      const res = await createEmployee(data);
       setIsSaving(false);
-      if (!res.ok) {
+      if (res?.message !== "success") {
         return toast({
           title: "Something went wrong.",
-          description: `Failed to create employee: ${res?.statusText}`,
+          description: `Failed to create employee: ${res?.message}`,
           variant: "destructive",
         })
       }
@@ -77,7 +74,7 @@ export function EmployeeHireForm({
 
   return (
     <Form {...form}>
-  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div  className="sm:col-span-2">
               <FormField
