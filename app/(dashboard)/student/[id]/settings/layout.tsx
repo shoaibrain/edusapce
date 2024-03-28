@@ -58,7 +58,6 @@ export default async function StudentSettingsLayout({
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
-
                 <BreadcrumbItem>
                   <BreadcrumbPage>Settings</BreadcrumbPage>
                 </BreadcrumbItem>

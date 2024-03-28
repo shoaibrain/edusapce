@@ -1,3 +1,5 @@
+"use client"
+
 import { notFound } from "next/navigation"
 
 import { UserAccountNav } from "@/components/user-account-nav"
@@ -6,12 +8,24 @@ import { SiteFooter } from "@/components/site-footer"
 import { getCurrentUser } from "@/lib/session"
 import DashboardSideNav from "@/components/dashboard-sidenav"
 import React from "react"
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils"
+import { Separator } from "@/components/ui/separator"
+import { Nav } from "./nav"
+import { Archive } from "lucide-react"
 
 interface DashboardLayoutProps {
   children?: React.ReactNode
 }
 
-export default async function DashboardLayout({
+interface LayoutProps {
+  defaultLayout: number[] | undefined
+  defaultCollapsed?: boolean
+  navCollapsedSize: number
+}
+
+export  async function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
   const user = await getCurrentUser()
@@ -46,4 +60,121 @@ export default async function DashboardLayout({
       <SiteFooter className="border-t" />
     </div>
   )
+}
+
+export default function Layout (
+  {
+    defaultLayout = [265, 440, 655],
+    defaultCollapsed = false,
+    navCollapsedSize,
+  }: LayoutProps
+){
+  const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
+
+  return (
+      <TooltipProvider delayDuration={0}>
+        <ResizablePanelGroup
+          direction="horizontal"
+          onLayout={(sizes: number[]) => {
+            document.cookie = `react-resizable-panels:layout=${JSON.stringify(
+              sizes
+            )}`
+          }}
+          className="h-full max-h-[800px] items-stretch"
+        >
+          <ResizablePanel
+            defaultSize={defaultLayout[0]}
+            collapsedSize={navCollapsedSize}
+            collapsible={true}
+            minSize={15}
+            maxSize={20}
+            // @ts-ignore
+            onCollapse={(collapsed) => {
+              setIsCollapsed(collapsed)
+              document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
+                collapsed
+              )}`
+            }}
+            className={cn(
+              isCollapsed &&
+                "min-w-[50px] transition-all duration-300 ease-in-out"
+            )}
+          >
+            <Nav
+              isCollapsed={isCollapsed}
+              links={[
+                {
+                  title: "Inbox",
+                  label: "128",
+                  icon: Archive,
+                  variant: "default",
+                },
+                {
+                  title: "Drafts",
+                  label: "9",
+                  icon: Archive,
+                  variant: "ghost",
+                },
+                {
+                  title: "Sent",
+                  label: "",
+                  icon: Archive,
+                  variant: "ghost",
+                },
+                {
+                  title: "Junk",
+                  label: "23",
+                  icon: Archive,
+                  variant: "ghost",
+                },
+                {
+                  title: "Trash",
+                  label: "",
+                  icon: Archive,
+                  variant: "ghost",
+                },
+                {
+                  title: "Archive",
+                  label: "",
+                  icon: Archive,
+                  variant: "ghost",
+                },
+              ]}
+            />
+            <Separator />
+            <Nav
+              isCollapsed={isCollapsed}
+              links={[
+                {
+                  title: "Social",
+                  label: "972",
+                  icon: Archive,
+                  variant: "ghost",
+                },
+                {
+                  title: "Updates",
+                  label: "342",
+                  icon: Archive,
+                  variant: "ghost",
+                },
+                {
+                  title: "Forums",
+                  label: "128",
+                  icon: Archive,
+                  variant: "ghost",
+                },
+              ]}
+            />
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
+            <h1>TAB</h1>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={defaultLayout[2]}>
+            <h1>MAIL DISPLAY</h1>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </TooltipProvider>
+    )
 }
