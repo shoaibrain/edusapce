@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/toaster"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
+import { SiteFooter } from "@/components/site-footer"
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -57,7 +58,6 @@ export const metadata = {
   },
   manifest: `${siteConfig.url}/site.webmanifest`,
 }
-
 
 interface RootLayoutProps {
   children: React.ReactNode
