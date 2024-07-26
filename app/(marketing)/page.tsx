@@ -26,9 +26,9 @@ export default async function IndexPage() {
           </div>
         </div> */}
 
-<section className="flex h-[90vh] items-center md:pb-6 md:pt-5 lg:py-8 px-4">
-      <SchoolHeroCarousel />
-</section>
+      <section className="flex h-[90vh] items-center px-4 md:pb-6 md:pt-5 lg:py-8">
+            <SchoolHeroCarousel />
+      </section>
     </>
   )
 }
