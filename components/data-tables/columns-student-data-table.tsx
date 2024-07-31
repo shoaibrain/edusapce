@@ -73,11 +73,12 @@ export const columns: ColumnDef<Student>[] = [
     },
   },
   {
-    accessorKey: "currentGradeLevel",
+    accessorKey: "yearGradeLevel",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Grade Level" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("currentGradeLevel")}</div>,
+    // Grade Level not showing in table
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue(`yearGradeLevel`)}</div>,
     enableSorting: false,
     enableHiding: true,
 

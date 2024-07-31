@@ -1,4 +1,6 @@
 import prisma from "@/lib/db"
+import { DatabaseError } from "@/lib/errors";
+import { SchoolCreateInput } from "@/lib/validations/school";
 import { logger } from "@/logger";
 import { YearGradeLevel } from "@prisma/client";
 
@@ -146,22 +148,24 @@ export const getSchool = async(schoolId : string) => {
     }
 }
 
-export const postSchool = async (school) => {
-    console.log(`school: ${JSON.stringify(school)}`)
-    try {
-          const newSchool = await prisma.school.create({
-            data: school,
-          });
-          return newSchool;
-      } catch (error) {
-        console.log(`Error creating school: ${error.message}`)
-       throw new Error(`Error creating school: ${error.message}`);
-      }
-}
+export const postSchool = async (school: SchoolCreateInput) => {
+  try {
+    const newSchool = await prisma.school.create({
+      data: school,
+    });
+    return newSchool;
+  } catch (error) {
+    console.error(`Error creating school: ${error.message}`);
+    if (error.code === 'P2002') {
+      const field = error.meta?.target?.[0];
+      throw new DatabaseError(`A school with this ${field} already exists`);
+    }
+    throw new DatabaseError('Failed to create school');
+  }
+};
 
 export const deleteSchool = async (schoolId: string) => {
     try {
-      // TODO: soft delete
         const deletedSchool = await prisma.school.delete({
             where: {
                 id: schoolId,

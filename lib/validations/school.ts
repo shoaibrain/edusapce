@@ -1,12 +1,15 @@
 import * as z from "zod"
+
 export const schoolCreateSchema = z.object({
-  name: z.string(),
-  address: z.string(),
-  phone: z.string(),
-  email: z.string().optional(),
-  website: z.string().url().optional(),
   tenantId: z.string(),
-})
+  name: z.string().min(1, "School name is required"),
+  address: z.string().min(1, "Address is required"),
+  phone: z.string().min(1, "Phone number is required"),
+  email: z.string().email("Invalid email").optional(),
+  website: z.string().url("Invalid URL").optional(),
+
+});
+export type SchoolCreateInput = z.infer<typeof schoolCreateSchema>;
 
 export const schoolPatchSchema = z.object({
   name: z.string().optional(),

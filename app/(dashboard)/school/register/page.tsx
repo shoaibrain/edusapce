@@ -1,6 +1,3 @@
-import { StudentAdmissionForm } from "@/components/forms/form-student-admit";
-import prisma from "@/lib/db";
-import { getGradeLevelsForSchool } from "@/services/service-school";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,19 +8,27 @@ import {
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
 import { Metadata } from "next";
+import React from "react";
+
+import {SchoolRegisterForm} from "@/components/forms/form-school-register";
+import { getCurrentUser } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/auth";
 
 export const metadata: Metadata = {
-  title: "Admission",
-  description: "Student Admission Form",
+  title: "School Registration",
+  description: "School Registration Form",
 }
 
-export default async function StudentAdmissionPage({
-  params,
-}: {
+export default async function SchoolRegisterFormPage({params}: {
   params: { id: string };
 }) {
+  // or user
+  const tenant = await getCurrentUser()
+  if (!tenant) {
+    redirect(authOptions?.pages?.signIn || "/login")
+  }
 
-  const classGrades = await getGradeLevelsForSchool(params.id);
 
   return (
     <div className="flex flex-col space-y-6">
@@ -48,12 +53,12 @@ export default async function StudentAdmissionPage({
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Admission</BreadcrumbPage>
+                  <BreadcrumbPage>Registration</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
         </Breadcrumb>
-       <h1 className="font-cal text-3xl font-bold dark:text-white">
-          <StudentAdmissionForm schoolId={params.id} classGrades={classGrades}/>
+        <h1 className="font-cal text-3xl font-bold dark:text-white">
+          <SchoolRegisterForm tenantId={tenant.id}/>
         </h1>
     </div>
   );

@@ -4,6 +4,11 @@ import { revalidatePath } from "next/cache";
 import prisma from "../db";
 import {  YearGradeLevel } from "@prisma/client";
 import { YearGradeLevelCreateSchema } from "../validations/academics";
+import { SchoolCreateInput, schoolCreateSchema } from "../validations/school";
+import { postSchool } from "@/services/service-school";
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
+import { UnauthorizedError, ValidationError, AppError } from '../errors';
 
 export interface SchoolOverview {
   student_count: string,
@@ -178,4 +183,42 @@ interface SchoolAcademics {
   levelOrder: number,
   capacity: number,
   classRoom: string,
+}
+
+
+export async function schoolCreate(
+  formData: SchoolCreateInput
+): Promise<{
+  success: boolean;
+  data?: any;
+  error?: { message: string; field?: string };
+}> {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      throw new UnauthorizedError();
+    }
+    const parseResult = schoolCreateSchema.safeParse(formData);
+    if (!parseResult.success) {
+      throw new ValidationError(parseResult.error.errors[0].message);
+    }
+    const createdSchool = await postSchool(parseResult.data);
+    revalidatePath("/school");
+    return { success: true, data: createdSchool };
+  } catch (error) {
+    console.error('Error in schoolCreate:', error);
+    if (error instanceof AppError) {
+      return {
+        success: false,
+        error: {
+          message: error.message,
+          field: error instanceof ValidationError ? "field" : undefined
+        },
+      };
+    }
+    return {
+      success: false,
+      error: { message: 'An unexpected error occurred' },
+    };
+  }
 }

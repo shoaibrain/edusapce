@@ -1,7 +1,6 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import * as z from "zod"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
@@ -18,59 +17,59 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/use-toast"
 import React from "react"
 import { Icons } from "@/components/icons"
-import { schoolCreateSchema } from "@/lib/validations/school"
+import { SchoolCreateInput, schoolCreateSchema } from "@/lib/validations/school"
+import { schoolCreate } from "@/lib/actions/school-actions"
 
-interface SchoolFormProps extends React.HTMLAttributes<HTMLFormElement> {
+interface SchoolRegisterFormProps extends React.HTMLAttributes<HTMLFormElement> {
   tenantId: string;
 }
-type formData = z.infer<typeof schoolCreateSchema>
-
 
 export function SchoolRegisterForm({
   tenantId,
   className,
   ...props
-}: SchoolFormProps) {
-  const form = useForm<formData>({
+}: SchoolRegisterFormProps) {
+  const form = useForm<SchoolCreateInput>({
     resolver: zodResolver(schoolCreateSchema),
     mode: "onChange",
     defaultValues: {
+      tenantId: tenantId,
       name: undefined,
       address: undefined,
       phone: undefined,
       email: undefined,
       website: undefined,
-      tenantId: tenantId,
     }
   })
   const router = useRouter();
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
-  async function onSubmit(data: formData) {
-
+  async function onSubmit(data: SchoolCreateInput) {
     setIsSaving(true);
-    const response = await fetch(`/api/v1/schools`,{
-      method : 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
-
-    setIsSaving(false);
-    if (!response?.ok) {
-      return toast({
+    try {
+      const response = await schoolCreate(data);
+      if (!response.success) {
+        console.error(`Error creating student: ${response.error?.message}`);
+        return toast({
+          title: "Something went wrong.",
+          description: `Error: ${response.error?.message}`,
+          variant: "destructive",
+        });
+      }
+      toast({
+        description: "A new School registered.",
+      });
+      router.refresh();
+    } catch (error) {
+      console.error(`Error: ${error.message}`);
+      toast({
         title: "Something went wrong.",
-        description: `Failed to register school`,
+        description: `Error: ${error.message}}`,
         variant: "destructive",
-      })
+      });
+    } finally {
+      setIsSaving(false);
     }
-
-    toast({
-      description: "A school has been registered",
-    })
-    // BUG: page does not refresh
-    router.refresh();
   }
 
   return (

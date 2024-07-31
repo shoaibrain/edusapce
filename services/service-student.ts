@@ -1,5 +1,6 @@
 import prisma from "@/lib/db"
 import { logger } from "@/logger";
+import { Prisma } from '@prisma/client';
 
 export const getStudents = async () => {
     try {
@@ -16,6 +17,8 @@ export const getStudents = async () => {
               email: true,
               phone: true,
               address: true,
+              yearGradeLevelId:true
+
             },
         });
         return students;
@@ -29,18 +32,7 @@ export const getStudentsForSchool = async(schoolId: string) => {
     const students = await prisma.student.findMany({
       where: {
         schoolId: schoolId
-      },
-      include: {
-        gradeLevels: {
-          include: {
-            gradeLevel: true,
-          },
-          orderBy: {
-            enrolledAt: 'desc',
-          },
-          take: 1, // Get only the most recent grade level
-        },
-      },
+      }
     })
     if (students) {
       return students;
@@ -59,15 +51,7 @@ export const getStudent = async(studentId : string) => {
           },
           include:{
               guardians: true,
-              gradeLevels: {
-                include: {
-                  gradeLevel: true,
-                },
-                orderBy: {
-                  enrolledAt: 'desc',
-                },
-                take: 1, // Get only the most recent grade level
-              },
+              yearGradeLevel: true,
           }
       })
       if (student) {
@@ -78,41 +62,39 @@ export const getStudent = async(studentId : string) => {
       throw new Error(`Error getting student: ${error.message}`);
     }
 }
+
 export const postStudent = async (student, gradeLevelId: string) => {
   try {
     const newStudent = await prisma.$transaction(async (tx) => {
       // Create the new student
       const createdStudent = await tx.student.create({
-        data: student,
-      });
-
-      // Create the StudentYearGradeLevel record
-      const createdStudentYearGradeLevel = await tx.studentYearGradeLevel.create({
         data: {
-          student_id: createdStudent.id,
-          grade_level_id: gradeLevelId,
-        },
-      });
-
-      // Connect the student and the StudentYearGradeLevel records
-      const updatedStudent = await tx.student.update({
-        where: { id: createdStudent.id },
-        data: {
-          gradeLevels: {
-            connect: { id: createdStudentYearGradeLevel.id },
+          ...student,
+          yearGradeLevel: {
+            connect: { id: gradeLevelId },
           },
         },
       });
 
-      return updatedStudent;
+      return createdStudent;
     });
-
     return newStudent;
   } catch (error) {
-    console.log(`Error creating student: ${error.message}`);
+    logger.error(`Error creating student: ${error.message}`);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      // Handle known Prisma errors
+      switch (error.code) {
+        case 'P2002':
+          throw new Error('A unique constraint violation occurred.');
+        // Add more cases as needed for other error codes
+        default:
+          throw new Error('An unknown error occurred.');
+      }
+    }
     throw new Error(`Error creating student: ${error.message}`);
   }
 };
+
 export const deleteStudent = async (studentId: string) => {
     try {
         const deletedStudent = await prisma.student.delete({
@@ -139,6 +121,7 @@ export const patchStudentProfile = async (studentId: string, studentUpdates) => 
       throw new Error(`Error updating student: ${error.message}`);
     }
   };
+
 export const patchStudentEnrollmentn = async (
   studentId: string,
   schoolId: string,

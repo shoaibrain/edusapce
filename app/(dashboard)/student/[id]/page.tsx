@@ -43,7 +43,7 @@ export default async function StudentPage({ params }: { params: { id: string } }
     )
   }
   const guardians = student.guardians;
-  const classGrade = student.gradeLevels[0].gradeLevel;
+  const classGrade = student.yearGradeLevel;
 
   return (
     <>
@@ -115,12 +115,20 @@ export default async function StudentPage({ params }: { params: { id: string } }
               </div>
         </div>
         <section className="mt-8 grid w-full grid-cols-1 gap-8 md:grid-cols-2">
-          <div className=" rounded-lg p-6 shadow-md">
-              <h3 className="mb-4 text-lg font-bold"> Student Academic performance insights</h3>
+        <div className=" rounded-lg p-6 shadow-md">
+          <h3 className="mb-4 text-lg font-bold">Student Academics</h3>
+          {classGrade && (
+            <>
               <p className="text-sm text-gray-500 dark:text-gray-400">{`Class Grade: ${classGrade.name}`}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{`School Level: ${classGrade.levelCategory}`}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{`Class Grade Order: ${classGrade.levelOrder}`}</p>
-          </div>
+            </>
+          )}
+          {!classGrade && (
+            <p className="text-sm text-gray-500 dark:text-gray-400">Class grade information unavailable.</p>
+          )}
+        </div>
+
           <div className="rounded-lg p-6 shadow-md">
             <h3 className="mb-4 text-lg font-bold">Guardians Contacts:</h3>
             <ul className="divide-y divide-gray-200 dark:divide-gray-700">

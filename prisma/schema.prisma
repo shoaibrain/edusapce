@@ -88,7 +88,7 @@ model School {
 
   name       String
   address    String
-  phone      String  @unique
+  phone      String
   email      String? @unique
   website    String? @unique
   schoolType String? // public, private, etc.
@@ -120,7 +120,7 @@ model YearGradeLevel {
   capacity      Int?
   classRoom     String?
 
-  students StudentYearGradeLevel[] // association between Student & YearGradeLevel
+  students Student[] // One-to-many relationship with students
 
   classePeriods ClassPeriod[] // Classes belonging to this grade level
   createdAt     DateTime      @default(now()) @map("created_at")
@@ -129,22 +129,8 @@ model YearGradeLevel {
   @@map("grade_levels")
 }
 
-// Facilitates the many-to-many relationship between students and grade levels.
-model StudentYearGradeLevel {
-  id             String @id @default(cuid())
-  student_id     String
-  grade_level_id String
-
-  enrolledAt DateTime @default(now())
-
-  student    Student        @relation(fields: [student_id], references: [id])
-  gradeLevel YearGradeLevel @relation(fields: [grade_level_id], references: [id])
-
-  @@unique([student_id, grade_level_id])
-}
-
 model Student {
-  id               String                  @id @default(cuid())
+  id               String          @id @default(cuid())
   schoolId         String
   // basic attributes
   firstName        String
@@ -154,18 +140,19 @@ model Student {
   gender           String
   // identity related attributes
   nationality      String?
-  ssn              String?                 @unique
-  email            String?                 @unique
-  phone            String?                 @unique
+  ssn              String?         @unique
+  email            String?         @unique
+  phone            String?
   address          String
   // school related attributes
-  enrollmentStatus String?                 @default("ADMITTED")
-  role             Role                    @default(STUDENT)
-  // Reference to the StudentYearGradeLevel association table
-  gradeLevels      StudentYearGradeLevel[]
-  guardians        Guardian[] // can have multiple guardians
-  createdAt        DateTime                @default(now()) @map("created_at")
-  updatedAt        DateTime                @default(now()) @map("updated_at")
+  enrollmentStatus String?         @default("ADMITTED")
+  role             Role            @default(STUDENT)
+  yearGradeLevelId String? // Foreign key to current YearGradeLevel
+  yearGradeLevel   YearGradeLevel? @relation(fields: [yearGradeLevelId], references: [id])
+
+  guardians Guardian[] // can have multiple guardians
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @default(now()) @map("updated_at")
 
   @@map("students")
 }

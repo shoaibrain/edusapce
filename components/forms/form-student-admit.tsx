@@ -30,8 +30,8 @@ import { format } from "date-fns"
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { Calendar } from "@/components/ui/calendar"
 import { studentCreateSchema } from "@/lib/validations/student"
-
-
+import {studentCreate} from "@/lib/actions/student-actions"
+// year grade level
 interface GradeLevel {
   id: string;
   name: string;
@@ -47,17 +47,15 @@ interface StudentAdmissionFormProps extends React.HTMLAttributes<HTMLFormElement
   schoolId: string;
   classGrades?: GradeLevel[]
 }
+
 type formData = z.infer<typeof studentCreateSchema>
-//Todo: make it multi-step form
+
 export function StudentAdmissionForm({
   guardianId,
   schoolId,
   classGrades,
   className,
 }: StudentAdmissionFormProps) {
-
-  console.log(`Grade Levels: ${JSON.stringify(classGrades)}`)
-
 
   const form = useForm<formData>({
     resolver: zodResolver(studentCreateSchema),
@@ -72,42 +70,42 @@ export function StudentAdmissionForm({
       email: undefined,
       phone: undefined,
       address: undefined,
-      gradeLevelId: undefined,
+      yearGradeLevelId: undefined
     }
-  })
+  });
 
-  const router = useRouter()
+
+  const router = useRouter();
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
   async function onSubmit(data: formData) {
-
-    console.log(`data in onSubmit: ${data}`)
     setIsSaving(true);
-
-    const response = await fetch(`/api/v1/students`,{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
-    setIsSaving(false);
-    if (!response?.ok) {
-      console.log(`Error creating YearGradeLevel for school ${schoolId}
-      Error message: ${JSON.stringify(response)}`)
-
-      return toast({
+    try {
+      const response = await studentCreate(data);
+      if (response.message !== "ok") {
+        console.error(`Error creating student: ${response.message}`);
+        return toast({
+          title: "Something went wrong.",
+          description: `Error: ${response.message}`,
+          variant: "destructive",
+        });
+      }
+      toast({
+        description: "A new student admitted.",
+      });
+      router.refresh();
+    } catch (error) {
+      console.error(`Error: ${error.message}`);
+      toast({
         title: "Something went wrong.",
-        description: `Failed to admit student for ${schoolId}`,
+        description: `Error: ${error.message}}`,
         variant: "destructive",
-      })
+      });
+    } finally {
+      setIsSaving(false);
     }
-
-    toast({
-      description: "A new student admitted.",
-    })
-    router.refresh();
   }
+
 
   return (
     <Form {...form}>
@@ -299,7 +297,7 @@ export function StudentAdmissionForm({
                   {classGrades && classGrades.length > 0 && (
                     <FormField
                       control={form.control}
-                      name="gradeLevelId"
+                      name="yearGradeLevelId"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Student Grade Level</FormLabel>

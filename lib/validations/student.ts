@@ -19,7 +19,7 @@ export const studentPatchSchema = z.object({
   }).optional(),
   address: z.string().optional(),
   enrollmentStatus: z.string().optional(),
-  gradeLevel: z.string().optional(),
+  yearGradeLevelId: z.string().optional(),
   guardians: z.array(z.string()).optional() // array of guardian ids
 });
 
@@ -36,8 +36,7 @@ export const studentCreateSchema = z.object({
 
   address: z.string().min(3).max(32),
   guardians: z.array(z.string()).optional(),
-  currentGradeLevel: z.string().optional(),
-  gradeLevelId: z.string(),
+  yearGradeLevelId: z.string(),
 
 })
 
