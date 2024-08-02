@@ -75,7 +75,7 @@ model Tenant {
   updatedAt DateTime @default(now()) @map("updated_at")
 
   accounts Account[]
-  sessions Session[] // can this manage its user sessions?
+  sessions Session[]
   schools  School[]
 
   @@map("tenants")
@@ -238,10 +238,6 @@ model Employee {
 
   @@map("employees")
 }
-
-// Subjects are textbooks/papers/articels ,etc used in classes
-// eduSpace provides access to online textbooks(presumably)
-// Subjects are digital resources, and can be printed out as well
 
 model Subject {
   id       String @id @default(cuid())

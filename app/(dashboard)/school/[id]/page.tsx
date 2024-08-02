@@ -13,6 +13,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { RecentSales } from "@/components/recent";
 import { SchoolEarningOverview } from "@/components/overview-school-earning";
 import { getSchoolOverviewData } from "@/lib/actions/school-actions";
+import { getCurrentUser } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "School",
@@ -23,6 +26,10 @@ export default async function SchoolDashboard({
 }: {
   params: { id: string };
 }) {
+  const user = await getCurrentUser()
+  if (!user) {
+    redirect(authOptions?.pages?.signIn || "/login")
+  }
   const schoolOverview = await getSchoolOverviewData(params.id);
   return (
     <>
@@ -87,21 +94,21 @@ export default async function SchoolDashboard({
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-7">
                 <Card className="col-span-4">
                   <CardHeader>
-                    <CardTitle>Overview</CardTitle>
+                    <CardTitle>block-1</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <SchoolEarningOverview />
+                    <p>block-1</p>
                   </CardContent>
                 </Card>
                 <Card className="col-span-3">
                   <CardHeader>
-                    <CardTitle>Recent Activities</CardTitle>
+                    <CardTitle>block-2</CardTitle>
                     <CardDescription>
-                      341 recent activities in last 24 hours
+                      block-desc
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <RecentSales />
+                  <CardContent className="pl-2">
+                    block-2
                   </CardContent>
                 </Card>
               </div>
