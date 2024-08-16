@@ -1,5 +1,5 @@
 import { schoolCreateSchema } from "@/lib/validations/school";
-import { logger } from "@/logger";
+import logger from "@/logger";
 import { getSchools, postSchool } from "@/services/service-school";
 import * as z from "zod"
 

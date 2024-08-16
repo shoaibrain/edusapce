@@ -6,13 +6,13 @@ import {
   patchSchoolProfile
 } from "@/services/service-school";
 import { z } from "zod";
-import { logger } from "@/logger";
 import { NextRequest } from "next/server";
 import {
   YearGradeLevelCreateSchema,
 } from "@/lib/validations/school";
 import { getStudentsForSchool } from "@/services/service-student";
 import { getEmployeesForSchool } from "@/services/service-employee";
+import logger from "@/logger";
 
 const routeContextSchema = z.object({
     params: z.object({

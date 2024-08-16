@@ -14,15 +14,11 @@ export async function studentCreate(
     if (!createData.success) {
       throw new Error("Invalid create data");
     }
-
     const { yearGradeLevelId, ...studentData } = createData.data;
-
     // Call the service function to create a new student
     const createdStudent = await postStudent(studentData, yearGradeLevelId);
-
     // Revalidate the path to update the student list
     revalidatePath("/student");
-
     return { message: "ok", createdStudent };
   } catch (error) {
     console.error(error);

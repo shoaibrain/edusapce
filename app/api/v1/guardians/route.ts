@@ -1,7 +1,6 @@
 import { guardianCreateSchema } from "@/lib/validations/guardian";
 import { getGuardians, postGuardian } from "@/services/service-guardian";
 import { z } from "zod";
-import { logger } from "@/logger";
 
 export async function GET() {
   try {

@@ -1,6 +1,5 @@
 import { StudentAdmissionForm } from "@/components/forms/form-student-admit";
-import prisma from "@/lib/db";
-import { getGradeLevelsForSchool } from "@/services/service-school";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,6 +10,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
 import { Metadata } from "next";
+import { getGradeLevelsForSchool } from "@/services/service-school";
 
 export const metadata: Metadata = {
   title: "Admission",

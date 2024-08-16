@@ -30,9 +30,6 @@ const genders = [
   { label: "Other", value: "Other" },
 ] as const
 
-
-// TODO: doesnt work as of now
-
 interface StudentEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   student: Student;
 }
@@ -44,7 +41,6 @@ export function StudentSettingsForm({
   className,
   ...props
 }: StudentEditFormProps) {
-
 
   const form = useForm<FormData>({
     resolver: zodResolver(studentPatchSchema),

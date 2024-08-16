@@ -24,6 +24,7 @@ export default async function DashboardPage() {
     redirect(authOptions?.pages?.signIn || "/login")
   }
   const schools = await getSchoolsForTenant(tenant.id);
+  console.log(`logged in user role: ${tenant.role}`)
 
   return (
     <>

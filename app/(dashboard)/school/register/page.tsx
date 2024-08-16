@@ -23,13 +23,10 @@ export const metadata: Metadata = {
 export default async function SchoolRegisterFormPage({params}: {
   params: { id: string };
 }) {
-  // or user
   const tenant = await getCurrentUser()
   if (!tenant) {
     redirect(authOptions?.pages?.signIn || "/login")
   }
-
-
   return (
     <div className="flex flex-col space-y-6">
         <Breadcrumb>

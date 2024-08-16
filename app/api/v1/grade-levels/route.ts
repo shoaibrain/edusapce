@@ -1,5 +1,6 @@
 import { YearGradeLevelCreateSchema } from "@/lib/validations/academics";
-import { logger } from "@/logger";
+import logger from "@/logger";
+
 import { postYearGradeLevel } from "@/services/service-academic";
 import { NextRequest } from "next/server";
 import { z } from "zod";

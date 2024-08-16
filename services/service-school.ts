@@ -1,19 +1,21 @@
 import prisma from "@/lib/db"
-import { DatabaseError } from "@/lib/errors";
+import { DatabaseError } from "@/lib/error";
 import { SchoolCreateInput } from "@/lib/validations/school";
-import { logger } from "@/logger";
-import { YearGradeLevel } from "@prisma/client";
+import { withAuth } from "@/lib/withAuth";
+import logger from "@/logger";
+import { Role, YearGradeLevel } from "@prisma/client";
 
-interface YearGradeLevelWithStudentCount {
+type YearGradeLevelWithStudentCount = {
   id: string;
   name: string;
-  description?: string;
+  description: string | null;
   levelCategory: string;
   levelOrder: number;
-  capacity?: number;
-  classRoom?: string;
-  studentCount: number;
-}
+  capacity: number | null;
+  classRoom: string | null;
+  studentCount: number | null;
+};
+
 
 export const addGradeLevels = async (
   schoolId: string,
@@ -47,14 +49,12 @@ export const addGradeLevels = async (
 };
 
 
-export const getGradeLevelsForSchool = async (
+const YearGradeLevelWithStudentCount = async (
   schoolId: string
 ): Promise<YearGradeLevelWithStudentCount[]> => {
   try {
     const gradeLevels = await prisma.yearGradeLevel.findMany({
-      where: {
-        schoolId: schoolId,
-      },
+      where: { schoolId },
       select: {
         id: true,
         name: true,
@@ -63,21 +63,24 @@ export const getGradeLevelsForSchool = async (
         levelOrder: true,
         capacity: true,
         classRoom: true,
-        _count: {
-          select: { students: true }, // Include student count in the selection
-        },
+        _count: { select: { students: true } },
       },
     });
-    // @ts-ignore
+
     return gradeLevels.map((gradeLevel) => ({
       ...gradeLevel,
       studentCount: gradeLevel._count.students,
     }));
   } catch (error) {
-    logger.warn(`Error retrieving gradeLevels for school ${schoolId}`);
-    throw new Error('Failed to get grade levels');
+    logger.error(`Error retrieving grade levels: ${error.message}`, { schoolId, error });
+    throw new DatabaseError(`Failed to get grade levels`, { schoolId });
   }
 };
+
+export const getGradeLevelsForSchool = withAuth(
+  YearGradeLevelWithStudentCount,
+  [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER]
+);
 
 export const patchGradeLevel = async (
   schoolId: string,
@@ -107,8 +110,6 @@ export const addStudentsToGradeLevel = async (
     throw new Error("Failed to add students to grade level");
   }
 };
-
-
 
 export const getSchools = async () => {
     try {

@@ -1,5 +1,5 @@
 import prisma from "@/lib/db"
-import { logger } from "@/logger";
+import logger from "@/logger";
 import { Prisma } from '@prisma/client';
 
 export const getStudents = async () => {

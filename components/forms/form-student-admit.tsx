@@ -31,21 +31,24 @@ import { CalendarIcon } from "@radix-ui/react-icons"
 import { Calendar } from "@/components/ui/calendar"
 import { studentCreateSchema } from "@/lib/validations/student"
 import {studentCreate} from "@/lib/actions/student-actions"
+
 // year grade level
-interface GradeLevel {
+interface YearGradeLevelWithStudentCount {
   id: string;
   name: string;
-  description?: string;
+  description: string | null;
   levelCategory: string;
   levelOrder: number;
-  capacity?: number;
-  classRoom?: string;
-}
+  capacity: number | null;
+  classRoom: string | null;
+  studentCount: number | null;
+};
+
 
 interface StudentAdmissionFormProps extends React.HTMLAttributes<HTMLFormElement> {
   guardianId?: string;
   schoolId: string;
-  classGrades?: GradeLevel[]
+  classGrades?: YearGradeLevelWithStudentCount[]
 }
 
 type formData = z.infer<typeof studentCreateSchema>
@@ -73,7 +76,6 @@ export function StudentAdmissionForm({
       yearGradeLevelId: undefined
     }
   });
-
 
   const router = useRouter();
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -105,7 +107,6 @@ export function StudentAdmissionForm({
       setIsSaving(false);
     }
   }
-
 
   return (
     <Form {...form}>

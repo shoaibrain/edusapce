@@ -3,14 +3,13 @@
 interface YearGradeLevel {
   id: string;
   name: string;
-  description?: string;
+  description: string | null;
   levelCategory: string;
   levelOrder: number;
-  capacity?: number;
-  classRoom?: string;
-  studentCount: number; // Include the student count property
-}
-
+  capacity: number | null;
+  classRoom: string | null;
+  studentCount: number | null;
+};
 
 export default function YearGradeLevelCard({ data }: { data: YearGradeLevel }) {
 

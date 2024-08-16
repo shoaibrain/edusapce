@@ -50,19 +50,17 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email
         session.user.image = token.picture
         session.user.schoolId = token.schoolId
+        session.user.role = token.role
       }
-
       return session
     },
 
-    // TODO: add schoolId to token?
     async jwt({ token, user }) {
       const dbUser = await prisma.tenant.findFirst({
         where: {
           email: token.email || "",
         }
       })
-
       if (!dbUser) {
         if (user) {
           token.id = user?.id
@@ -75,6 +73,7 @@ export const authOptions: NextAuthOptions = {
         name: dbUser.name,
         email: dbUser.email,
         picture: dbUser.image,
+        role: dbUser.role,
       };
 
       return Promise.resolve(updatedToken);

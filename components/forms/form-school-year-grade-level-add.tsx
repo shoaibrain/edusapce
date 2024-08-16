@@ -18,15 +18,18 @@ import { buttonVariants } from "../ui/button";
 import { Icons } from "../icons";
 import { yearGradeLevelCreate } from "@/lib/actions/school-actions";
 
+
+
 interface GradeLevel {
   id: string;
   name: string;
-  description?: string;
+  description: string | null;
   levelCategory: string;
   levelOrder: number;
-  capacity?: number;
-  classRoom?: string;
-}
+  capacity: number | null;
+  classRoom: string | null;
+  studentCount: number | null;
+};
 
 interface ClassGradeLevelAddFormProps extends React.HTMLAttributes<HTMLFormElement> {
   schoolId: string;

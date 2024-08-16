@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import prisma from "@/lib/db";
 
 export const getGuardians = async () => {
