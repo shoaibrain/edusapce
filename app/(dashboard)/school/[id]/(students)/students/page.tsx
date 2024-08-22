@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
@@ -7,7 +6,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { columns } from '@/components/data-tables/columns-student-data-table'
 import { DataTable } from '@/components/data-tables/data-table'
 import { Metadata } from 'next'
-import { getStudentsForSchool } from '@/services/service-student'
+import { getStudentsForSchoolOld } from '@/services/service-student'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -27,7 +26,7 @@ export const metadata: Metadata = {
 
 async function getStudents(schoolId: string) {
   try {
-    const students = await getStudentsForSchool(schoolId)
+    const students = await getStudentsForSchoolOld(schoolId)
     if (!students) {
       throw new Error(`Failed to get student data for school: ${schoolId}`)
     }

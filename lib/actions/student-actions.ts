@@ -1,43 +1,126 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { studentCreateSchema } from "../validations/student";
-import {  Student } from "@prisma/client";
-import { postStudent } from "../../services/service-student";
+import { studentCreateSchema, studentPatchSchema } from "../validations/student";
+import {  Role } from "@prisma/client";
+import { z } from "zod";
+import logger from "@/logger";
+import { DatabaseError } from "../error";
+import { handleActionError, withAuth } from "../withAuth";
+import { getStudent, getStudentsForSchoolOld, postStudent, updateStudent } from "@/services/service-student";
 
-export async function studentCreate(
-  formData: any
-): Promise<{ message: string; createdStudent?: Student; errorDetails?: { field?: string; message: string } }> {
+type StudentCreateInput = z.infer<typeof studentCreateSchema>;
+type StudentPatchInput = z.infer<typeof studentPatchSchema>;
+
+const studentCreateAction = async (formData: StudentCreateInput) => {
   try {
-    // Parse form data against schema
-    const createData = studentCreateSchema.safeParse(formData);
-    if (!createData.success) {
-      throw new Error("Invalid create data");
-    }
-    const { yearGradeLevelId, ...studentData } = createData.data;
-    // Call the service function to create a new student
+    const validatedData = studentCreateSchema.parse(formData);
+    const { yearGradeLevelId, ...studentData } = validatedData;
     const createdStudent = await postStudent(studentData, yearGradeLevelId);
-    // Revalidate the path to update the student list
     revalidatePath("/student");
-    return { message: "ok", createdStudent };
+    return { success: true, data: createdStudent };
   } catch (error) {
-    console.error(error);
-    if (error.message.includes("unique constraint")) {
-      // Extract the field name (if possible)
-      const match = error.message.match(/constraint on \(.*\)/);
-      const field = match?.[1]?.split(',')[0].trim(); // Get first field name from constraint
-
+    logger.error('Error in studentCreate:', { error });
+    if (error instanceof z.ZodError) {
       return {
-        message: "An error occurred while creating the student. It appears that one or more fields contain duplicate values.",
-        errorDetails: {
-          field: field, // May be undefined if extraction fails
-          message: "Please check the provided data and try again.",
-        },
+        success: false,
+        error: {
+          type: 'VALIDATION_ERROR',
+          message: 'Invalid student data',
+          details: error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message
+          }))
+        }
       };
-    } else {
-      // Handle other errors
-      console.error(`Error while creating Student. Error:${error.message}`);
-      return { message: `${error.message}` };
     }
+    if (error instanceof DatabaseError) {
+      return {
+        success: false,
+        error: {
+          type: 'DATABASE_ERROR',
+          message: 'An error occurred while creating the student.',
+          details: error.details
+        }
+      };
+    }
+    return {
+      success: false,
+      error: {
+        type: 'UNKNOWN_ERROR',
+        message: 'An unexpected error occurred.'
+      }
+    };
   }
-}
+};
+
+const studentPatchAction = async (formData: StudentPatchInput) => {
+  try {
+    const validatedData = studentPatchSchema.parse(formData);
+    const updatedStudent = await updateStudent(validatedData.id, validatedData);
+
+    revalidatePath("/students");
+    return { success: true, data: updatedStudent };
+  } catch (error) {
+    console.log(JSON.stringify(error));
+    logger.error('Error in studentPatch:', { error });
+
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: {
+          type: 'VALIDATION_ERROR',
+          message: 'Invalid student data',
+          details: error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message
+          }))
+        }
+      };
+    }
+
+    if (error instanceof DatabaseError) {
+      return {
+        success: false,
+        error: {
+          type: 'DATABASE_ERROR',
+          message: 'An error occurred while updating the student.',
+          details: error.details
+        }
+      };
+    }
+
+    return handleActionError(error);
+  }
+};
+
+const studentGetAction = async (studentId: string) => {
+  try {
+    const student = await getStudent(studentId);
+    if (!student) {
+      return { success: false, error: 'Student not found' };
+    }
+    revalidatePath(`/students/${studentId}`);
+    return { success: true, data: student };
+  } catch (error) {
+    console.error('Error fetching student:', error);
+    return { success: false, error: 'Failed to fetch student' };
+  }
+};
+
+const studentsGetAction = async (schoolId: string) => {
+  try {
+    const students = await getStudentsForSchoolOld(schoolId);
+    revalidatePath('/students');
+    return { success: true, data: students };
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    return { success: false, error: 'Failed to fetch students' };
+  }
+};
+
+
+export const studentsGet = withAuth(studentsGetAction, [Role.ADMIN, Role.PRINCIPAL]);
+export const studentGet = withAuth(studentGetAction, [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT]);
+export const studentPatch  = withAuth(studentPatchAction,[Role.ADMIN, Role.TEACHER, Role.PRINCIPAL]);
+export const studentCreate = withAuth(studentCreateAction, [Role.ADMIN, Role.TEACHER, Role.PRINCIPAL]);

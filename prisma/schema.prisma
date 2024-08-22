@@ -113,7 +113,7 @@ model YearGradeLevel {
   schoolId String
   School   School? @relation(fields: [schoolId], references: [id])
 
-  name          String
+  levelName     String  @map("levelName")
   description   String?
   levelCategory String // Elementary, Middle, High
   levelOrder    Int

@@ -10,7 +10,7 @@ import { NextRequest } from "next/server";
 import {
   YearGradeLevelCreateSchema,
 } from "@/lib/validations/school";
-import { getStudentsForSchool } from "@/services/service-student";
+import { getStudentsForSchoolOld } from "@/services/service-student";
 import { getEmployeesForSchool } from "@/services/service-employee";
 import logger from "@/logger";
 
@@ -53,7 +53,7 @@ async function handleRead(schoolId: string | null, nextResource: string | null) 
       // return default resource
       return await getSchool(schoolId);
     } else if (nextResource === "student") {
-      return await getStudentsForSchool(schoolId);
+      return await getStudentsForSchoolOld(schoolId);
     } else if (nextResource === "employee") {
       return await getEmployeesForSchool(schoolId);
     } else if (nextResource === "year-grade-level") {

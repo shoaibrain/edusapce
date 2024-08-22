@@ -1,6 +1,10 @@
 import prisma from "@/lib/db"
+import { DatabaseError, ValidationError } from "@/lib/error";
+import { studentCreateSchema, StudentPatchInput } from "@/lib/validations/student";
+
 import logger from "@/logger";
-import { Prisma } from '@prisma/client';
+import { Prisma, Student } from '@prisma/client';
+import { z } from "zod";
 
 export const getStudents = async () => {
     try {
@@ -27,7 +31,7 @@ export const getStudents = async () => {
       }
 }
 
-export const getStudentsForSchool = async(schoolId: string) => {
+export const getStudentsForSchoolOld = async(schoolId: string) => {
   try {
     const students = await prisma.student.findMany({
       where: {
@@ -43,99 +47,163 @@ export const getStudentsForSchool = async(schoolId: string) => {
     logger.warn(`failed to read students for school: ${schoolId}`)
   }
 }
-export const getStudent = async(studentId : string) => {
-    try{
-        const student =  await prisma.student.findUnique({
-          where: {
-            id: studentId,
-          },
-          include:{
-              guardians: true,
-              yearGradeLevel: true,
+
+
+export async function getStudent(studentId: string): Promise<Student | null> {
+  try {
+    const student = await prisma.student.findUnique({
+      where: { id: studentId },
+      include: {
+        yearGradeLevel: {
+          select: {
+            levelName: true,
+            levelCategory: true,
+            levelOrder: true,
           }
-      })
-      if (student) {
-        return student;
+        },
+        guardians: true
       }
-      return null;
-    } catch (error) {
-      throw new Error(`Error getting student: ${error.message}`);
-    }
+    });
+
+    if (!student) return null;
+    // why are we doing this?
+    return {
+      ...student,
+      levelName: student.yearGradeLevel?.levelName ?? 'Not Assigned',
+      levelCategory: student.yearGradeLevel?.levelCategory ?? 'Not Assigned'
+    };
+
+  } catch (error) {
+    console.error('Error fetching student by ID:', error);
+    throw new Error('Failed to fetch student');
+  }
 }
 
-export const postStudent = async (student, gradeLevelId: string) => {
+export async function getStudentsForSchool(schoolId: string) {
   try {
-    const newStudent = await prisma.$transaction(async (tx) => {
-      // Create the new student
-      const createdStudent = await tx.student.create({
+    const students = await prisma.student.findMany({
+      where: { schoolId },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        enrollmentStatus: true,
+        yearGradeLevel: {
+          select: {
+            levelName: true
+          }
+        }
+      },
+    });
+
+    return students.map(student => ({
+      id: student.id,
+      firstName: student.firstName,
+      lastName: student.lastName,
+      enrollmentStatus: student.enrollmentStatus,
+      levelName: student.yearGradeLevel?.levelName ?? 'Not Assigned'
+    }));
+
+  } catch (error) {
+    console.error('Error fetching students with grade:', error);
+    throw new Error('Failed to fetch students');
+  }
+}
+
+
+type CreateStudentInput = z.infer<typeof studentCreateSchema>;
+
+export const postStudent = async (
+  student: Omit<CreateStudentInput, 'yearGradeLevelId'>,
+  yearGradeLevelId: string
+): Promise<Student> => {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      return tx.student.create({
         data: {
           ...student,
+          birthDate: new Date(student.birthDate), // Convert string to Date if necessary
           yearGradeLevel: {
-            connect: { id: gradeLevelId },
+            connect: { id: yearGradeLevelId },
           },
+          guardians: {
+            connect: student.guardians?.map(id => ({ id })) || []
+          }
         },
       });
-
-      return createdStudent;
     });
-    return newStudent;
   } catch (error) {
-    logger.error(`Error creating student: ${error.message}`);
+    logger.error('Error creating student', { error, studentData: student, yearGradeLevelId });
+
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      // Handle known Prisma errors
       switch (error.code) {
         case 'P2002':
-          throw new Error('A unique constraint violation occurred.');
-        // Add more cases as needed for other error codes
+          throw new ValidationError('A student with this information already exists.', { fields: error.meta?.target as string[] });
+        case 'P2025':
+          throw new ValidationError('The specified grade level or guardian does not exist.', { yearGradeLevelId, guardians: student.guardians });
         default:
-          throw new Error('An unknown error occurred.');
+          throw new DatabaseError('An error occurred while creating the student.', { errorCode: error.code });
       }
     }
-    throw new Error(`Error creating student: ${error.message}`);
+
+    throw new DatabaseError('An unexpected error occurred while creating the student.');
   }
 };
 
-export const deleteStudent = async (studentId: string) => {
-    try {
-        const deletedStudent = await prisma.student.delete({
-            where: {
-                id: studentId,
-            }
-        })
-        return deletedStudent;
-    } catch(error) {
-        throw new Error(`Error deleting student: ${error.message}`);
-    }
-
-}
-export const patchStudentProfile = async (studentId: string, studentUpdates) => {
-    try {
-      const patchedStudent = await prisma.student.update({
-        where: {
-          id: studentId,
-        },
-        data: studentUpdates,
-      });
-      return patchedStudent;
-    } catch (error) {
-      throw new Error(`Error updating student: ${error.message}`);
-    }
-  };
-
-export const patchStudentEnrollmentn = async (
-  studentId: string,
-  schoolId: string,
-  enrollmentUpdates) =>{
+export async function updateStudent(
+  id: string,
+  data:  Omit<StudentPatchInput, 'id'>
+): Promise<Student> {
   try {
-    const patchedStudent = await prisma.student.update({
-      where: {
-        id: studentId,
-        schoolId:schoolId,
-      },
-      data:enrollmentUpdates
+    const updateData: Prisma.StudentUpdateInput = {
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      gender: data.gender,
+      nationality: data.nationality,
+      ssn: data.ssn,
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+      enrollmentStatus: data.enrollmentStatus,
+      birthDate: data.birthDate ? new Date(data.birthDate) : undefined,
+      yearGradeLevel: data.yearGradeLevelId
+        ? { connect: { id: data.yearGradeLevelId } }
+        : undefined,
+      guardians: data.guardians
+        ? { set: data.guardians.map(guardianId => ({ id: guardianId })) }
+        : undefined,
+    };
+    // Remove undefined values
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
     });
-    return patchedStudent;
-    } catch( error ) {
-      throw new Error(`Error updating student: ${error.message}`);
+    const updatedStudent = await prisma.student.update({
+      where: { id },
+      data: updateData,
+      include: {
+        yearGradeLevel: true,
+        guardians: true,
+      },
+    });
+
+    return updatedStudent;
+  } catch (error) {
+    logger.error('Error updating student', { error, studentId: id, updateData: data });
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      switch (error.code) {
+        case 'P2025':
+          throw new ValidationError('Student not found', { studentId: id });
+        case 'P2002':
+          throw new ValidationError('Unique constraint violation', { field: error.meta?.target });
+        case 'P2003':
+          throw new ValidationError('Foreign key constraint violation', { field: error.meta?.field_name });
+        default:
+          throw new DatabaseError('An error occurred while updating the student', { errorCode: error.code });
+      }
     }
+    throw new DatabaseError('An unexpected error occurred while updating the student');
   }
+}

@@ -30,7 +30,7 @@ import { format } from "date-fns"
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { Calendar } from "@/components/ui/calendar"
 import { studentCreateSchema } from "@/lib/validations/student"
-import {studentCreate} from "@/lib/actions/student-actions"
+import {studentCreate as studentCreateAction} from "@/lib/actions/student-actions"
 
 // year grade level
 interface YearGradeLevelWithStudentCount {
@@ -83,12 +83,12 @@ export function StudentAdmissionForm({
   async function onSubmit(data: formData) {
     setIsSaving(true);
     try {
-      const response = await studentCreate(data);
-      if (response.message !== "ok") {
-        console.error(`Error creating student: ${response.message}`);
+      const response = await studentCreateAction(data);
+      if (!response.success) {
+        console.error(`Error creating student: ${response.error?.message}`);
         return toast({
           title: "Something went wrong.",
-          description: `Error: ${response.message}`,
+          description: `Error: ${response.error?.message}`,
           variant: "destructive",
         });
       }
