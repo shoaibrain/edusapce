@@ -124,7 +124,7 @@ export function TenantPatchForm({ tenant: tenant, className, ...props }: TenantP
             disabled={isSaving}
           >
           {isSaving && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              <Icons.spinner className="mr-2 size-4 animate-spin" />
           )}
           <span>Save</span>
           </button>

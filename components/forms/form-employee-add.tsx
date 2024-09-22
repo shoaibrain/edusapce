@@ -53,26 +53,6 @@ export function EmployeeHireForm({
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   async function onSubmit(data: formData) {
     console.log(JSON.stringify(data, null, 2))
-    setIsSaving(true);
-      const res = await fetch(`/api/v1/employees`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-      setIsSaving(false);
-      if (!res.ok) {
-        return toast({
-          title: "Something went wrong.",
-          description: `Failed to create employee: ${res?.statusText}`,
-          variant: "destructive",
-        })
-      }
-      toast({
-        description: "A new employee has been created.",
-      })
-      router.refresh()
   }
 
   return (
@@ -204,7 +184,7 @@ export function EmployeeHireForm({
         disabled={isSaving}
       >
         {isSaving && (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          <Icons.spinner className="mr-2 size-4 animate-spin" />
         )}
         <span>Add New Employee</span>
       </button>

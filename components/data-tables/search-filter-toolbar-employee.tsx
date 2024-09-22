@@ -7,7 +7,7 @@ import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { DataTableFacetedFilter } from "./data-table-faceted-filter"
 import { DataTableViewOptions } from "./data-table-view-options"
-import { student_enrollment_status, departments } from "@/lib/data/data"
+import { departments } from "@/lib/data/data"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -43,7 +43,7 @@ export function EmployeeDataTableToolbar<TData>({
             className="h-8 px-2 lg:px-3"
           >
             Reset
-            <Cross2Icon className="ml-2 h-4 w-4" />
+            <Cross2Icon className="ml-2 size-4" />
           </Button>
         )}
       </div>

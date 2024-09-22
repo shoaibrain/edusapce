@@ -48,26 +48,7 @@ export function EmployeeEditForm({
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
   async function onSubmit(data: FormData) {
-    setIsSaving(true)
-    const response = await fetch(`/api/v1/employees/${employee.id}`,{
-      method : 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
-    setIsSaving(false)
-    if (!response?.ok) {
-      return toast({
-        title: "Something went wrong.",
-        description: `Failed to update employee information.`,
-        variant: "destructive",
-      })
-    }
-    toast({
-      title:"Successfully updated",
-      description: "Information has been updated.",
-    })
+    console.log(JSON.stringify(data));
 
   }
   return (
@@ -180,7 +161,7 @@ export function EmployeeEditForm({
         disabled={isSaving}
       >
         {isSaving && (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          <Icons.spinner className="mr-2 size-4 animate-spin" />
         )}
         <span>Save Changes</span>
         </button>

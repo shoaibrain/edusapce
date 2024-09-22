@@ -37,7 +37,7 @@ async function createClassPeriod(data: ClassPeriodInput) {
 
   return newClassPeriod;
 }
-export const createClassPeriodWithAuth = withAuth(
+export const createClassPeriodForGradeYear = withAuth(
 createClassPeriod,
   [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER]
 );

@@ -6,7 +6,7 @@ export function StudentCard({student}) {
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <div className="h-100 w-100 shrink-0 items-start">
             <Image
-              className="h-40 w-40"
+              className="size-40"
               src="/public/user.jpeg"
               alt="student Image"
               width={80}

@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Icons } from "../icons";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "../ui/button";
-import { createClassPeriodWithAuth } from "@/services/service-academic";
+import { createClassPeriodForGradeYear } from "@/services/service-academic";
 
 
 interface ClassPeriodAddFormProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -50,7 +50,8 @@ export function ClassPeriodAdd({
   async function onSubmit(data: FormData) {
     setIsSaving(true);
     try {
-      const newClassPeriod = await createClassPeriodWithAuth(data);
+      // TODO: Class period is not being added to db
+      const newClassPeriod = await createClassPeriodForGradeYear(data);
       toast({
         title: "Success",
         description: `Class period "${newClassPeriod.name}" has been added.`,
