@@ -51,3 +51,9 @@ export class DatabaseError extends AppError {
 export function isAppError(error: unknown): error is AppError {
   return error instanceof AppError;
 }
+export class NotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'NotFoundError';
+  }
+}

@@ -1,8 +1,12 @@
+import Link from "next/link";
+import { ClassPeriodAdd } from "./forms/form-class-periods-add";
+import { Button } from "./ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
 
 interface YearGradeLevel {
   id: string;
-  name: string;
+  levelName: string;
   description: string | null;
   levelCategory: string;
   levelOrder: number;
@@ -15,13 +19,13 @@ export default function YearGradeLevelCard({ data }: { data: YearGradeLevel }) {
 
   return (
     <div className="relative rounded-lg border border-stone-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
-      {/* <Link
-        href={`school/${data.id}`}
+      <Link
+        href={`academics/year-grade/${data.id}`}
         className="flex flex-col overflow-hidden rounded-lg"
-      > */}
+      >
         <div className="border-t border-stone-200 p-4 dark:border-stone-700">
           <h3 className="font-cal my-0 truncate text-xl font-bold tracking-wide dark:text-white">
-            {data.name}
+            {data.levelName}
           </h3>
           <p className="mt-2 line-clamp-1 text-sm font-normal leading-snug text-stone-500 dark:text-stone-400">
             {`Description: ${data.description}`}
@@ -38,10 +42,11 @@ export default function YearGradeLevelCard({ data }: { data: YearGradeLevel }) {
           <p className="mt-2 line-clamp-1 text-sm font-normal leading-snug text-stone-500 dark:text-stone-400">
             {`Class Room: ${data.classRoom}`}
           </p>
+
         </div>
 
         {/*
-        Note: good to have analytics for schools
+
         <div className="absolute bottom-4 flex w-full justify-between space-x-4 px-4">
         <Link
           href={`school/${data.id}/analytics`}
@@ -52,7 +57,25 @@ export default function YearGradeLevelCard({ data }: { data: YearGradeLevel }) {
         </Link>
       </div> */
       }
-      {/* </Link> */}
+      </Link>
+{/*
+      <div>
+        <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Add Grade Level</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[80vw]  md:max-w-[60vw]">
+                  <DialogHeader>
+                    <DialogTitle>Add New Grade Level</DialogTitle>
+                    <DialogDescription>
+                      Fill out the information for new Grade Level. click Save when done.
+                    </DialogDescription>
+                  </DialogHeader>
+                    <ClassPeriodAdd  gradeLevelId = {data.id}/>
+                </DialogContent>
+        </Dialog>
+        </div> */}
+
     </div>
   );
 }

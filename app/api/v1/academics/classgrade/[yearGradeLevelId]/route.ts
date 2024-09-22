@@ -2,7 +2,7 @@ import { z } from "zod";
 import { gradeLevelPatchSchema } from "@/lib/validations/academics";
 import { patchGradeLevel } from "@/services/service-school";
 import { NextRequest } from "next/server";
-import logger from "@/logger";
+
 
 
 const routeContextSchema = z.object({
@@ -25,7 +25,7 @@ export async function PATCH(
     await handleUpdates(params.id as string, action, json);
     return new Response(null, { status: 200 });
   } catch(error) {
-    logger.warn(`Failed to update school: ${error.message}`)
+    console.log(`Failed to update school: ${error.message}`)
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.message), { status: 422 })
     }
@@ -40,10 +40,10 @@ async function handleUpdates(id: string,
     try{
     if (action === 'grade-patch') { // create grade_level in school
       await handleSchoolGradeLevelPatch(payload.schoolId, payload.grade);
-      logger.info(`Patch applied on ${JSON.stringify(payload)}`);
+      console.log(`Patch applied on ${JSON.stringify(payload)}`);
     }
   } catch(error){
-    logger.warn(`Failed to patch gradeLevel for school ${payload.schoolId}
+    console.log(`Failed to patch gradeLevel for school ${payload.schoolId}
                  with payload data: ${JSON.stringify(payload)}
       `);
   }

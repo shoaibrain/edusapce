@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import logger from "@/logger";
+
 
 export const getEmployees = async () => {
   try {
@@ -33,7 +33,7 @@ export const getEmployeesForSchool =async (schoolId:string) => {
       })
       return employees;
     }catch (error){
-      logger.warn(`failed to read employees for school: ${schoolId}`)
+      console.log(`failed to read employees for school: ${schoolId}`)
     }
 }
 

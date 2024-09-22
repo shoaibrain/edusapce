@@ -119,7 +119,7 @@ export default async function StudentPage({ params }: { params: { id: string } }
           <h3 className="mb-4 text-lg font-bold">Student Academics</h3>
           {classGrade && (
             <>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{`Class Grade: ${classGrade.name}`}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{`Class Grade: ${classGrade.levelName}`}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{`School Level: ${classGrade.levelCategory}`}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{`Class Grade Order: ${classGrade.levelOrder}`}</p>
             </>

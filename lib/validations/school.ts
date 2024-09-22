@@ -35,30 +35,6 @@ export const schoolTermCreateSchema = z.object({
   registrationClose: z.date().optional(),
 })
 
-export const YearGradeLevelCreateSchema = z.object({
-  schoolId:z.string(),
-  name: z.string(),
-  description: z.string().optional(),
-  levelCategory: z.string(),
-  levelOrder: z.number(),
-  capacity: z.number().optional(),
-  classRoom: z.string().optional(),
-  schoolYearId: z.string().optional(),
-})
-
-
-export const ClassPeriodCreateSchema = z.object({
-  name: z.string(),
-  classType: z.string().optional(),
-  capacity: z.number().optional(),
-  department: z.string(),
-  description: z.string().optional(),
-  startTime: z.date(),
-  endTime: z.date(),
-  gradeLevelId: z.string().optional(),
-  subjectId: z.string().optional(),
-})
-
 export const employeeSalaryCreateSchema = z.object({
   salaryType: z.string(),
   amount: z.number(),

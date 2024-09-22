@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { studentCreateSchema, studentPatchSchema } from "../validations/student";
 import {  Role } from "@prisma/client";
 import { z } from "zod";
-import logger from "@/logger";
+
 import { DatabaseError } from "../error";
 import { handleActionError, withAuth } from "../withAuth";
 import { getStudent, getStudentsForSchoolOld, postStudent, updateStudent } from "@/services/service-student";
@@ -20,7 +20,7 @@ const studentCreateAction = async (formData: StudentCreateInput) => {
     revalidatePath("/student");
     return { success: true, data: createdStudent };
   } catch (error) {
-    logger.error('Error in studentCreate:', { error });
+    console.log('Error in studentCreate:', { error });
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -63,7 +63,7 @@ const studentPatchAction = async (formData: StudentPatchInput) => {
     return { success: true, data: updatedStudent };
   } catch (error) {
     console.log(JSON.stringify(error));
-    logger.error('Error in studentPatch:', { error });
+    console.log('Error in studentPatch:', { error });
 
     if (error instanceof z.ZodError) {
       return {

@@ -2,14 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import prisma from "../db";
-import {  Role, YearGradeLevel } from "@prisma/client";
-import { YearGradeLevelCreateSchema } from "../validations/academics";
+import {  Prisma, Role, YearGradeLevel } from "@prisma/client";
 import { SchoolCreateInput, schoolCreateSchema } from "../validations/school";
-import { postSchool } from "@/services/service-school";
+import {  addGradeLevels as addGradeLevel, postSchool } from "@/services/service-school";
 
 import { withAuth, handleActionError } from "../withAuth";
-import logger from "@/logger";
-import { ValidationError } from "../error";
+
+import { DatabaseError, ValidationError } from "../error";
+import { z } from "zod";
+import { YearGradeLevelCreateInput, YearGradeLevelCreateSchema } from "../validations/academics";
 
 export interface SchoolOverview {
   student_count: string,
@@ -28,52 +29,41 @@ export interface StudentMetrics {
 }
 
 
-export async function yearGradeLevelCreate(
-  formData: any
-): Promise<{ message: string; createdYearGradeLevel?: YearGradeLevel }> {
-  try {
-    const createData = YearGradeLevelCreateSchema.safeParse(formData);
-    if (!createData.success) {
-      throw new Error("Invalid create data");
-    }
-    const {
-      schoolId,
-      name,
-      description,
-      levelCategory,
-      levelOrder,
-      capacity,
-      classRoom,
-    } = createData.data;
 
-    const createdYearGradeLevel = await prisma.yearGradeLevel.create({
-      data: {
-        schoolId,
-        name,
-        description,
-        levelCategory,
-        levelOrder,
-        capacity,
-        classRoom,
-      },
-    });
-    // Associate the newly created YearGradeLevel with the School
-    await prisma.school.update({
-      where: { id: schoolId },
-      data: {
-        yearGradeLevels: {
-          connect: { id: createdYearGradeLevel.id },
-        },
-      },
-    });
+
+export const yearGradeLevelCreate = withAuth(async (formData: YearGradeLevelCreateInput) => {
+  try {
+
+    const validatedData = YearGradeLevelCreateSchema.parse(formData);
+
+    const { schoolId, ...gradeLevelData } = validatedData;
+
+    const createdGradeLevel = await addGradeLevel(schoolId, gradeLevelData);
+
     revalidatePath("/school");
-    return { message: "ok", createdYearGradeLevel };
+
+
+    return {
+      success: true,
+      message: "Grade level created successfully",
+      data: createdGradeLevel
+    };
   } catch (error) {
-    console.error(error);
-    console.log(`Error while creating YearGradeLevel. Error:${error.message}`)
-    return { message: "Failed to create new grade level." };
+    console.error("Error creating YearGradeLevel", error);
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        message: "Validation failed",
+        errors: error.errors,
+      };
+    }
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "An unexpected error occurred",
+    };
   }
-}
+}, ["ADMIN", "PRINCIPAL"]);
+
 
 
 export async function getSchoolOverviewData(
@@ -162,7 +152,7 @@ export async function getSchoolAcademicDetails(
       },
       select: {
         id: true,
-        name: true,
+        levelName: true,
         description: true,
         levelCategory: true,
         levelOrder: true,
@@ -202,10 +192,10 @@ const schoolCreateAction = async (
     }
     const createdSchool = await postSchool(parseResult.data);
     revalidatePath("/school");
-    logger.info('School created successfully', { schoolId: createdSchool.id });
+    console.log('School created successfully', { schoolId: createdSchool.id });
     return { success: true, data: createdSchool };
   } catch (error) {
-    logger.error('Error in schoolCreate:', { error });
+    console.log('Error in schoolCreate:', { error });
     return handleActionError(error);
   }
 };

@@ -35,7 +35,7 @@ import {studentCreate as studentCreateAction} from "@/lib/actions/student-action
 // year grade level
 interface YearGradeLevelWithStudentCount {
   id: string;
-  name: string;
+  levelName: string;
   description: string | null;
   levelCategory: string;
   levelOrder: number;
@@ -311,7 +311,7 @@ export function StudentAdmissionForm({
                             <SelectContent>
                               {classGrades.map((level) => (
                                 <SelectItem key={level.id} value={level.id}>
-                                  {level.name}
+                                  {level.levelName}
                                 </SelectItem>
                               ))}
                             </SelectContent>

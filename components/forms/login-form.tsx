@@ -23,7 +23,7 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
   const router = useRouter()
   const { register, handleSubmit, formState: { errors }} = useForm<FormData>({resolver: zodResolver(userAuthSchema),})
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const searchParams = useSearchParams()
+
   async function loginUser(data: FormData) {
     setIsLoading(true);
     try {

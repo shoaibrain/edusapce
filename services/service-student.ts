@@ -1,8 +1,7 @@
 import prisma from "@/lib/db"
-import { DatabaseError, ValidationError } from "@/lib/error";
+import { DatabaseError, NotFoundError, ValidationError } from "@/lib/error";
 import { studentCreateSchema, StudentPatchInput } from "@/lib/validations/student";
 
-import logger from "@/logger";
 import { Prisma, Student } from '@prisma/client';
 import { z } from "zod";
 
@@ -44,12 +43,21 @@ export const getStudentsForSchoolOld = async(schoolId: string) => {
       return null;
     }
   } catch (error){
-    logger.warn(`failed to read students for school: ${schoolId}`)
+    console.log(`failed to read students for school: ${schoolId}`)
   }
 }
 
+type StudentWithGradeInfo = Student & {
+  yearGradeLevel: {
+    levelName: string;
+    levelCategory: string;
+    levelOrder: number;
+  } | null;
+  guardians: Prisma.GuardianGetPayload<{}>[];
+};
 
-export async function getStudent(studentId: string): Promise<Student | null> {
+
+export async function getStudent(studentId: string): Promise<StudentWithGradeInfo> {
   try {
     const student = await prisma.student.findUnique({
       where: { id: studentId },
@@ -65,17 +73,45 @@ export async function getStudent(studentId: string): Promise<Student | null> {
       }
     });
 
-    if (!student) return null;
-    // why are we doing this?
+    if (!student) {
+      throw new NotFoundError(`Student with ID ${studentId} not found`);
+    }
+
     return {
       ...student,
-      levelName: student.yearGradeLevel?.levelName ?? 'Not Assigned',
-      levelCategory: student.yearGradeLevel?.levelCategory ?? 'Not Assigned'
+      yearGradeLevel: student.yearGradeLevel
+        ? {
+            levelName: student.yearGradeLevel.levelName,
+            levelCategory: student.yearGradeLevel.levelCategory,
+            levelOrder: student.yearGradeLevel.levelOrder,
+          }
+        : null,
     };
 
   } catch (error) {
-    console.error('Error fetching student by ID:', error);
-    throw new Error('Failed to fetch student');
+    if (error instanceof NotFoundError) {
+      console.log(error.message, { studentId });
+      throw error; // Re-throw NotFoundError as it's already handled
+    }
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      // Handle specific Prisma errors
+      switch (error.code) {
+        case 'P2002':
+          console.log('Unique constraint violation when fetching student', { studentId, error });
+          throw new DatabaseError('Database constraint violation', { cause: error });
+        case 'P2025':
+          console.log('Record not found in the database', { studentId, error });
+          throw new NotFoundError(`Student with ID ${studentId} not found`);
+        default:
+          console.log('Prisma error when fetching student', { studentId, errorCode: error.code, error });
+          throw new DatabaseError('Database error occurred', { cause: error });
+      }
+    }
+
+    // For unexpected errors
+    console.log('Unexpected error when fetching student', { studentId, error });
+    throw new DatabaseError('An unexpected error occurred while fetching the student', { cause: error });
   }
 }
 
@@ -90,7 +126,8 @@ export async function getStudentsForSchool(schoolId: string) {
         enrollmentStatus: true,
         yearGradeLevel: {
           select: {
-            levelName: true
+            levelName: true,
+            levelOrder: true,
           }
         }
       },
@@ -133,7 +170,7 @@ export const postStudent = async (
       });
     });
   } catch (error) {
-    logger.error('Error creating student', { error, studentData: student, yearGradeLevelId });
+    console.log('Error creating student', { error, studentData: student, yearGradeLevelId });
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       switch (error.code) {
@@ -191,7 +228,7 @@ export async function updateStudent(
 
     return updatedStudent;
   } catch (error) {
-    logger.error('Error updating student', { error, studentId: id, updateData: data });
+    console.log('Error updating student', { error, studentId: id, updateData: data });
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       switch (error.code) {
         case 'P2025':

@@ -1,3 +1,4 @@
+//@ts-nocheck
 "use client"
 import { YearGradeLevelCreateSchema } from "@/lib/validations/academics";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +23,7 @@ import { yearGradeLevelCreate } from "@/lib/actions/school-actions";
 
 interface GradeLevel {
   id: string;
-  name: string;
+  levelName: string;
   description: string | null;
   levelCategory: string;
   levelOrder: number;
@@ -48,7 +49,7 @@ export function GradeLevelAddForm({
     mode: "onChange",
     defaultValues: {
       schoolId: schoolId,
-      name: undefined,
+      levelName: undefined,
       description:undefined,
       levelCategory:undefined,
       levelOrder: undefined,
@@ -60,9 +61,10 @@ export function GradeLevelAddForm({
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   async function onSubmit(data: formData) {
 
+    // dont allow duplicate levelOrder in same school
     const hasDuplicate = yearGradeLevels.some(
-      ({ name, levelOrder, classRoom }) =>
-        name === data.name || levelOrder === data.levelOrder || classRoom === data.classRoom
+      ({ levelName, levelOrder, classRoom }) =>
+        levelName === data.levelName || levelOrder === data.levelOrder || classRoom === data.classRoom
     );
     if (hasDuplicate) {
       toast({
@@ -75,6 +77,9 @@ export function GradeLevelAddForm({
 
   setIsSaving(true);
   try {
+
+
+
     const response = await yearGradeLevelCreate(data);
     if(response.message === "ok") {
       toast({
@@ -102,7 +107,7 @@ export function GradeLevelAddForm({
           <div className="sm:col-span-3">
             <FormField
               control={form.control}
-              name="name"
+              name="levelName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Grade Level Name</FormLabel>

@@ -25,7 +25,11 @@ export default function DashboardSideNav(  ) {
   const { id } = useParams() as { id?: string }; // school id
 
   const tabs = useMemo(() => {
-    if (segments[0] === "school" && id) {
+
+    const firstSegment = segments?.[0] ?? "";
+    const thirdSegment = segments?.[2] ?? "";
+
+    if (firstSegment === "school" && id) {
       return [
         {
           name: "Dashboard",
@@ -35,41 +39,41 @@ export default function DashboardSideNav(  ) {
         {
           name: "Academics",
           href: `/school/${id}/academics`,
-          isActive: segments.includes("academics"),
+          isActive: segments?.includes("academics"),
           icon: <GraduationCap width={18} />,
         },
         {
           name: "Students",
           href: `/school/${id}/students`,
-          isActive: segments.includes("students"),
+          isActive: segments?.includes("students"),
           icon: <Contact width={18} />,
         },
         {
           name: "Employees",
           href: `/school/${id}/employees`,
-          isActive: segments.includes("employees"),
+          isActive: segments?.includes("employees"),
           icon: <User width={18} />,
         },
         {
           name: "Guardians",
           href: `/school/${id}/guardians`,
-          isActive: segments.includes("guardians"),
+          isActive: segments?.includes("guardians"),
           icon: <User width={18} />,
         },
         {
           name: "Analytics & Reports",
           href: `/school/${id}/analytics`,
-          isActive: segments.includes("analytics"),
+          isActive: segments?.includes("analytics"),
           icon: <BarChart3 width={18} />,
         },
         {
           name: "Settings",
           href: `/school/${id}/settings`,
-          isActive: segments.includes("settings"),
+          isActive: segments?.includes("settings"),
           icon: <Settings width={18} />,
         },
       ];
-    } else if (segments[2] == "admission" && id) {
+    } else if (thirdSegment == "admission" && id) {
       return [
         {
           name: "Back to Students",
@@ -77,7 +81,7 @@ export default function DashboardSideNav(  ) {
           icon: <ArrowLeft width={18} />,
         },
       ];
-    } else if (segments[0] == "student" && id) {
+    } else if (firstSegment == "student" && id) {
       return [
         {
           name: "Academics",
@@ -95,13 +99,13 @@ export default function DashboardSideNav(  ) {
       {
         name: "Dashboard",
         href: "/dashboard",
-        isActive: segments.length === 0,
+        isActive: segments?.length === 0,
         icon: <LayoutDashboard width={18} />,
       },
       {
         name: "Settings",
         href: "/settings",
-        isActive: segments[0] === "settings",
+        isActive: firstSegment === "settings",
         icon: <Settings width={18} />,
       },
     ];

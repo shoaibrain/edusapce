@@ -1,5 +1,4 @@
 import {
-  addGradeLevels,
   deleteSchool,
   getGradeLevelsForSchool,
   getSchool,
@@ -7,12 +6,11 @@ import {
 } from "@/services/service-school";
 import { z } from "zod";
 import { NextRequest } from "next/server";
-import {
-  YearGradeLevelCreateSchema,
-} from "@/lib/validations/school";
+
 import { getStudentsForSchoolOld } from "@/services/service-student";
 import { getEmployeesForSchool } from "@/services/service-employee";
-import logger from "@/logger";
+
+import { YearGradeLevelCreateSchema } from "@/lib/validations/academics";
 
 const routeContextSchema = z.object({
     params: z.object({
@@ -32,12 +30,12 @@ export async function GET(
     const response = await handleRead(params.schoolId, schoolResource);
 
     if (!response) {
-      logger.info(`No response found for id ${params.schoolId}`)
+      console.log(`No response found for id ${params.schoolId}`)
       return new Response(JSON.stringify("Not Found"), { status: 404 });
     }
     return new Response(JSON.stringify(response), { status: 200 });
   } catch(error) {
-    logger.warn(`Failed to get response: ${error.message}`)
+    console.log(`Failed to get response: ${error.message}`)
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }
@@ -84,7 +82,7 @@ export async function PATCH(
     await handlePatch(params.schoolId as string, action, json);
     return new Response(null, { status: 200 });
   } catch(error) {
-    logger.warn(`Failed to update school: ${error.message}`)
+    console.log(`Failed to update school: ${error.message}`)
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.message), { status: 422 })
     }
@@ -109,7 +107,7 @@ async function handlePatch(schoolId: string,
 
 async function handleSchoolGradeLevelAdd(schoolId: string, data: any) {
   const gradeLevelAddData = YearGradeLevelCreateSchema.parse(data.grade)
-  await addGradeLevels(schoolId, gradeLevelAddData);
+  // await addGradeLevels(schoolId, gradeLevelAddData);
 }
 
 async function handleSchoolProfilePatch(schoolId: string, data: any) {
@@ -125,12 +123,12 @@ export async function DELETE(
 ) {
   try {
     const { params } = routeContextSchema.parse(context);
-    logger.info(`Deleting school ${params.schoolId}`)
+    console.log(`Deleting school ${params.schoolId}`)
     await deleteSchool(params.schoolId as string);
     return new Response(null, { status: 204, statusText: "School deleted" })
   } catch(error) {
     if (error instanceof z.ZodError) {
-      logger.warn(`Failed to delete school: ${error.message}`)
+      console.log(`Failed to delete school: ${error.message}`)
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }
     return new Response(null, { status: 500 })

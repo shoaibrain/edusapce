@@ -2,12 +2,11 @@ import prisma from "@/lib/db"
 import { DatabaseError } from "@/lib/error";
 import { SchoolCreateInput } from "@/lib/validations/school";
 import { withAuth } from "@/lib/withAuth";
-import logger from "@/logger";
 import { Role, YearGradeLevel } from "@prisma/client";
 
 type YearGradeLevelWithStudentCount = {
   id: string;
-  name: string;
+  levelName: string;
   description: string | null;
   levelCategory: string;
   levelOrder: number;
@@ -39,11 +38,11 @@ export const addGradeLevels = async (
         },
       },
     });
-    logger.info(`Grade Level added for school ${schoolId}`)
+    console.log(`Grade Level added for school ${schoolId}`)
     return createdGradeLevel;
   } catch (error) {
     // Handle errors appropriately
-    logger.warn(`Failed to add grade levels: ${error.message} for school : ${schoolId}`);
+    console.log(`Failed to add grade levels: ${error.message} for school : ${schoolId}`);
     throw new Error('Failed to add grade levels');
   }
 };
@@ -59,7 +58,7 @@ const YearGradeLevelWithStudentCount = async (
       where: { schoolId },
       select: {
         id: true,
-        name: true,
+        levelName: true,
         description: true,
         levelCategory: true,
         levelOrder: true,
@@ -74,7 +73,7 @@ const YearGradeLevelWithStudentCount = async (
       studentCount: gradeLevel._count.students,
     }));
   } catch (error) {
-    logger.error(`Error retrieving grade levels: ${error.message}`, { schoolId, error });
+    console.log(`Error retrieving grade levels: ${error.message}`, { schoolId, error });
     throw new DatabaseError(`Failed to get grade levels`, { schoolId });
   }
 };
@@ -91,9 +90,9 @@ export const patchGradeLevel = async (
 
   try{
 
-        logger.info(`Successfully patched grade level for school ${schoolId}`);
+    console.log(`Successfully patched grade level for school ${schoolId}`);
   } catch(error) {
-    logger.warn(`Failed to patch grade levels: ${error.message}`);
+    console.log(`Failed to patch grade levels: ${error.message}`);
     throw new Error('Failed to add grade levels');
   }
 }
@@ -106,9 +105,9 @@ export const addStudentsToGradeLevel = async (
   try {
     console.log(`schoolId: ${schoolId}`)
 
-    logger.info(`Successfully added students to grade level for school ${schoolId}`);
+    console.log(`Successfully added students to grade level for school ${schoolId}`);
   } catch (error) {
-    logger.error(`Error adding students to grade level: ${error.message}`);
+    console.log(`Error adding students to grade level: ${error.message}`);
     throw new Error("Failed to add students to grade level");
   }
 };

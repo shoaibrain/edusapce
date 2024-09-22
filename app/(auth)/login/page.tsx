@@ -3,12 +3,19 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
-import { Metadata } from "next"
+import { Metadata, Viewport } from "next"
 import { UserLoginForm } from "@/components/forms/login-form"
 
 export const metadata: Metadata = {
   title: "Login",
   description: "Login to your account",
+}
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" }
+  ]
 }
 
 export default function LoginPage() {
@@ -33,10 +40,12 @@ export default function LoginPage() {
             Welcome back
           </h1>
           <p className="text-sm text-muted-foreground">
-            Enter your credential to sign in to your account
+            Enter your credentials to sign in to your account
           </p>
         </div>
-        <UserLoginForm />
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <UserLoginForm />
+        </React.Suspense>
         <p className="px-8 text-center text-sm text-muted-foreground">
           <Link
             href="/register"

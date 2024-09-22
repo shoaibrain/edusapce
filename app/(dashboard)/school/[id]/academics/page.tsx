@@ -71,7 +71,9 @@ const yearGradeLevels =  await getGradeLevelsForSchool(params.id);
                 {yearGradeLevels.map((gradeLevel) => (
                   <YearGradeLevelCard key={gradeLevel.id} data={gradeLevel} />
                 ))}
+
               </div>
+
           ) :(
             <div className="mt-20 flex flex-col items-center space-x-4">
             <h1 className="font-cal text-4xl">No Academic Grade Level found</h1>
