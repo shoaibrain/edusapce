@@ -84,6 +84,7 @@ model School {
   imageBlurhash   String?
   createdAt       DateTime         @default(now()) @map("created_at")
   updatedAt       DateTime         @default(now()) @map("updated_at")
+  departments     Department[]
   yearGradeLevels YearGradeLevel[]
   tenant          Tenant           @relation(fields: [tenantId], references: [id])
 
@@ -138,16 +139,31 @@ model ClassPeriod {
   subjectId    String?
   name         String
   classType    String?
-  department   String
   description  String?
   startTime    DateTime
   endTime      DateTime
   createdAt    DateTime        @default(now()) @map("created_at")
   updatedAt    DateTime        @default(now()) @map("updated_at")
+  instructorId String?
+  departmentId String?
+  department   Department?     @relation(fields: [departmentId], references: [id])
   gradeLevel   YearGradeLevel? @relation(fields: [gradeLevelId], references: [id])
+  instructor   Employee?       @relation(fields: [instructorId], references: [id])
   subject      Subject?        @relation(fields: [subjectId], references: [id])
 
   @@map("class_periods")
+}
+
+model Department {
+  id           String        @id @default(cuid())
+  schoolId     String
+  name         String
+  classPeriods ClassPeriod[]
+  school       School        @relation(fields: [schoolId], references: [id])
+  teachers     Employee[]
+
+  @@unique([schoolId, name])
+  @@map("departments")
 }
 
 model SchoolYear {
@@ -174,22 +190,24 @@ model SchoolTerm {
 }
 
 model Employee {
-  id         String    @id @default(cuid())
-  tenantId   String
-  schoolId   String
-  firstName  String
-  middleName String?
-  lastName   String
-  phone      String
-  email      String?   @unique
-  address    String
-  role       Role      @default(STAFF)
-  birthDate  DateTime?
-  gender     String?
-  ssn        String?
-  department String?
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @default(now()) @map("updated_at")
+  id           String        @id @default(cuid())
+  tenantId     String
+  schoolId     String
+  firstName    String
+  middleName   String?
+  lastName     String
+  phone        String
+  email        String?       @unique
+  address      String
+  role         Role          @default(STAFF)
+  birthDate    DateTime?
+  gender       String?
+  ssn          String?
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @default(now()) @map("updated_at")
+  departmentId String?
+  classPeriods ClassPeriod[]
+  department   Department?   @relation(fields: [departmentId], references: [id])
 
   @@map("employees")
 }
@@ -201,10 +219,8 @@ model Subject {
   textbookName String?
   textbookUrl  String?
   description  String?
-  department   String?
   ClassPeriod  ClassPeriod[]
 
-  @@index([subjectName, department])
   @@map("subjects")
 }
 

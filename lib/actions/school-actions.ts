@@ -2,13 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import prisma from "../db";
-import {  Prisma, Role, YearGradeLevel } from "@prisma/client";
-import { SchoolCreateInput, schoolCreateSchema } from "../validations/school";
-import {  addGradeLevels as addGradeLevel, postSchool } from "@/services/service-school";
+import {  Role } from "@prisma/client";
+import { DepartmentCreateInput, departmentCreateSchema, SchoolCreateInput, schoolCreateSchema } from "../validations/school";
+import {  addGradeLevels as addGradeLevel, addNewSchoolDepartments, postSchool } from "@/services/service-school";
 
 import { withAuth, handleActionError } from "../withAuth";
 
-import { DatabaseError, ValidationError } from "../error";
+import {  ValidationError } from "../error";
 import { z } from "zod";
 import { YearGradeLevelCreateInput, YearGradeLevelCreateSchema } from "../validations/academics";
 
@@ -27,21 +27,13 @@ export interface StudentMetrics {
   absenteeRate?: number;
   suspensionRate?: number;
 }
-
-
-
-
 export const yearGradeLevelCreate = withAuth(async (formData: YearGradeLevelCreateInput) => {
   try {
 
     const validatedData = YearGradeLevelCreateSchema.parse(formData);
-
     const { schoolId, ...gradeLevelData } = validatedData;
-
     const createdGradeLevel = await addGradeLevel(schoolId, gradeLevelData);
-
     revalidatePath("/school");
-
 
     return {
       success: true,
@@ -62,9 +54,34 @@ export const yearGradeLevelCreate = withAuth(async (formData: YearGradeLevelCrea
       message: error instanceof Error ? error.message : "An unexpected error occurred",
     };
   }
-}, ["ADMIN", "PRINCIPAL"]);
+}, [Role.ADMIN, Role.PRINCIPAL]);
 
-
+export const schoolDepartmentCreate = withAuth(async (data: DepartmentCreateInput) => {
+  try{
+    const validatedData = departmentCreateSchema.parse(data);
+    const { schoolId, departments } = validatedData;
+    const createdDepartment = await addNewSchoolDepartments(schoolId, departments);
+    revalidatePath("/school");
+    return {
+      success: true,
+      message: "School Department created successfully",
+      data: createdDepartment
+    };
+  } catch (error) {
+      console.error("Error creating Department", error);
+      if (error instanceof z.ZodError) {
+        return {
+          success: false,
+          message: "Validation failed",
+          errors: error.errors,
+        };
+      }
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "An unexpected error occurred",
+      };
+  }
+},[Role.ADMIN, Role.PRINCIPAL]);
 
 export async function getSchoolOverviewData(
   schoolId: string
@@ -167,6 +184,7 @@ export async function getSchoolAcademicDetails(
     return { message: 'Failed to retrieve school academic data' };
   }
 }
+
 interface SchoolAcademics {
   id: string,
   name: string,
@@ -176,7 +194,6 @@ interface SchoolAcademics {
   capacity: number,
   classRoom: string,
 }
-
 
 const schoolCreateAction = async (
   formData: SchoolCreateInput
@@ -199,5 +216,4 @@ const schoolCreateAction = async (
     return handleActionError(error);
   }
 };
-
 export const schoolCreate = withAuth(schoolCreateAction, [Role.ADMIN, Role.PRINCIPAL]);

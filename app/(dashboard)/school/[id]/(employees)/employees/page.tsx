@@ -105,7 +105,7 @@ export default async function EmployeesPage(
         </div>
         <div className="container mx-auto  py-10">
           <div className="pb-8">
-          <Link href={`/school/${schoolId}/register`} className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
+          <Link href={`/school/${schoolId}/employee-registration`} className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
               Add New Employee
           </Link>
           </div>

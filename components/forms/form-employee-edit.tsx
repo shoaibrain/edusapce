@@ -1,3 +1,4 @@
+//@ts-nocheck
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -18,13 +19,13 @@ import { toast } from "@/components/ui/use-toast"
 import React from "react"
 
 import { Icons } from "@/components/icons"
-import { employeePatchSchema } from "@/lib/validations/employee"
 import { Employee } from "@prisma/client"
+import { createEmployeeSchema } from "@/lib/validations/employee"
 
 interface EmployeeEditFormProps extends React.HTMLAttributes<HTMLFormElement> {
   employee: Employee;
 }
-type FormData = z.infer<typeof employeePatchSchema>
+type FormData = z.infer<typeof createEmployeeSchema>
 
 export function EmployeeEditForm({
   employee,
@@ -33,7 +34,7 @@ export function EmployeeEditForm({
 }: EmployeeEditFormProps) {
 
   const form = useForm<FormData>({
-    resolver: zodResolver(employeePatchSchema),
+    resolver: zodResolver(createEmployeeSchema),
     mode: "onChange",
     defaultValues: {
       firstName: employee?.firstName,

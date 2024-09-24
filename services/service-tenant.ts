@@ -60,3 +60,24 @@ export const patchTenant = async (tenantId: string, payload: any) => {
     throw new Error(`Error updating tenant: ${error.message}`);
   }
 }
+
+export const getTenantForSchool = async (schoolId: string) => {
+  try {
+    const result = await prisma.school.findUnique({
+      where: {
+        id: schoolId,
+      },
+      select: {
+        tenant: true,
+      },
+    });
+
+    if (!result) {
+      throw new Error(`School with ID ${schoolId} not found`);
+    }
+    return result.tenant;
+  } catch (error) {
+    console.error("Error fetching tenant for school", error);
+    throw new Error(`Failed to fetch tenant for school: ${error.message}`);
+  }
+};

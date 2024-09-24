@@ -1,3 +1,10 @@
+"use server"
+import { revalidatePath } from "next/cache";
+import { createEmployeeSchema, EmployeeCreateInput, EmployeePatchInput, patchEmployeeSchema } from "../validations/employee";
+import { withAuth } from "../withAuth";
+import { z } from "zod";
+import { createEmployee, updateEmployee } from "@/services/service-school";
+
 export async function getEmployeeMetricsForSchool(
   schoolId: string
 ): Promise<{ message: string; employeeMetrics?: EmployeeMetrics }> {
@@ -13,7 +20,6 @@ export async function getEmployeeMetricsForSchool(
       employeeSatisfactionScore:parseFloat((Math.random() * 100).toFixed(2)), // Score out of 5 (replace with actual scale)
       studentToTeacherRatio: parseFloat((Math.random() * 100).toFixed(2)), // Ratio of students to teachers
     };
-
     return { message: 'School employee overview retrieved successfully', employeeMetrics };
   } catch (error) {
     console.error('Error fetching school employee overview data:', error);
@@ -31,3 +37,62 @@ interface EmployeeMetrics {
   employeeSatisfactionScore: number;
   studentToTeacherRatio: number;
 }
+
+//##########//
+
+export const EmployeeCreate = withAuth(async (formData:EmployeeCreateInput) => {
+  try {
+    const validatedData = createEmployeeSchema.parse(formData);
+    const{tenantId, schoolId, ...employeeData} = validatedData;
+    const createdEmployee = await createEmployee(tenantId, schoolId, employeeData);
+    revalidatePath("/employees");
+    return {
+      success: true,
+      message: "Employee created successfully",
+      data: createdEmployee
+    };
+  } catch(error){
+    console.error("Error creating Employee", error);
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        message: "Validation failed",
+        errors: error.errors,
+      };
+    }
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "An unexpected error occurred",
+    };
+  }
+},["ADMIN", "PRINCIPAL"]);
+
+export const EmployeeUpdate = withAuth(async (formData: EmployeePatchInput) => {
+  try {
+    const validatedData = patchEmployeeSchema.parse(formData);
+    const { employeeId, ...updateData } = validatedData;
+    if (!employeeId) {
+      throw new Error("Employee ID is required for updating");
+    }
+    const updatedEmployee = await updateEmployee(employeeId, updateData);
+    revalidatePath(`/employees/${employeeId}`);
+    return {
+      success: true,
+      message: "Employee updated successfully",
+      data: updatedEmployee,
+    };
+  } catch (error) {
+    console.error("Error updating Employee", error);
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        message: "Validation failed",
+        errors: error.errors,
+      };
+    }
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "An unexpected error occurred",
+    };
+  }
+}, ["ADMIN", "PRINCIPAL", "TEACHER", "STAFF"]);

@@ -11,11 +11,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Icons } from "../icons";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "../ui/button";
-import { createClassPeriodForGradeYear } from "@/services/service-academic";
+import { classPeriodCreate } from "@/lib/actions/academic-actions";
+import { DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
+interface department {
+  id: string,
+  name: string
+}
 
 interface ClassPeriodAddFormProps extends React.HTMLAttributes<HTMLFormElement> {
   gradeLevelId: string;
+  existingDepartments?: department[];
 }
 
 type FormData = z.infer<typeof ClassPeriodCreateSchema>
@@ -28,6 +34,7 @@ const classPeriodTypes = [
 
 export function ClassPeriodAdd({
   gradeLevelId,
+  existingDepartments: existingDepartments = [],
   className,
   ...props
 }: ClassPeriodAddFormProps) {
@@ -36,9 +43,9 @@ export function ClassPeriodAdd({
     mode: 'onChange',
     defaultValues: {
       gradeLevelId: gradeLevelId,
+      departmentId: undefined,
       name: "",
       classType: undefined,
-      department: "",
       description: undefined,
       startTime: "",
       endTime: "",
@@ -50,16 +57,16 @@ export function ClassPeriodAdd({
   async function onSubmit(data: FormData) {
     setIsSaving(true);
     try {
-      // TODO: Class period is not being added to db
-      const newClassPeriod = await createClassPeriodForGradeYear(data);
-      toast({
-        title: "Success",
-        description: `Class period "${newClassPeriod.name}" has been added.`,
-        variant: "default",
-      });
-      form.reset();
+      const newClassPeriod = await classPeriodCreate(data);
+      if (newClassPeriod.success) {
+        toast({
+          title: "Success",
+          description: newClassPeriod.message,
+          variant: "default",
+        });
+        form.reset();
+      }
     } catch(error) {
-      console.error('Error creating Class period.', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to add Class period.",
@@ -71,131 +78,146 @@ export function ClassPeriodAdd({
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-      <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          <div className="sm:col-span-3">
+    <DialogContent className="sm:max-w-[80vw]  md:max-w-[60vw]">
+      <DialogHeader>
+        <DialogTitle>Add New Class Period</DialogTitle>
+      </DialogHeader>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name *</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div  className="sm:col-span-3">
             <FormField
               control={form.control}
-              name="name"
+              name="classType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name *</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+                  <FormLabel>Class Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select class period type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {classPeriodTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </div>
-          <div  className="sm:col-span-3">
-          <FormField
-            control={form.control}
-            name="classType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Class Type</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select class period type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {classPeriodTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          </div>
-          <div className="sm:col-span-2">
-            <FormField
-              control={form.control}
-              name="department"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Department *</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+            </div>
+            <div className="sm:col-span-3">
+              {existingDepartments && existingDepartments.length > 0 && (
+                <FormField
+                control={form.control}
+                name="departmentId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Department *</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="select academic department for this class period" />
+                          </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        { existingDepartments.map((department) => (
+                          <SelectItem key={department.id} value={department.id}>
+                          {department.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               )}
-            />
+            </div>
+            <div  className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Class Period description</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="startTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Start Time *</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="time" // HTML5 time input for HH:MM format
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="endTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>End Time *</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="time" // HTML5 time input for HH:MM format
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
           </div>
-          <div  className="sm:col-span-3">
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Class Period description</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
-          <div className="sm:col-span-3">
-            <FormField
-              control={form.control}
-              name="startTime"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Start Time *</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="time" // HTML5 time input for HH:MM format
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+          <button
+              type="submit"
+              className={cn(buttonVariants(), className)}
+              disabled={isSaving}
+            >
+              {isSaving && (
+                <Icons.spinner className="mr-2 size-4 animate-spin" />
               )}
-            />
-          </div>
-          <div className="sm:col-span-3">
-            <FormField
-              control={form.control}
-              name="endTime"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>End Time *</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="time" // HTML5 time input for HH:MM format
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-         </div>
-        </div>
-        <button
-            type="submit"
-            className={cn(buttonVariants(), className)}
-            disabled={isSaving}
-          >
-            {isSaving && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            <span>Save</span>
-          </button>
-      </form>
-    </Form>
+              <span>Save</span>
+            </button>
+        </form>
+      </Form>
+    </DialogContent>
   )
-
-
-
 }

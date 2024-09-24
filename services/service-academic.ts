@@ -1,10 +1,8 @@
 import prisma from "@/lib/db";
 import { DatabaseError } from "@/lib/error";
-import { ClassPeriodCreateSchema } from "@/lib/validations/academics";
+import { ClassPeriodCreateInput } from "@/lib/validations/academics";
 import { withAuth } from "@/lib/withAuth";
-import { Role } from "@prisma/client";
-import { z } from "zod";
-
+import { ClassPeriod, Role } from "@prisma/client";
 
 export const postYearGradeLevel = async (data:any) =>{
   try {
@@ -17,30 +15,35 @@ export const postYearGradeLevel = async (data:any) =>{
   }
 }
 
+export const createClassPeriod = async (
+  gradeLevelId: string,
+  departmentId: string,
+  classPeriodData: Omit<ClassPeriodCreateInput, 'gradeLevelId' | 'departmentId'>
+): Promise<ClassPeriod> => {
+  try {
+    // Convert HH:mm strings to Date objects
+    const startTime = new Date(`1970-01-01T${classPeriodData.startTime}:00`);
+    const endTime = new Date(`1970-01-01T${classPeriodData.endTime}:00`);
 
-type ClassPeriodInput = z.infer<typeof ClassPeriodCreateSchema>;
+    // Create a new ClassPeriod in the database
+    const createdClassPeriod = await prisma.classPeriod.create({
+      data: {
+        name: classPeriodData.name,
+        classType: classPeriodData.classType,
+        description: classPeriodData.description,
+        startTime,
+        endTime,
+        gradeLevelId: gradeLevelId,
+        departmentId: departmentId,
+      },
+    });
+    return createdClassPeriod;
+  } catch (error) {
+    console.error(`Failed to add class period: ${error.message}${gradeLevelId ? ` for grade level: ${gradeLevelId}` : ''}`);
+    throw new Error('Failed to add class period');
+  }
+};
 
-async function createClassPeriod(data: ClassPeriodInput) {
-  const { startTime, endTime, ...rest } = data;
-
-  // Convert HH:mm strings to Date objects
-  const start = new Date(`1970-01-01T${startTime}:00`);
-  const end = new Date(`1970-01-01T${endTime}:00`);
-
-  const newClassPeriod = await prisma.classPeriod.create({
-    data: {
-      ...rest,
-      startTime: start,
-      endTime: end,
-    },
-  });
-
-  return newClassPeriod;
-}
-export const createClassPeriodForGradeYear = withAuth(
-createClassPeriod,
-  [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER]
-);
 
 interface YearGradeLevelWithDetails {
   id: string;
@@ -56,7 +59,6 @@ interface YearGradeLevelWithDetails {
     id: string;
     name: string;
     classType: string | null;
-    department: string;
     description: string | null;
     startTime: Date;
     endTime: Date;
@@ -80,7 +82,6 @@ const getYearGradeLevelById = async (
             id: true,
             name: true,
             classType: true,
-            department: true,
             description: true,
             startTime: true,
             endTime: true,

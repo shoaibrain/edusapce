@@ -1,8 +1,10 @@
 import prisma from "@/lib/db"
 import { DatabaseError } from "@/lib/error";
+import { EmployeeCreateInput, EmployeePatchInput } from "@/lib/validations/employee";
 import { SchoolCreateInput } from "@/lib/validations/school";
 import { withAuth } from "@/lib/withAuth";
-import { Role, YearGradeLevel } from "@prisma/client";
+import { DepartmentEnum } from "@/types/department";
+import { Employee, Prisma, Role, YearGradeLevel } from "@prisma/client";
 
 type YearGradeLevelWithStudentCount = {
   id: string;
@@ -44,6 +46,106 @@ export const addGradeLevels = async (
     // Handle errors appropriately
     console.log(`Failed to add grade levels: ${error.message} for school : ${schoolId}`);
     throw new Error('Failed to add grade levels');
+  }
+};
+
+export const addNewSchoolDepartments = async (schoolId: string, departments: DepartmentEnum[]) => {
+  try {
+    const result = await prisma.$transaction(
+      departments.map(department =>
+        prisma.department.create({
+          data: {
+            schoolId,
+            name: department,
+          },
+        })
+      )
+    );
+    return result;
+  } catch (error) {
+    console.error("Error adding new departments:", error);
+    throw new Error(`Failed to create departments: ${error.message}`);
+  }
+};
+
+export const createEmployee = async(
+  tenantId: string,
+  schoolId: string,
+  employeeData: Omit<EmployeeCreateInput, 'tenantId' | 'schoolId'>
+): Promise<Employee> => {
+
+  try {
+    if (!tenantId || !schoolId) {
+      throw new Error("Tenant ID and School ID are required.");
+    }
+    const createdEmployee = await prisma.employee.create({
+      data: {
+        tenantId,
+        schoolId,
+        ...employeeData,
+      },
+    });
+    return createdEmployee;
+  } catch (error) {
+    console.error("Error creating employee: ", error);
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        // P2002 is the unique constraint violation error code
+        throw new Error("An employee with this email already exists.");
+      }
+    }
+    throw new Error(
+      error instanceof Error ? error.message : "An unexpected error occurred while creating the employee."
+    );
+  }
+}
+
+export const updateEmployee = async (
+  employeeId: string,
+  updateData: Omit<EmployeePatchInput, 'employeeId'>
+): Promise<Employee> => {
+  try {
+    if (!employeeId) {
+      throw new Error("Employee ID is required for updating.");
+    }
+    const updatedEmployee = await prisma.employee.update({
+      where: { id: employeeId },
+      data: {
+        ...updateData,
+        updatedAt: new Date(),
+      },
+    });
+    return updatedEmployee;
+  } catch (error) {
+    console.error("Error updating employee: ", error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        // P2025 is the record not found error
+        throw new Error("Employee not found.");
+      }
+    }
+    throw new Error(
+      error instanceof Error ? error.message : "An unexpected error occurred while updating the employee."
+    );
+  }
+};
+
+export const getSchoolDepartments = async (schoolId: string) => {
+  try {
+    const result = await prisma.department.findMany({
+      where: {
+        schoolId: schoolId,
+      },
+      select: {
+        id:true,
+        name: true
+      }
+    });
+    return result;
+  } catch (error) {
+    console.error("Error fetching departments:", error);
+    throw new Error(`Failed to fetch departments for schoolId ${schoolId}: ${error.message}`);
   }
 };
 

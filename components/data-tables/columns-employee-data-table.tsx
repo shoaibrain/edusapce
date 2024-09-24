@@ -82,22 +82,22 @@ export const columns: ColumnDef<Employee>[] = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button variant="ghost" className="size-8 p-0">
               <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
+              <MoreHorizontal className="size-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>
-              <Link href={`/dashboard/employees/${employee.id}`}>View Details</Link>
+              <Link href={`/school/${employee.schoolId}/employee/${employee.id}`}>View Details</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`/dashboard/employees/${employee.id}`}>Fees payment</Link>
+            <Link href={`/school/${employee.schoolId}/employee/${employee.id}`}>View Details</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Link href={`/dashboard/employees/${employee.id}`}>Contact</Link>
+            <Link href={`/school/${employee.schoolId}/employee/${employee.id}`}>View Details</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

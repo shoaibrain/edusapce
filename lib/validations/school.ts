@@ -1,3 +1,4 @@
+import { DepartmentEnum } from "@/types/department";
 import * as z from "zod"
 
 export const schoolCreateSchema = z.object({
@@ -10,6 +11,13 @@ export const schoolCreateSchema = z.object({
 
 });
 export type SchoolCreateInput = z.infer<typeof schoolCreateSchema>;
+
+export const departmentCreateSchema = z.object({
+  schoolId: z.string(),
+  departments: z.array(z.nativeEnum(DepartmentEnum)).min(1, "At least one new department must be selected"),
+});
+
+export type DepartmentCreateInput = z.infer<typeof departmentCreateSchema>;
 
 export const schoolPatchSchema = z.object({
   name: z.string().optional(),

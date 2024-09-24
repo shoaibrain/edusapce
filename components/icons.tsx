@@ -31,6 +31,7 @@ import {
   Backpack,
   Users,
   LayoutDashboard,
+  Pencil,
 
   Award,
   X,
@@ -61,7 +62,7 @@ export const Icons = {
   warning: AlertTriangle,
   combine: Combine,
   user: User,
-
+  pencil: Pencil,
   student: Backpack,
   library: Library,
   arrowRight: ArrowRight,

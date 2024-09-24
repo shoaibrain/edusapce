@@ -1,6 +1,3 @@
-
-
-
 import { StudentSettingsForm } from "@/components/forms/form-student-edit";
 import { getStudent } from "@/services/service-student";
 
