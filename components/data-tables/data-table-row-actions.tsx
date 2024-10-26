@@ -37,9 +37,7 @@ export function DataTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem>
-          <Link href={`/student/${dataId}`}>
-              View profile
-          </Link>
+        <Link href={`sasadassass`}>View Details</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

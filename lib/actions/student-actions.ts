@@ -120,7 +120,7 @@ const studentsGetAction = async (schoolId: string) => {
 };
 
 
-export const studentsGet = withAuth(studentsGetAction, [Role.ADMIN, Role.PRINCIPAL]);
-export const studentGet = withAuth(studentGetAction, [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT]);
-export const studentPatch  = withAuth(studentPatchAction,[Role.ADMIN, Role.TEACHER, Role.PRINCIPAL]);
-export const studentCreate = withAuth(studentCreateAction, [Role.ADMIN, Role.TEACHER, Role.PRINCIPAL]);
+export const studentsGet = withAuth(studentsGetAction, [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);
+export const studentGet = withAuth(studentGetAction, [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);
+export const studentPatch  = withAuth(studentPatchAction,[Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);
+export const studentCreate = withAuth(studentCreateAction, [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);

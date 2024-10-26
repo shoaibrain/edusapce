@@ -31,7 +31,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { Calendar } from "../ui/calendar"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 
+
+interface department {
+  id: string,
+  name: string
+}
 
 interface EmployeeAdmissionFormProps extends React.HTMLAttributes<HTMLFormElement> {
   schoolId: string;
@@ -39,10 +45,6 @@ interface EmployeeAdmissionFormProps extends React.HTMLAttributes<HTMLFormElemen
   existingDepartments?: department[];
 }
 
-interface department {
-  id: string,
-  name: string
-}
 
 type formData = z.infer<typeof createEmployeeSchema>
 
@@ -57,8 +59,8 @@ export function EmployeeAdmissionForm({
     resolver: zodResolver(createEmployeeSchema),
     mode: "onChange",
     defaultValues: {
-      tenantId: tenantId,
       schoolId: schoolId,
+      tenantId: tenantId,
       firstName: undefined,
       middleName: undefined,
       lastName: undefined,
@@ -98,8 +100,14 @@ export function EmployeeAdmissionForm({
   }
 
   return (
+  <Card className="border border-blue-300">
+    <CardHeader className="border-b border-blue-300 p-4">
+        <CardTitle>Employee Application Form</CardTitle>
+        <CardDescription>Fill in the below information to get started with employee registration.</CardDescription>
+    </CardHeader>
+  <CardContent>
     <Form {...form}>
-  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div  className="sm:col-span-2">
               <FormField
@@ -346,5 +354,7 @@ export function EmployeeAdmissionForm({
       </button>
       </form>
     </Form>
+    </CardContent>
+    </Card>
   )
 }

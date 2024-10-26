@@ -1,9 +1,10 @@
 "use server"
 import { revalidatePath } from "next/cache";
-import { createEmployeeSchema, EmployeeCreateInput, EmployeePatchInput, patchEmployeeSchema } from "../validations/employee";
+import { createEmployeeSchema, EmployeeCreateInput, EmployeePatchInput, employeePatchSchema } from "../validations/employee";
 import { withAuth } from "../withAuth";
 import { z } from "zod";
 import { createEmployee, updateEmployee } from "@/services/service-school";
+import { Role } from "@prisma/client";
 
 export async function getEmployeeMetricsForSchool(
   schoolId: string
@@ -65,17 +66,17 @@ export const EmployeeCreate = withAuth(async (formData:EmployeeCreateInput) => {
       message: error instanceof Error ? error.message : "An unexpected error occurred",
     };
   }
-},["ADMIN", "PRINCIPAL"]);
+},[Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);
 
 export const EmployeeUpdate = withAuth(async (formData: EmployeePatchInput) => {
   try {
-    const validatedData = patchEmployeeSchema.parse(formData);
-    const { employeeId, ...updateData } = validatedData;
-    if (!employeeId) {
+    const validatedData = employeePatchSchema.parse(formData);
+    const { id, ...updateData } = validatedData;
+    if (!id) {
       throw new Error("Employee ID is required for updating");
     }
-    const updatedEmployee = await updateEmployee(employeeId, updateData);
-    revalidatePath(`/employees/${employeeId}`);
+    const updatedEmployee = await updateEmployee(id, updateData);
+    revalidatePath(`/employees/${id}`);
     return {
       success: true,
       message: "Employee updated successfully",
@@ -95,4 +96,4 @@ export const EmployeeUpdate = withAuth(async (formData: EmployeePatchInput) => {
       message: error instanceof Error ? error.message : "An unexpected error occurred",
     };
   }
-}, ["ADMIN", "PRINCIPAL", "TEACHER", "STAFF"]);
+}, [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);

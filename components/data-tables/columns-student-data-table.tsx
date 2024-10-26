@@ -3,8 +3,11 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "./data-table-column-header"
-import { DataTableRowActions } from "./data-table-row-actions"
 import { Student } from "@prisma/client"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu"
+import { Button } from "../ui/button"
+import { MoreHorizontal } from "lucide-react"
+import Link from "next/link"
 
 export const columns: ColumnDef<Student>[] = [
   {
@@ -60,11 +63,11 @@ export const columns: ColumnDef<Student>[] = [
     },
   },
   {
-    accessorKey: "enrollmentStatus",
+    accessorKey: "department",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title=" Status" />
+      <DataTableColumnHeader column={column} title=" Department" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("enrollmentStatus")}</div>,
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("department")}</div>,
     enableSorting: true,
     enableHiding: true,
 
@@ -73,21 +76,25 @@ export const columns: ColumnDef<Student>[] = [
     },
   },
   {
-    accessorKey: "yearGradeLevel",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Grade Level" />
-    ),
-    // Grade Level not showing in table
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue(`yearGradeLevel`)}</div>,
-    enableSorting: false,
-    enableHiding: true,
-
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
-  },
-  {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} dataId={row.original.id}/>,
+    cell: ({ row }) => {
+      const student = row.original
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="size-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem>
+              <Link href={`/school/${student.schoolId}/student/${student.id}`}>View Details</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    },
   },
 ]

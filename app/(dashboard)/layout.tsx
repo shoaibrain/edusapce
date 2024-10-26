@@ -4,8 +4,10 @@ import { UserAccountNav } from "@/components/user-account-nav"
 import { MainNav } from "@/components/main-nav"
 import { SiteFooter } from "@/components/site-footer"
 import { getCurrentUser } from "@/lib/session"
-import DashboardSideNav from "@/components/dashboard-sidenav"
+
 import React from "react"
+import DashboardSideNav from "@/components/dashboard-sidenav"
+
 
 interface DashboardLayoutProps {
   children?: React.ReactNode
@@ -14,12 +16,11 @@ interface DashboardLayoutProps {
 export default async function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
-  const user = await getCurrentUser()
 
+  const user = await getCurrentUser()
   if (!user) {
     return notFound()
   }
-
   return (
     <div className="flex min-h-screen flex-col space-y-6">
       <header className="sticky top-0 z-40 border-b bg-background">

@@ -1,116 +1,132 @@
-"use client"
-
-import * as React from "react"
-import { useRouter } from "next/navigation"
-import { Card, CardHeader,
-          CardFooter, CardTitle,
-          CardDescription, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+"use client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "@/components/ui/use-toast"
-import { userRegisterSchema } from "@/lib/validations/userRegisterSchema";
+import { tenantCreateSchema } from "@/lib/validations/tenant";
+import { useState } from "react";
 import { z } from "zod";
+import { toast } from "../ui/use-toast";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { Input } from "../ui/input";
+import { buttonVariants } from "../ui/button";
+import { cn } from "@/lib/utils";
+import { Icons } from "../icons";
+import { tenantCreate } from "@/lib/actions/tenant-actions";
 
 
-interface UserRegisterFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+type FormData = z.infer<typeof tenantCreateSchema>;
 
-type FormData = z.infer<typeof userRegisterSchema>
-
-export function UserRegisterForm({className, ...props}:UserRegisterFormProps ) {
-  const router = useRouter()
-
-  const {register, handleSubmit, formState:{errors}} = useForm<FormData>({resolver: zodResolver(userRegisterSchema)})
-
-  async function registerTenant(data: FormData) {
-
-    data.email =  data.email.toLowerCase();
+export function TenantRegistrationForm() {
+  const form = useForm<FormData>({
+    resolver: zodResolver(tenantCreateSchema),
+    mode: "onChange",
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  async function onSubmit(data: FormData) {
+    setIsSaving(true);
     try {
-      const response = await fetch("/api/v1/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-      if (!response.ok) {
+      const newTenant = await tenantCreate(data);
+      if (newTenant.success) {
         toast({
-          title: 'Failed to register user. contact admin',
-          variant: "destructive",
+          title: "Success",
+          description: "Tenant registered successfully",
+          variant: "default",
         });
+        form.reset();
       }
-      toast({
-        title: 'Registered successfully',
-        variant: "default",
-      });
-      router.push('/login');
-
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.message) {
-        const errorMessage = error.response.data.message;
-        if (errorMessage === 'Email already exists') {
-          toast({
-            title: 'Email is already used to register',
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: 'Error during registration',
-            variant: "destructive"
-          });
-        }
-      } else {
-        toast({
-          title: 'Failed to register user. contact admin',
-          variant: "destructive"
-        });
-      }
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to register tenant.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
     }
   }
 
   return (
-    <Card className="w-full">
-       <form  onSubmit={handleSubmit(registerTenant)}>
-        <CardHeader>
-          <CardTitle>Create an account</CardTitle>
-          <CardDescription>
-            Enter your info below to create an account
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input id="name" type="text"  autoCapitalize="none" autoCorrect="off" placeholder="firstname lastname" {...register("name")}/>
-              {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="mb-5 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name *</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-
-          <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" autoCapitalize="none" autoCorrect="off" autoComplete="email" {...register("email")}/>
-          {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+            <div className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email *</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password *</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="sm:col-span-3">
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password *</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
-
-
-          <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" autoCapitalize="none" autoCorrect="off"{...register("password")}/>
-          {errors.password && <p className="text-red-500">{errors.password.message}</p>}
-          </div>
-
-          <div className="grid gap-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input id="confirmPassword" type="password" autoCapitalize="none" autoCorrect="off"{...register("confirmPassword")}/>
-          {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
-          </div>
-        </CardContent>
-
-        <CardFooter>
-        <Button className="w-full" type="submit">Create account</Button>
-      </CardFooter>
-      </form>
-      </Card>
-
-  )
+          <button
+            type="submit"
+            className={cn(buttonVariants())}
+            disabled={isSaving}
+          >
+            {isSaving && (
+              <Icons.spinner className="mr-2 size-4 animate-spin" />
+            )}
+            <span>Register</span>
+          </button>
+        </form>
+      </Form>
+  );
 }

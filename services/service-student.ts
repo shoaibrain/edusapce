@@ -119,28 +119,8 @@ export async function getStudentsForSchool(schoolId: string) {
   try {
     const students = await prisma.student.findMany({
       where: { schoolId },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        enrollmentStatus: true,
-        yearGradeLevel: {
-          select: {
-            levelName: true,
-            levelOrder: true,
-          }
-        }
-      },
     });
-
-    return students.map(student => ({
-      id: student.id,
-      firstName: student.firstName,
-      lastName: student.lastName,
-      enrollmentStatus: student.enrollmentStatus,
-      levelName: student.yearGradeLevel?.levelName ?? 'Not Assigned'
-    }));
-
+    return students;
   } catch (error) {
     console.error('Error fetching students with grade:', error);
     throw new Error('Failed to fetch students');

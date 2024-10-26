@@ -1,83 +1,96 @@
 import prisma from "@/lib/db";
+import { TenantCreate, TenantUpdate } from "@/lib/validations/tenant";
+import { School, Tenant } from "@prisma/client";
 
-export const getTenants = async () => {
+export const createTenant = async (tenantData: TenantCreate): Promise<Tenant> => {
   try {
-    const tenants = await prisma.tenant.findMany();
-    return tenants;
+    const { name, email, password } = tenantData;
+    const createdTenant = await prisma.tenant.create({
+      data: {
+        name,
+        email,
+        hashedPassword: password
+      },
+    });
+    return createdTenant;
   } catch (error) {
-    throw new Error(`Error getting tenants: ${error.message}`);
+    console.error(`Failed to create tenant: ${error.message}`);
+    throw new Error('Failed to create tenant');
+  }
+};
+
+
+export const updateTenant = async (tenantData: TenantUpdate): Promise<Tenant> => {
+  try {
+    const { id, password, ...updateData } = tenantData;
+    const updatedTenant = await prisma.tenant.update({
+      where: { id },
+      data: {
+        ...updateData,
+        ...(password && { password }),
+      },
+    });
+    if (updateData.email && updateData.email !== updatedTenant.email) {
+      await prisma.tenant.update({
+        where: { id },
+        data: { emailVerified: null },
+      });
+      // Optional: send a verification email
+      // await sendVerificationEmail(updateData.email);
+    }
+    return updatedTenant;
+  } catch (error) {
+    console.error(`Failed to update tenant: ${error.message}`);
+    throw new Error('Failed to update tenant');
+  }
+};
+
+
+export const getSchoolsForTenant = async(tenantId: string): Promise<School[]> =>{
+  try {
+    const schools = await prisma.school.findMany({
+      where: {
+        tenantId: tenantId
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+    return schools;
+  } catch(error) {
+    console.error('Error fetching schools for tenant:', error);
+    throw new Error('Failed to fetch schools for tenant');
   }
 }
 
-export const getTenant = async (tenantId: string) => {
+type TenantSelect = {
+  id: string
+  name: string
+  email: string
+  phone: string | null
+  image: string | null
+  address: string | null
+}
+
+export const getTenantById = async(tenantId: string): Promise<TenantSelect | null> => {
   try {
     const tenant = await prisma.tenant.findUnique({
       where: {
-        id: tenantId,
-      },
-      include:{
-        schools: true
-      }
-    });
-    return tenant;
-  } catch (error) {
-    throw new Error(`Error getting tenant: ${error.message}`);
-  }
-}
-
-export const getSchoolsForTenant = async (tenantId: string) => {
-  try {
-    const schools = await prisma.school.findMany({
-      //bug: this is not filtering by tenantId
-      where: {
-        tenantId: tenantId,
-      },
-    });
-    return schools;
-  } catch (error) {
-    console.log(`Error getting schools: ${error}`)
-    throw new Error(`Error getting schools: ${error.message}`);
-  }
-}
-
-export const patchTenant = async (tenantId: string, payload: any) => {
-  try {
-    const tenant = await prisma.tenant.update({
-      where: {
-        id: tenantId,
-      },
-      data: {
-        name: payload.name,
-        email: payload.email,
-        phone: payload.phone,
-        address: payload.address,
-        image: payload.image,
-      },
-    });
-    return tenant;
-  } catch (error) {
-    console.log(`Error updating tenant: ${error}`)
-    throw new Error(`Error updating tenant: ${error.message}`);
-  }
-}
-
-export const getTenantForSchool = async (schoolId: string) => {
-  try {
-    const result = await prisma.school.findUnique({
-      where: {
-        id: schoolId,
+        id: tenantId
       },
       select: {
-        tenant: true,
-      },
-    });
-
-    if (!result) {
-      throw new Error(`School with ID ${schoolId} not found`);
-    }
-    return result.tenant;
-  } catch (error) {
-    console.error("Error fetching tenant for school", error);
-    throw new Error(`Failed to fetch tenant for school: ${error.message}`);
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        image: true,
+        address: true
+      }
+    })
+    return tenant
+  } catch(error) {
+    console.error("Error fetching tenant:", error)
+    throw new Error("Failed to fetch tenant")
   }
-};
+}

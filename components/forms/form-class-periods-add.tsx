@@ -18,10 +18,17 @@ interface department {
   id: string,
   name: string
 }
+interface instructor {
+  id: string,
+  firstName: string,
+  middleName?: string,
+  lastName: string
+}
 
 interface ClassPeriodAddFormProps extends React.HTMLAttributes<HTMLFormElement> {
   gradeLevelId: string;
   existingDepartments?: department[];
+  instructors?: instructor[];
 }
 
 type FormData = z.infer<typeof ClassPeriodCreateSchema>
@@ -35,6 +42,7 @@ const classPeriodTypes = [
 export function ClassPeriodAdd({
   gradeLevelId,
   existingDepartments: existingDepartments = [],
+  instructors: instructors=[],
   className,
   ...props
 }: ClassPeriodAddFormProps) {
@@ -47,6 +55,7 @@ export function ClassPeriodAdd({
       name: "",
       classType: undefined,
       description: undefined,
+      instructorId: undefined,
       startTime: "",
       endTime: "",
     }
@@ -144,6 +153,34 @@ export function ClassPeriodAdd({
                         { existingDepartments.map((department) => (
                           <SelectItem key={department.id} value={department.id}>
                           {department.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              )}
+            </div>
+            <div className="sm:col-span-3">
+              {instructors && instructors.length > 0 && (
+                <FormField
+                control={form.control}
+                name="instructorId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Instructor </FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="select instructor for this class period" />
+                          </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        { instructors.map((instructor) => (
+                          <SelectItem key={instructor.id} value={instructor.id}>
+                          {`${instructor.firstName} ${instructor.lastName}`}
                           </SelectItem>
                         ))}
                       </SelectContent>

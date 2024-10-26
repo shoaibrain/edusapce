@@ -10,7 +10,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { authOptions } from "@/lib/auth"
 import { getCurrentUser } from "@/lib/session"
 import { getYearGradeLevel } from "@/services/service-academic"
-import { getSchoolDepartments } from "@/services/service-school"
+import { getSchoolDepartments, getSchoolInstructors } from "@/services/service-school"
 
 import { EditGradeDialog } from "@/components/forms/form-school-year-grade-level-edit"
 import ClassPeriodCard from "@/components/class-period-card"
@@ -62,6 +62,7 @@ export default async function YearGradePage({
   const schoolId = decodeURIComponent(params.id)
   const yearGrade = await getYearGradeLevel(yearGradeLevelId)
   const existingDepartments = await getSchoolDepartments(schoolId)
+  const instructors = await getSchoolInstructors(schoolId);
 
   const classPeriods = yearGrade?.classPeriods;
   const studentCount = yearGrade?.studentCount;
@@ -73,7 +74,7 @@ export default async function YearGradePage({
           <div className="flex items-center space-x-2 text-sm">
             <Link href={`/school/${schoolId}/academics`} className="hover:text-primary">Academics</Link>
             <ChevronRight className="size-4" />
-            <span className="text-primary font-medium">{yearGrade?.levelName}</span>
+            <span className="font-medium text-primary">{yearGrade?.levelName}</span>
           </div>
           <Dialog>
             <DialogTrigger asChild>
@@ -94,7 +95,7 @@ export default async function YearGradePage({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-                  <Users className="text-muted-foreground size-4" />
+                  <Users className="size-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{studentCount}</div>
@@ -103,7 +104,7 @@ export default async function YearGradePage({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Class Periods</CardTitle>
-                  <Clock className="text-muted-foreground size-4" />
+                  <Clock className="size-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{classPeriods?.length}</div>
@@ -112,7 +113,7 @@ export default async function YearGradePage({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Average Attendance</CardTitle>
-                  <Users className="text-muted-foreground size-4" />
+                  <Users className="size-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{87}%</div>
@@ -153,7 +154,7 @@ export default async function YearGradePage({
                     <ul className="space-y-2">
                       {gradeInfo.instructors.map((instructor, index) => (
                         <li key={index} className="flex items-center">
-                          <Users className="text-muted-foreground mr-2 size-4" />
+                          <Users className="mr-2 size-4 text-muted-foreground" />
                           <span>{instructor.name} ({instructor.subject})</span>
                         </li>
                       ))}

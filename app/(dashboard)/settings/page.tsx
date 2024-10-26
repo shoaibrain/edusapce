@@ -4,20 +4,22 @@ import { authOptions } from "@/lib/auth"
 import { getCurrentUser } from "@/lib/session"
 import { DashboardHeader } from "@/components/header"
 import { DashboardShell } from "@/components/shell"
-import { TenantPatchForm } from "@/components/tenant-patch-form"
+import { TenantUpdateForm } from "@/components/forms/tenant-update-form"
 import { Metadata } from "next"
+import { getTenant } from "@/lib/actions/tenant-actions"
 
 export const metadata: Metadata = {
-  title: "Settings",
-  description: "Manage account and website settings.",
+  title: "Tenant Settings",
+  description: "Tenant Admin Settings page",
 }
 
 export default async function SettingsPage() {
-  const tenant = await getCurrentUser()
+  const user = await getCurrentUser()
 
-  if (!tenant) {
+  if (!user) {
     redirect(authOptions?.pages?.signIn || "/login")
   }
+  const tenant = await getTenant(user.id);
 
   return (
     <DashboardShell>
@@ -26,11 +28,7 @@ export default async function SettingsPage() {
         text="Manage tenant account settings"
       />
       <div className="grid gap-10">
-        <TenantPatchForm tenant={
-          { id: tenant.id,
-            name: tenant.name || "",
-            email: tenant.email || "",
-          }} />
+        <TenantUpdateForm tenant={tenant.data}/>
       </div>
     </DashboardShell>
   )

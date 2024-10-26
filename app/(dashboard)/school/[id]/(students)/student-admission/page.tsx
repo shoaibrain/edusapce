@@ -13,7 +13,7 @@ import { Metadata } from "next";
 import { getGradeLevelsForSchool } from "@/services/service-school";
 
 export const metadata: Metadata = {
-  title: "Admission",
+  title: "Student Admission",
   description: "Student Admission Form",
 }
 

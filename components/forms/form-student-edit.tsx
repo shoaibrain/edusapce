@@ -184,7 +184,7 @@ export function StudentSettingsForm({
                           ) : (
                             <span>Pick a date</span>
                           )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          <CalendarIcon className="ml-auto size-4 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
@@ -288,7 +288,7 @@ export function StudentSettingsForm({
           disabled={isSaving}
         >
           {isSaving && (
-            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            <Icons.spinner className="mr-2 size-4 animate-spin" />
           )}
           <span>Save Changes</span>
         </button>

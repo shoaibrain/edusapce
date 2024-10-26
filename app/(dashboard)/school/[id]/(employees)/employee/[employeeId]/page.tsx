@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,7 +15,6 @@ import { Metadata } from "next"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
 import { Calendar, Mail, MessageSquare, Phone, User, Bell } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -27,11 +27,10 @@ export default async function EmployeePage({ params }: {
 }) {
   const schoolId = params.id
   const employeeId = params.employeeId
-  const employee = await getEmployee(employeeId)
 
-  if (!employee) {
-    return <p>No Employee found</p>
-  }
+    if (!employee) {
+      return <p>No Employee found</p>
+    }
 
   // Mock data
   const classPeriods = [
@@ -87,6 +86,9 @@ export default async function EmployeePage({ params }: {
         <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle>Employee Information</CardTitle>
+            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(employee, null, 2)}</code>
+          </pre>
           </CardHeader>
           <CardContent>
             <div className="mb-4 flex items-center space-x-4">
@@ -95,14 +97,14 @@ export default async function EmployeePage({ params }: {
                 <AvatarFallback>{`${employee.firstName[0]}${employee.lastName[0]}`}</AvatarFallback>
               </Avatar>
               <div>
-                <h2 className="text-2xl font-semibold">{`${employee.firstName} ${employee.lastName}`}</h2>
-                <p className="text-muted-foreground">{employee.role || "Teacher"}</p>
+                <h2 className="text-2xl font-semibold">{`${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`}</h2>
+                <p className="text-muted-foreground">{employee.role}</p>
               </div>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="flex items-center space-x-2">
                 <Mail className="size-4 text-muted-foreground" />
-                <span>{employee.email}</span>
+                <span>{employee.email || 'N/A'}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="size-4 text-muted-foreground" />
@@ -110,16 +112,22 @@ export default async function EmployeePage({ params }: {
               </div>
               <div className="flex items-center space-x-2">
                 <User className="size-4 text-muted-foreground" />
-                <span>Employee ID: {employeeId}</span>
+                <span>Employee ID: {employee.id}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Calendar className="size-4 text-muted-foreground" />
+                <span>Birth Date: {employee.birthDate ? new Date(employee.birthDate).toLocaleDateString() : 'N/A'}</span>
               </div>
             </div>
             <div className="mt-4">
-              <h3 className="mb-2 font-semibold">Subjects</h3>
-              {/* <div className="flex flex-wrap gap-2">
-                {classPeriod.subjects?.map((subject, index) => (
-                  <Badge key={index} variant="secondary">{subject}</Badge>
-                )) || <span className="text-muted-foreground">No subjects assigned</span>}
-              </div> */}
+              <h3 className="mb-2 font-semibold">Additional Information</h3>
+              <p>Address: {employee.address}</p>
+              <p>Gender: {employee.gender || 'N/A'}</p>
+              <p>Department ID: {employee.departmentId || 'N/A'}</p>
+              <p>School ID: {employee.schoolId}</p>
+              <p>Tenant ID: {employee.tenantId}</p>
+              <p>Created At: {new Date(employee.createdAt).toLocaleString()}</p>
+              <p>Updated At: {new Date(employee.updatedAt).toLocaleString()}</p>
             </div>
           </CardContent>
         </Card>

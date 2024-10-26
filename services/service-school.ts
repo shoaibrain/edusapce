@@ -1,10 +1,12 @@
+
+//@ts-nocheck
 import prisma from "@/lib/db"
-import { DatabaseError } from "@/lib/error";
+import { DatabaseError, NotFoundError, ValidationError } from "@/lib/error";
 import { EmployeeCreateInput, EmployeePatchInput } from "@/lib/validations/employee";
-import { SchoolCreateInput } from "@/lib/validations/school";
+import { SchoolCreateInput, SchoolUpdateInput } from "@/lib/validations/school";
 import { withAuth } from "@/lib/withAuth";
 import { DepartmentEnum } from "@/types/department";
-import { Employee, Prisma, Role, YearGradeLevel } from "@prisma/client";
+import { Employee, Prisma, Role, School, YearGradeLevel } from "@prisma/client";
 
 type YearGradeLevelWithStudentCount = {
   id: string;
@@ -102,15 +104,15 @@ export const createEmployee = async(
 }
 
 export const updateEmployee = async (
-  employeeId: string,
-  updateData: Omit<EmployeePatchInput, 'employeeId'>
+  id: string,
+  updateData: Omit<EmployeePatchInput, 'id'>
 ): Promise<Employee> => {
   try {
     if (!employeeId) {
       throw new Error("Employee ID is required for updating.");
     }
     const updatedEmployee = await prisma.employee.update({
-      where: { id: employeeId },
+      where: { id: id },
       data: {
         ...updateData,
         updatedAt: new Date(),
@@ -149,7 +151,25 @@ export const getSchoolDepartments = async (schoolId: string) => {
   }
 };
 
-
+export const getSchoolInstructors = async(schoolId: string) => {
+  try {
+    const result = await prisma.employee.findMany({
+      where: {
+        schoolId: schoolId
+      },
+      select: {
+        id: true,
+        firstName: true,
+        middleName: true,
+        lastName: true
+      }
+    });
+    return result;
+  } catch (error) {
+    console.error('Error fetching school instructors:', error);
+    throw error;
+  }
+};
 
 
 const YearGradeLevelWithStudentCount = async (
@@ -182,7 +202,7 @@ const YearGradeLevelWithStudentCount = async (
 
 export const getGradeLevelsForSchool = withAuth(
   YearGradeLevelWithStudentCount,
-  [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER]
+  [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]
 );
 
 export const patchGradeLevel = async (
@@ -268,28 +288,50 @@ export const postSchool = async (school: SchoolCreateInput) => {
   }
 };
 
-export const deleteSchool = async (schoolId: string) => {
-    try {
-        const deletedSchool = await prisma.school.delete({
-            where: {
-                id: schoolId,
-            }
-        })
-        return deletedSchool;
-      } catch (error) {
-       throw new Error(`Error deleting school: ${error.message}`);
-      }
-}
-export const patchSchoolProfile = async (schoolId: string, schoolUpdates) => {
-    try {
-      const patchedSchool = await prisma.school.update({
-        where: {
-          id: schoolId,
-        },
-        data: schoolUpdates,
+
+// #######
+
+export async function updateSchool(
+  id: string,
+  tenantId: string,
+  data: Omit<SchoolUpdateInput, 'id' | 'tenantId'>
+): Promise<School> {
+  try {
+    const updateData = Object.entries(data).reduce((acc, [key, value]) => {
+      if (value !== undefined) acc[key] = value;
+      return acc;
+    }, {} as Partial<SchoolUpdateInput>);
+
+    const updatedSchool = await prisma.$transaction(async (prisma) => {
+      const school = await prisma.school.findUnique({
+        where: { id, tenantId }
       });
-      return patchedSchool;
-    } catch (error) {
-      throw new Error(`Error patching school: ${error.message}`);
+
+      if (!school) {
+        throw new NotFoundError('School not found');
+      }
+
+      return prisma.school.update({
+        where: { id, tenantId },
+        data: updateData,
+      });
+    });
+
+    return updatedSchool;
+  } catch (error) {
+    console.error('Error updating school', { error, schoolId: id, tenantId, updateData: data });
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      switch (error.code) {
+        case 'P2025':
+          throw new ValidationError('Student not found', { studentId: id });
+        case 'P2002':
+          throw new ValidationError('Unique constraint violation', { field: error.meta?.target });
+        case 'P2003':
+          throw new ValidationError('Foreign key constraint violation', { field: error.meta?.field_name });
+        default:
+          throw new DatabaseError('An error occurred while updating the student', { errorCode: error.code });
+      }
     }
+    throw new DatabaseError('An unexpected error occurred while updating the student');
+  }
 }

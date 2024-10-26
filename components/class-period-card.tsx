@@ -14,7 +14,8 @@ interface ClassPeriod {
   startTime: string;
   endTime: string;
 }
-export default function ClassPeriodCard({classPeriods, existingDepartments, yearGradeLevelId}){
+export default function ClassPeriodCard(
+  {classPeriods, existingDepartments, yearGradeLevelId}){
 
   return (
     <div className="flex-1">
@@ -38,7 +39,11 @@ export default function ClassPeriodCard({classPeriods, existingDepartments, year
                   <Plus className="mr-2 size-4" /> Class Period
                 </Button>
               </DialogTrigger>
-              <ClassPeriodAdd existingDepartments={existingDepartments} gradeLevelId={yearGradeLevelId} />
+              <ClassPeriodAdd
+                existingDepartments={existingDepartments}
+                gradeLevelId={yearGradeLevelId}
+
+                />
             </Dialog>
           </div>
         </CardContent>

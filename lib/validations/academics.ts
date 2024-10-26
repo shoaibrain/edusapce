@@ -12,19 +12,16 @@ export const YearGradeLevelCreateSchema = z.object({
 
 export type YearGradeLevelCreateInput = z.infer<typeof YearGradeLevelCreateSchema>;
 
-const optionalNullable = <T extends z.ZodTypeAny>(schema: T) =>
-  schema.optional().nullable();
 
 export const yearGradeLevelPatchSchema = z.object({
   id: z.string().cuid(),
 
 })
 
-
-
 export const ClassPeriodCreateSchema = z.object({
   gradeLevelId: z.string(),
   departmentId: z.string(),
+  instructorId: z.string(),
   name: z.string().min(1, "Name is required"),
   classType: z.string().optional(),
   description: z.string().optional(),

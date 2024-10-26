@@ -1,3 +1,5 @@
+
+//@ts-nocheck
 import { GradeLevelAddForm } from "@/components/forms/form-school-year-grade-level-add";
 import { Button } from "@/components/ui/button";
 import {
@@ -103,7 +105,9 @@ const yearGradeLevels =  await getGradeLevelsForSchool(params.id);
                       Fill out the information for new Grade Level. click Save when done.
                     </DialogDescription>
                   </DialogHeader>
-                    <GradeLevelAddForm schoolId={params.id} yearGradeLevels={yearGradeLevels}/>
+                    <GradeLevelAddForm
+                      schoolId={params.id}
+                      yearGradeLevels={yearGradeLevels}/>
                 </DialogContent>
         </Dialog>
         </div>

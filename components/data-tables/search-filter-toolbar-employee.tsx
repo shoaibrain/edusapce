@@ -7,7 +7,7 @@ import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { DataTableFacetedFilter } from "./data-table-faceted-filter"
 import { DataTableViewOptions } from "./data-table-view-options"
-import { departments } from "@/lib/data/data"
+
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -33,7 +33,7 @@ export function EmployeeDataTableToolbar<TData>({
           <DataTableFacetedFilter
             column={table.getColumn("department")}
             title="Department"
-            options={departments}
+            // options={departments}
           />
         )}
         {isFiltered && (

@@ -3,8 +3,9 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
-import { UserRegisterForm } from "@/components/forms/tenant-register-form"
+
 import { Metadata } from "next"
+import { TenantRegistrationForm } from "@/components/forms/tenant-register-form"
 
 export const metadata: Metadata = {
   title: "Register",
@@ -28,7 +29,7 @@ export default function RegisterPage() {
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
-            <Icons.logo className="mx-auto h-6 w-6" />
+            <Icons.logo className="mx-auto size-6" />
             <h1 className="text-2xl font-semibold tracking-tight">
               Create an account
             </h1>
@@ -36,7 +37,7 @@ export default function RegisterPage() {
               Enter your info below to create an account
             </p>
           </div>
-          <UserRegisterForm />
+          <TenantRegistrationForm />
           <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <Link

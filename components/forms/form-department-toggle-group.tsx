@@ -9,7 +9,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
-import { Button } from "../ui/button";
+import {  buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { Icons } from "../icons";
 import { schoolDepartmentCreate } from "@/lib/actions/school-actions";
@@ -23,6 +23,7 @@ export function SchoolDepartmentToggleForm({
   // BUG: existing vals are not pre-toggeled in ToggleGroup
   existingDepartments: existingDepartments = [],
   schoolId,
+  className,
   ...props
 }: SchoolDepartmentToggleFormProps) {
   const [selectedDepartments, setSelectedDepartments] = useState<DepartmentEnum[]>(existingDepartments);
@@ -74,8 +75,11 @@ export function SchoolDepartmentToggleForm({
   };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" {...props}>
-      <div >
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn("mx-auto max-w-[50%] space-y-8", className)}
+        {...props}
+      >
       <FormField
           control={form.control}
           name="departments"
@@ -103,17 +107,16 @@ export function SchoolDepartmentToggleForm({
             </FormItem>
           )}
         />
-      </div>
-        <Button
+        <button
           type="submit"
-          className={cn("w-full")}
+          className={cn(buttonVariants())}
           disabled={isSaving}
         >
           {isSaving && (
             <Icons.spinner className="mr-2 size-4 animate-spin" />
           )}
           <span>{isSaving ? 'Saving...' : 'Save Departments'}</span>
-        </Button>
+        </button>
       </form>
     </Form>
   );

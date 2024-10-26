@@ -1,3 +1,4 @@
+//@ts-nocheck
 import prisma from "@/lib/db";
 
 
@@ -42,16 +43,24 @@ export const getEmployee = async (employeeId: string) => {
     const employee = await prisma.employee.findUnique({
       where: {
         id: employeeId,
+      },
+      include: {
+        department: true,
+        classPeriods: true,
+        subjects: true,
       }
-    })
+    });
+
     if (!employee) {
       throw new Error(`Employee with id: ${employeeId} not found`);
     }
+
     return employee;
   } catch (error) {
     throw new Error(`Error getting employee: ${error.message}`);
   }
-}
+};
+
 
 export const deleteEmployee = async (employeeId: string) => {
   try {

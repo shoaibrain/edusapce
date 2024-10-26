@@ -9,27 +9,79 @@ import {
   Settings,
   GraduationCap,
   Contact,
-  LucideIcon,
 } from "lucide-react";
 import {
   useParams,
   usePathname,
   useSelectedLayoutSegments,
 } from "next/navigation";
-import {  useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-
-export default function DashboardSideNav(  ) {
+export default function DashboardSideNav() {
   const segments = useSelectedLayoutSegments();
+  const pathname = usePathname();
 
-  const { id } = useParams() as { id?: string }; // school id
+  console.log('Current pathname:', pathname);
+  console.log('Current segments:', segments);
+
+  // Extract IDs from the URL
+  const extractIds = useMemo(() => {
+    const schoolMatch = pathname?.match(/\/school\/([^\/]+)/);
+    const studentMatch = pathname?.match(/\/student\/([^\/]+)/);
+    const employeeMatch = pathname?.match(/\/employee\/([^\/]+)/);
+
+    return {
+      schoolId: schoolMatch ? schoolMatch[1] : undefined,
+      studentId: studentMatch ? studentMatch[1] : undefined,
+      employeeId: employeeMatch ? employeeMatch[1] : undefined,
+    };
+  }, [pathname]);
+
+  const { schoolId, studentId, employeeId } = extractIds;
+
 
   const tabs = useMemo(() => {
+    console.log('Recalculating tabs');
+    const firstSegment = segments[0] ?? "";
+    const thirdSegment = segments[2] ?? "";
+    const fourthSegment = segments[3] ?? "";
 
-    const firstSegment = segments?.[0] ?? "";
-    const thirdSegment = segments?.[2] ?? "";
+    console.log(`firstSegment: ${firstSegment}`)
+    console.log(`secondSegment: ${segments[1]}`)
+    console.log(`thirdSegment: ${thirdSegment}`)
+    console.log(`fourthSegment: ${fourthSegment}`)
 
-    if (firstSegment === "school" && id) {
+
+    // Check for student route first
+    if (fourthSegment === "student" && studentId) {
+      return [
+        {
+          name: "Academics",
+          href: `/school/${schoolId}/student/${studentId}/academics`,
+          icon: <GraduationCap width={18} />,
+          isActive: segments.includes("academics"),
+        },
+        {
+          name: "Settings",
+          href: `/school/${schoolId}/student/${studentId}/settings`,
+          icon: <Settings width={18} />,
+          isActive: segments.includes("settings"),
+        },
+      ];
+    }
+    // Then check for employee route
+    else if (fourthSegment === "employee" && employeeId) {
+      return [
+        {
+          name: "Settings",
+          href: `/school/${schoolId}/employee/${employeeId}/settings`,
+          icon: <Settings width={18} />,
+          isActive: segments.includes("settings"),
+        },
+      ];
+    }
+    // Then check for school route
+    else if (firstSegment === "school" && schoolId) {
       return [
         {
           name: "Dashboard",
@@ -38,68 +90,48 @@ export default function DashboardSideNav(  ) {
         },
         {
           name: "Academics",
-          href: `/school/${id}/academics`,
-          isActive: segments?.includes("academics"),
+          href: `/school/${schoolId}/academics`,
+          isActive: segments.includes("academics"),
           icon: <GraduationCap width={18} />,
         },
         {
           name: "Students",
-          href: `/school/${id}/students`,
-          isActive: segments?.includes("students"),
+          href: `/school/${schoolId}/students`,
+          isActive: segments.includes("students"),
           icon: <Contact width={18} />,
         },
         {
           name: "Employees",
-          href: `/school/${id}/employees`,
-          isActive: segments?.includes("employees"),
+          href: `/school/${schoolId}/employees`,
+          isActive: segments.includes("employees"),
           icon: <User width={18} />,
         },
         {
           name: "Guardians",
-          href: `/school/${id}/guardians`,
-          isActive: segments?.includes("guardians"),
+          href: `/school/${schoolId}/guardians`,
+          isActive: segments.includes("guardians"),
           icon: <User width={18} />,
         },
         {
           name: "Analytics & Reports",
-          href: `/school/${id}/analytics`,
-          isActive: segments?.includes("analytics"),
+          href: `/school/${schoolId}/analytics`,
+          isActive: segments.includes("analytics"),
           icon: <BarChart3 width={18} />,
         },
         {
           name: "Settings",
-          href: `/school/${id}/settings`,
-          isActive: segments?.includes("settings"),
+          href: `/school/${schoolId}/settings`,
+          isActive: segments.includes("settings"),
           icon: <Settings width={18} />,
         },
       ];
-    } else if (thirdSegment == "admission" && id) {
-      return [
-        {
-          name: "Back to Students",
-          href: `/school/${id}/students`,
-          icon: <ArrowLeft width={18} />,
-        },
-      ];
-    } else if (firstSegment == "student" && id) {
-      return [
-        {
-          name: "Academics",
-          href: `/student/${id}/academics`,
-          icon: <GraduationCap width={18} />,
-        },
-        {
-          name: "Settings",
-          href: `/student/${id}/settings`,
-          icon: <Settings width={18} />,
-        },
-      ]
     }
+    // Default route
     return [
       {
         name: "Dashboard",
         href: "/dashboard",
-        isActive: segments?.length === 0,
+        isActive: segments.length === 0,
         icon: <LayoutDashboard width={18} />,
       },
       {
@@ -109,31 +141,28 @@ export default function DashboardSideNav(  ) {
         icon: <Settings width={18} />,
       },
     ];
-  }, [segments, id]);
+  }, [segments, schoolId, studentId, employeeId]);
 
   const [showSidebar, setShowSidebar] = useState(false);
 
-  const pathname = usePathname();
-
   useEffect(() => {
-    // hide sidebar on path change
     setShowSidebar(false);
   }, [pathname]);
 
   return (
     <nav className="grid items-start gap-2">
-            {tabs.map(({ name, href, isActive, icon }) => (
-              <Link
-                key={name}
-                href={href}
-                className={`flex items-center space-x-3 ${
-                  isActive ? "bg-stone-200 text-black dark:bg-stone-700" : ""
-                } rounded-lg px-2 py-1.5 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
-              >
-                {icon}
-                <span className="text-sm font-medium">{name}</span>
-              </Link>
-            ))}
+      {tabs.map(({ name, href, isActive, icon }) => (
+        <Link
+          key={name}
+          href={href}
+          className={`flex items-center space-x-3 ${
+            isActive ? "bg-stone-200 text-black dark:bg-stone-700" : ""
+          } rounded-lg px-2 py-1.5 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+        >
+          {icon}
+          <span className="text-sm font-medium">{name}</span>
+        </Link>
+      ))}
     </nav>
   );
 }

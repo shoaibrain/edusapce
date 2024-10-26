@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { notFound, redirect } from "next/navigation";
-import SchoolSettingsNav from "./nav";
 import { getServerSession } from "next-auth/next"
 import prisma from "@/lib/db";
 import { authOptions } from "@/lib/auth";
@@ -37,7 +36,7 @@ export default async function SchoolSettingsLayout({
 
   return (
     <>
-      <Breadcrumb>
+      <Breadcrumb className="m-2">
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbLink>
@@ -62,12 +61,6 @@ export default async function SchoolSettingsLayout({
                 </BreadcrumbItem>
               </BreadcrumbList>
       </Breadcrumb>
-      <div className="flex flex-col items-center space-x-4 space-y-2 sm:flex-row sm:space-y-0">
-        <h1 className="font-cal text-l font-bold dark:text-white sm:text-3xl">
-          Settings for {data.name}
-        </h1>
-      </div>
-      <SchoolSettingsNav />
       {children}
     </>
   );

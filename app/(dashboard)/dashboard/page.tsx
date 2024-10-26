@@ -3,7 +3,6 @@ import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
 import { getCurrentUser } from "@/lib/session"
 
-import { getSchoolsForTenant } from "@/services/service-tenant"
 import { Suspense } from "react"
 
 import SchoolCard from "@/components/school-card"
@@ -11,6 +10,7 @@ import Image from 'next/image'
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+import { getTenantSchools } from "@/lib/actions/tenant-actions"
 
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export default async function DashboardPage() {
   if (!tenant) {
     redirect(authOptions?.pages?.signIn || "/login")
   }
-  const schools = await getSchoolsForTenant(tenant.id);
+  const schools = await getTenantSchools(tenant.id);
   console.log(`logged in user role: ${tenant.role}`)
 
   return (
@@ -43,9 +43,9 @@ export default async function DashboardPage() {
             null
           }
         >
-            {schools.length > 0 ? (
+            {schools && schools.data && schools.data.length > 0 ? (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                {schools.map((school) => (
+                {schools.data.map((school) => (
                   <SchoolCard key={school.id} data={school} />
                 ))}
               </div>

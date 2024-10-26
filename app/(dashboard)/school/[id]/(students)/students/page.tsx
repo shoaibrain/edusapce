@@ -6,7 +6,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { columns } from '@/components/data-tables/columns-student-data-table'
 import { DataTable } from '@/components/data-tables/data-table'
 import { Metadata } from 'next'
-import { getStudentsForSchoolOld } from '@/services/service-student'
+import { getStudentsForSchool, getStudentsForSchoolOld } from '@/services/service-student'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,41 +19,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSchoolStudentOverviewData } from '@/lib/actions/school-actions'
 import { getCurrentUser } from '@/lib/session'
 import { authOptions } from '@/lib/auth'
+
 export const metadata: Metadata = {
   title: "Students",
   description: "Students Dashboard",
 }
 
-async function getStudents(schoolId: string) {
-  try {
-    const students = await getStudentsForSchoolOld(schoolId)
-    if (!students) {
-      throw new Error(`Failed to get student data for school: ${schoolId}`)
-    }
-    return students;
-  } catch (error) {
-    console.error('Error fetching students:', error);
-    throw error;
-  }
-}
 
 export default async function StudentsPage({
-  params,
-  }: {
-    params: { id: string };
+  params,}: {params: { id: string };
   }) {
     const user = await getCurrentUser()
     if (!user) {
       redirect(authOptions?.pages?.signIn || "/login")
     }
-  const schoolId = decodeURIComponent(params.id)
-  const metrics  = await getSchoolStudentOverviewData(schoolId);
 
-  const students = await getStudents(schoolId);
-  if (!students) {
-    console.log(`No students found`)
-    notFound()
-  }
+    const schoolId = decodeURIComponent(params.id);
+    const students = await getStudentsForSchool(schoolId);
+      if (!students) {
+        console.log(`No students found`)
+        notFound()
+      }
+    const metrics  = await getSchoolStudentOverviewData(schoolId);
 
   return (
     <>
@@ -73,7 +60,7 @@ export default async function StudentsPage({
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbLink>
-                    <Link href= {`/school/${params.id}`}>School</Link>
+                    <Link href= {`/school/${schoolId}`}>School</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
@@ -82,7 +69,7 @@ export default async function StudentsPage({
                 </BreadcrumbItem>
               </BreadcrumbList>
         </Breadcrumb>
-        {/* mock some sats for students place holders */}
+
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -127,11 +114,10 @@ export default async function StudentsPage({
         </div>
         <div className="container mx-auto  py-10">
         <div className="pb-8">
-          <Link href={`/school/${schoolId}/admission`} className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
+          <Link href={`/school/${schoolId}/student-admission`} className={cn(buttonVariants({ size: "lg", variant:"default" }))}>
               Admit New Student
           </Link>
           </div>
-
           <DataTable columns={columns} data={students} student={true} />
         </div>
     </>

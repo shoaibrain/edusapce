@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { DataTable } from '@/components/data-tables/data-table'
 import { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { columns } from '@/components/data-tables/columns-employee-data-table'
 import { getEmployeesForSchool } from '@/services/service-employee'
 import {
@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getEmployeeMetricsForSchool } from '@/lib/actions/employee-action'
+import { getCurrentUser } from '@/lib/session'
+import { authOptions } from '@/lib/auth'
 
 
 export const metadata: Metadata = {
@@ -26,6 +28,10 @@ export const metadata: Metadata = {
 export default async function EmployeesPage(
   { params, }: { params: { id: string }; }
 ) {
+  const user = await getCurrentUser()
+  if (!user) {
+    redirect(authOptions?.pages?.signIn || "/login")
+  }
   const schoolId = decodeURIComponent(params.id)
   const employees = await getEmployeesForSchool(schoolId);
   const metrics = await getEmployeeMetricsForSchool(schoolId);
@@ -51,7 +57,7 @@ export default async function EmployeesPage(
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbLink>
-                    <Link href= {`/school/${params.id}`}>School</Link>
+                    <Link href= {`/school/${schoolId}`}>School</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />

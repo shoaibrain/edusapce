@@ -19,38 +19,17 @@ export const departmentCreateSchema = z.object({
 
 export type DepartmentCreateInput = z.infer<typeof departmentCreateSchema>;
 
-export const schoolPatchSchema = z.object({
-  name: z.string().optional(),
-  address: z.string().optional(),
-  phone: z.string().optional(),
-  email: z.string().optional(),
-  website: z.string().url().optional(),
-})
 
-export const schoolYearCreateSchema = z.object({
-  name: z.string(),
-  startDate: z.date(),
-  endDate: z.date(),
-  allocatedBudget: z.number().optional(),
-  registrationClose: z.date().optional(),
-})
+export const schoolUpdateSchema = z.object({
+  id: z.string().cuid(),
+  tenantId: z.string(),
+  name: z.string().min(1).max(255),
+  address: z.string().min(1).max(1000),
+  phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number'),
+  email: z.string().email().optional().nullable(),
+  website: z.string().url().optional().nullable(),
+  schoolType: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+}).strict();
 
-export const schoolTermCreateSchema = z.object({
-  name: z.string(),
-  startDate: z.date(),
-  endDate: z.date(),
-  schoolYearId: z.string(),
-  registrationClose: z.date().optional(),
-})
-
-export const employeeSalaryCreateSchema = z.object({
-  salaryType: z.string(),
-  amount: z.number(),
-  currency: z.string(),
-  startDate: z.date(),
-  endDate: z.date(),
-  notes: z.string().optional(),
-  employeeId: z.string(),
-})
-
-
+export type SchoolUpdateInput = z.infer<typeof schoolUpdateSchema>;

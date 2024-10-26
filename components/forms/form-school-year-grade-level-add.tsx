@@ -24,12 +24,12 @@ import { yearGradeLevelCreate } from "@/lib/actions/school-actions";
 interface GradeLevel {
   id: string;
   levelName: string;
-  description: string | null;
+  description: string | undefined;
   levelCategory: string;
   levelOrder: number;
-  capacity: number | null;
-  classRoom: string | null;
-  studentCount: number | null;
+  capacity: number | undefined;
+  classRoom: string | undefined;
+  studentCount: number | undefined;
 };
 
 interface ClassGradeLevelAddFormProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -59,8 +59,8 @@ export function GradeLevelAddForm({
   })
 
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
-  async function onSubmit(data: formData) {
 
+  async function onSubmit(data: formData) {
     // dont allow duplicate levelOrder in same school
     const hasDuplicate = yearGradeLevels.some(
       ({ levelName, levelOrder, classRoom }) =>
@@ -74,17 +74,15 @@ export function GradeLevelAddForm({
       });
       return;
     }
-
   setIsSaving(true);
   try {
 
-
-
     const response = await yearGradeLevelCreate(data);
-    if(response.message === "ok") {
+
+    if(response.success) {
       toast({
         title: "Success",
-        description: "A new year grade level has been added.",
+        description: `${response.message}`,
         variant: "default",
       });
     }
@@ -226,7 +224,7 @@ export function GradeLevelAddForm({
       disabled={isSaving}
     >
       {isSaving && (
-        <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+        <Icons.spinner className="mr-2 size-4 animate-spin" />
       )}
       <span>Save</span>
     </button>

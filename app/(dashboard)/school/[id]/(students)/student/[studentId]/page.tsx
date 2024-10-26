@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Dialog,
    DialogContent,
    DialogDescription,
-   DialogFooter,
    DialogHeader,
    DialogTitle,
    DialogTrigger } from "@/components/ui/dialog";
@@ -35,8 +34,10 @@ export const metadata: Metadata = {
   description: "Student Profile Page",
 }
 
-export default async function StudentPage({ params }: { params: { id: string } }) {
-  const student = await getStudent(params.id as string);
+export default async function StudentPage({ params }: { params: { id: string, studentId: string } }) {
+  const studentId = params.studentId;
+  const schoolId = params.id;
+  const student = await getStudent(studentId);
   if (!student) {
     return (
       <p>No student found</p>
@@ -80,7 +81,7 @@ export default async function StudentPage({ params }: { params: { id: string } }
           size="sm"
           className="ml-auto hidden h-8 lg:flex"
         >
-          <MixerHorizontalIcon className="mr-2 h-4 w-4" />
+          <MixerHorizontalIcon className="mr-2 size-4" />
           Options
         </Button>
       </DropdownMenuTrigger>
@@ -102,7 +103,7 @@ export default async function StudentPage({ params }: { params: { id: string } }
     </DropdownMenu>
          <div className="flex w-full flex-col items-center justify-between rounded-lg p-6 shadow-md md:flex-row">
               <div className="flex items-center space-x-4">
-                <Avatar className="h-24 w-24">
+                <Avatar className="size-24">
                   <AvatarImage alt="Student Name" src="/placeholder-avatar.jpg" />
                   <AvatarFallback>SN</AvatarFallback>
                 </Avatar>

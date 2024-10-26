@@ -3,14 +3,15 @@
 import { revalidatePath } from "next/cache";
 import prisma from "../db";
 import {  Role } from "@prisma/client";
-import { DepartmentCreateInput, departmentCreateSchema, SchoolCreateInput, schoolCreateSchema } from "../validations/school";
-import {  addGradeLevels as addGradeLevel, addNewSchoolDepartments, postSchool } from "@/services/service-school";
+
+import {  addGradeLevels as addGradeLevel, addNewSchoolDepartments, postSchool, updateSchool } from "@/services/service-school";
 
 import { withAuth, handleActionError } from "../withAuth";
 
-import {  ValidationError } from "../error";
+import {  DatabaseError, ValidationError } from "../error";
 import { z } from "zod";
 import { YearGradeLevelCreateInput, YearGradeLevelCreateSchema } from "../validations/academics";
+import { DepartmentCreateInput, departmentCreateSchema, SchoolCreateInput, schoolCreateSchema, SchoolUpdateInput, schoolUpdateSchema } from "../validations/school";
 
 export interface SchoolOverview {
   student_count: string,
@@ -34,7 +35,6 @@ export const yearGradeLevelCreate = withAuth(async (formData: YearGradeLevelCrea
     const { schoolId, ...gradeLevelData } = validatedData;
     const createdGradeLevel = await addGradeLevel(schoolId, gradeLevelData);
     revalidatePath("/school");
-
     return {
       success: true,
       message: "Grade level created successfully",
@@ -54,7 +54,7 @@ export const yearGradeLevelCreate = withAuth(async (formData: YearGradeLevelCrea
       message: error instanceof Error ? error.message : "An unexpected error occurred",
     };
   }
-}, [Role.ADMIN, Role.PRINCIPAL]);
+}, [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);
 
 export const schoolDepartmentCreate = withAuth(async (data: DepartmentCreateInput) => {
   try{
@@ -81,7 +81,7 @@ export const schoolDepartmentCreate = withAuth(async (data: DepartmentCreateInpu
         message: error instanceof Error ? error.message : "An unexpected error occurred",
       };
   }
-},[Role.ADMIN, Role.PRINCIPAL]);
+},[Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);
 
 export async function getSchoolOverviewData(
   schoolId: string
@@ -138,7 +138,7 @@ export async function getSchoolStudentOverviewData(
 }
 export async function getSchoolGuardianOverviewData(
   schoolId: string
-): Promise<{ message: string; guardianMetrics?: GuardianMetrics }> {
+): Promise<{ message: string; success:boolean, guardianMetrics?: GuardianMetrics }> {
   try {
     // Simulate retrieving guardian data
     const guardianMetrics: GuardianMetrics = {
@@ -146,10 +146,10 @@ export async function getSchoolGuardianOverviewData(
       averageVolunteerRate: Math.random() * 50, // Random between 0-50% for volunteer rate
       meetingAttendanceRate: Math.random() * 80, // Random between 0-80% for meeting attendance rate
     };
-    return { message: 'School guardian overview retrieved successfully', guardianMetrics };
+    return { message: 'School guardian overview retrieved successfully', success:true, guardianMetrics };
   } catch (error) {
     console.error('Error fetching school guardian overview data:', error);
-    return { message: 'Failed to retrieve school guardian overview data' };
+    return { message: 'Failed to retrieve school guardian overview data', success:false };
   }
 }
 // Interface for guardian metrics
@@ -159,31 +159,34 @@ interface GuardianMetrics {
   meetingAttendanceRate: number; // Percentage of guardians attending meetings
 }
 
-export async function getSchoolAcademicDetails(
-  schoolId: string
-): Promise<{ message: string; schoolAcademics?: SchoolAcademics }> {
-  try {
-    const gradeLevels = await prisma.yearGradeLevel.findMany({
-      where: {
-        schoolId: schoolId,
-      },
-      select: {
-        id: true,
-        levelName: true,
-        description: true,
-        levelCategory: true,
-        levelOrder: true,
-        capacity: true,
-        classRoom: true,
-      },
-    });
-    //@ts-ignore
-    return {message:"school grade level data retrieved successfully", gradeLevels}
-  } catch (error) {
-    console.error('Error fetching school academic data:', error);
-    return { message: 'Failed to retrieve school academic data' };
-  }
-}
+// export async function getSchoolAcademicDetails(
+//   schoolId: string
+// ): Promise<{ message: string; schoolAcademics?: SchoolAcademics }> {
+//   try {
+//     const gradeLevels = await prisma.yearGradeLevel.findMany({
+//       where: {
+//         schoolId: schoolId,
+//       },
+//       select: {
+//         id: true,
+//         levelName: true,
+//         description: true,
+//         levelCategory: true,
+//         levelOrder: true,
+//         capacity: true,
+//         classRoom: true,
+//       },
+//     });
+
+//     return {
+//       message: "success",
+//       data:gradeLevels
+//     }
+//   } catch (error) {
+//     console.error('Error fetching school academic data:', error);
+//     return { message: 'Failed to retrieve school academic data' };
+//   }
+// }
 
 interface SchoolAcademics {
   id: string,
@@ -216,4 +219,50 @@ const schoolCreateAction = async (
     return handleActionError(error);
   }
 };
-export const schoolCreate = withAuth(schoolCreateAction, [Role.ADMIN, Role.PRINCIPAL]);
+export const schoolCreate = withAuth(schoolCreateAction, [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);
+
+const schoolUpdateAction = async(
+  formData: SchoolUpdateInput ) => {
+  try {
+    const validatedData = schoolUpdateSchema.parse(formData);
+    const id = validatedData.id; // school id
+    const tenantId = validatedData.tenantId;
+    const updatedSchool = await updateSchool(
+      id,
+      tenantId,
+      validatedData);
+    revalidatePath(`/school/${validatedData.id}`);
+    revalidatePath(`/schools`);
+    return {
+      success: true,
+      data: updatedSchool
+    }
+  } catch (error) {
+    console.log(`Error in School patchh action:`, error);
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: {
+          type: 'VALIDATION_ERROR',
+          message: 'Invalid student data',
+          details: error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message
+          }))
+        }
+      };
+    }
+    if (error instanceof DatabaseError) {
+      return {
+        success: false,
+        error: {
+          type: 'DATABASE_ERROR',
+          message: 'An error occurred while updating the student.',
+          details: error.details
+        }
+      };
+    }
+    return handleActionError(error);
+  }
+};
+export const schoolUpdate = withAuth(schoolUpdateAction, [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);

@@ -19,7 +19,6 @@ import {
 import { GuardianEditForm } from "./forms/form-guardian-edit"
 import { Employee, Guardian, Student } from "@prisma/client"
 import { StudentSettingsForm } from "./forms/form-student-edit"
-import { EmployeeEditForm } from "./forms/form-employee-edit"
 
 interface ProfileOptionsProps extends React.HTMLAttributes<HTMLDivElement> {
   guardian?: Guardian;
@@ -62,7 +61,7 @@ export function ProfileOptions({
                     </DialogHeader>
                   {student && <StudentSettingsForm student ={student} />}
                   {guardian && <GuardianEditForm guardian={guardian} /> }
-                  {employee && <EmployeeEditForm employee={employee}/>}
+                  {/* {employee && <EmployeeEditForm employee={employee}/>} */}
                   </DialogContent>
             </Dialog>
         </div>
