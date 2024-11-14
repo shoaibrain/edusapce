@@ -1,4 +1,4 @@
-import { MainNav } from "@/components/main-nav"
+import { MainNav } from "@/components/main-nav-old"
 import { SiteFooter } from "@/components/site-footer"
 import { buttonVariants } from "@/components/ui/button"
 import { marketingConfig } from "@/config/marketing"

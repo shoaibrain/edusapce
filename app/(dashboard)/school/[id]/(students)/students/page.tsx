@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSchoolStudentOverviewData } from '@/lib/actions/school-actions'
 import { getCurrentUser } from '@/lib/session'
 import { authOptions } from '@/lib/auth'
+import { DashboardShell } from '@/components/shell'
 
 export const metadata: Metadata = {
   title: "Students",
@@ -43,33 +44,7 @@ export default async function StudentsPage({
     const metrics  = await getSchoolStudentOverviewData(schoolId);
 
   return (
-    <>
-        <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink>
-                    <Link href="/">Home</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink>
-                    <Link href="/dashboard">Dashboard</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink>
-                    <Link href= {`/school/${schoolId}`}>School</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Students</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-        </Breadcrumb>
-
+    <DashboardShell>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -120,6 +95,6 @@ export default async function StudentsPage({
           </div>
           <DataTable columns={columns} data={students} student={true} />
         </div>
-    </>
+    </DashboardShell>
   )
 }

@@ -1,22 +1,15 @@
-import { notFound } from "next/navigation"
-
-import { UserAccountNav } from "@/components/user-account-nav"
-import { MainNav } from "@/components/main-nav"
-import { SiteFooter } from "@/components/site-footer"
+import { notFound, usePathname } from "next/navigation"
 import { getCurrentUser } from "@/lib/session"
-
 import React from "react"
-import DashboardSideNav from "@/components/dashboard-sidenav"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Separator } from "@/components/ui/separator"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-
+import Breadcrumbs from "@/components/breadcrumbs"
 
 interface DashboardLayoutProps {
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
-
 export default async function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
@@ -33,23 +26,13 @@ export default async function DashboardLayout({
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
-            {/* put a dynamic Breadcrumb */}
-            {/* <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Your Schools
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb> */}
+            <Breadcrumbs />
           </div>
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
         {children}
       </main>
       </SidebarInset>
-
     </SidebarProvider>
   )
 }

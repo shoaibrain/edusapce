@@ -11,6 +11,7 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { getTenantSchools } from "@/lib/actions/tenant-actions"
+import { DashboardShell } from "@/components/shell"
 
 
 export const metadata: Metadata = {
@@ -27,8 +28,7 @@ export default async function DashboardPage() {
   console.log(`logged in user role: ${tenant.role}`)
 
   return (
-    <>
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
+    <DashboardShell>
       <div className="flex flex-col space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="font-cal text-3xl font-bold dark:text-white">
@@ -66,7 +66,6 @@ export default async function DashboardPage() {
             }
         </Suspense>
       </div>
-    </div>
-    </>
+    </DashboardShell>
   )
 }

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { useParams, usePathname, useSelectedLayoutSegments } from "next/navigation"
+import { usePathname, useSelectedLayoutSegments } from "next/navigation"
 import {
   ArrowLeft,
   BarChart3,
@@ -11,19 +11,13 @@ import {
   Settings,
   GraduationCap,
   Contact,
-  ChevronRight,
   Command,
   ChevronsUpDown,
   LogOut,
 } from "lucide-react"
 
-import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,11 +34,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
 
 interface DashboardSidebarProps {

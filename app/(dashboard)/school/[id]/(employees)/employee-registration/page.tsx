@@ -27,35 +27,6 @@ export default async function EmployeesPage(
   const existingDepartments = await getSchoolDepartments(schoolId)
   return (
     <>
-     <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink>
-                    <Link href="/">Home</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink>
-                    <Link href="/dashboard">Dashboard</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink>
-                    <Link href= {`/school/${params.id}`}>School</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                <Link href= {`/school/${params.id}/employees`}>School</Link>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                <BreadcrumbPage>Employee Admission</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-        </Breadcrumb>
         <div className="flex flex-col space-y-6">
           < EmployeeAdmissionForm
             schoolId={schoolId}

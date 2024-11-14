@@ -26,6 +26,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
+import { DashboardShell } from "@/components/shell";
 
 
 
@@ -47,32 +48,7 @@ export default async function StudentPage({ params }: { params: { id: string, st
   const classGrade = student.yearGradeLevel;
 
   return (
-    <>
-      <Breadcrumb>
-  <BreadcrumbList>
-    <BreadcrumbItem>
-      <BreadcrumbLink>
-        <Link href="/">Home</Link>
-      </BreadcrumbLink>
-    </BreadcrumbItem>
-    <BreadcrumbSeparator />
-    <BreadcrumbItem>
-      <BreadcrumbLink>
-        <Link href="/dashboard">Dashboard</Link>
-      </BreadcrumbLink>
-    </BreadcrumbItem>
-    <BreadcrumbSeparator />
-    <BreadcrumbItem>
-      <BreadcrumbLink>
-        <Link href= {`/school/${params.id}/students`}>Students</Link>
-      </BreadcrumbLink>
-    </BreadcrumbItem>
-    <BreadcrumbSeparator />
-    <BreadcrumbItem>
-      <BreadcrumbPage>Student</BreadcrumbPage>
-    </BreadcrumbItem>
-  </BreadcrumbList>
-</Breadcrumb>
+    <DashboardShell>
       <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-4 py-8 md:px-6">
       <DropdownMenu >
       <DropdownMenuTrigger asChild>
@@ -159,7 +135,7 @@ export default async function StudentPage({ params }: { params: { id: string, st
           </div>
         </section>
       </div>
-    </>
+    </DashboardShell>
   );
 
 }

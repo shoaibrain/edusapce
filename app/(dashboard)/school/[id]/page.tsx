@@ -14,6 +14,7 @@ import { getSchoolOverviewData } from "@/lib/actions/school-actions";
 import { getCurrentUser } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
+import { DashboardShell } from "@/components/shell";
 
 export const metadata: Metadata = {
   title: "School",
@@ -30,26 +31,7 @@ export default async function SchoolDashboard({
   }
   const schoolOverview = await getSchoolOverviewData(params.id);
   return (
-    <>
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink>
-              <Link href="/" >Home</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink>
-              <Link href="/dashboard">Dashboard</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>School</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+    <DashboardShell>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                   <Link href={`/school/${params.id}/students`}>
@@ -89,6 +71,6 @@ export default async function SchoolDashboard({
                   </CardContent>
                 </Card>
       </div>
-    </>
+    </DashboardShell>
   );
 }

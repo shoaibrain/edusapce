@@ -41,31 +41,6 @@ export default async function EmployeesPage(
 
   return (
     <>
-        <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink>
-                    <Link href="/">Home</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink>
-                    <Link href="/dashboard">Dashboard</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink>
-                    <Link href= {`/school/${schoolId}`}>School</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Employees</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-        </Breadcrumb>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
