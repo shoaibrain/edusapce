@@ -7,6 +7,10 @@ import { getCurrentUser } from "@/lib/session"
 
 import React from "react"
 import DashboardSideNav from "@/components/dashboard-sidenav"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
+import { Separator } from "@/components/ui/separator"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 
 
 interface DashboardLayoutProps {
@@ -22,29 +26,30 @@ export default async function DashboardLayout({
     return notFound()
   }
   return (
-    <div className="flex min-h-screen flex-col space-y-6">
-      <header className="sticky top-0 z-40 border-b bg-background">
-        <div className="container flex h-16 items-center justify-between py-4">
-          <MainNav />
-          <UserAccountNav
-            user = {{
-              name: user.name,
-              image: user.image,
-              email: user.email,
-            }}
-          />
-        </div>
-      </header>
-      <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
-        <aside className="hidden w-[200px] flex-col md:flex">
-          <DashboardSideNav
-          />
-        </aside>
-        <div className="flex w-full flex-1 flex-col overflow-hidden">
-          {children}
-        </div>
-      </div>
-      <SiteFooter className="border-t" />
-    </div>
+    <SidebarProvider >
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            {/* put a dynamic Breadcrumb */}
+            {/* <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="#">
+                    Your Schools
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb> */}
+          </div>
+        </header>
+        <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        {children}
+      </main>
+      </SidebarInset>
+
+    </SidebarProvider>
   )
 }
