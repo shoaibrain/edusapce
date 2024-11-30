@@ -1,12 +1,12 @@
-import { StudentSettingsForm } from "@/components/forms/form-student-edit";
-import { getStudent } from "@/services/service-student";
+//@ts-nocheck
+import { StudentEditForm } from "@/components/forms/form-student-edit";
+import { studentGetAction } from "@/lib/actions/student-actions";
 
-export default async function StudentSettingsIndex({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const student = await getStudent(params.id);
+export default async function StudentSettingsIndex({ params}: {params: { id: string, studentId: string }}) {
+ const schoolId = params.id;
+ const studentId = params.studentId;
+  const student = await studentGetAction(studentId);
+
   if (!student) {
     return (
       <>
@@ -18,7 +18,8 @@ export default async function StudentSettingsIndex({
   return (
     <>
     <div className="flex flex-col space-y-6">
-    <StudentSettingsForm student={student} />
+      {JSON.stringify(student)}
+    <StudentEditForm student={student} />
     </div>
     </>
   );

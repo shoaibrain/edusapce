@@ -18,7 +18,6 @@ import {
   DialogTrigger } from "./ui/dialog"
 import { GuardianEditForm } from "./forms/form-guardian-edit"
 import { Employee, Guardian, Student } from "@prisma/client"
-import { StudentSettingsForm } from "./forms/form-student-edit"
 
 interface ProfileOptionsProps extends React.HTMLAttributes<HTMLDivElement> {
   guardian?: Guardian;
@@ -59,7 +58,7 @@ export function ProfileOptions({
                         Edit information here. Click save when you are done.
                       </DialogDescription>
                     </DialogHeader>
-                  {student && <StudentSettingsForm student ={student} />}
+                  {/* {student && <StudentSettingsForm student ={student} />} */}
                   {guardian && <GuardianEditForm guardian={guardian} /> }
                   {/* {employee && <EmployeeEditForm employee={employee}/>} */}
                   </DialogContent>

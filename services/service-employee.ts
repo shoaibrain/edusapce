@@ -1,4 +1,3 @@
-//@ts-nocheck
 import prisma from "@/lib/db";
 
 
@@ -54,7 +53,6 @@ export const getEmployee = async (employeeId: string) => {
     if (!employee) {
       throw new Error(`Employee with id: ${employeeId} not found`);
     }
-
     return employee;
   } catch (error) {
     throw new Error(`Error getting employee: ${error.message}`);

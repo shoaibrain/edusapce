@@ -39,32 +39,6 @@ const yearGradeLevels =  await getGradeLevelsForSchool(params.id);
 
   return (
     <div className="flex flex-col space-y-6">
-        <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink>
-                    <Link href="/">Home</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink>
-                    <Link href="/dashboard">Dashboard</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink>
-                    <Link href= {`/school/${params.id}`}>School</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Academics</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-        </Breadcrumb>
-
         <Suspense
          fallback= {null}
         >

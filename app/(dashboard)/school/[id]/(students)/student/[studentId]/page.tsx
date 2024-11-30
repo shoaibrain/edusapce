@@ -17,14 +17,7 @@ import { DropdownMenu,
 import { getStudent } from "@/services/service-student";
 import { MixerHorizontalIcon } from "@radix-ui/react-icons";
 import { Metadata } from "next";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+
 import Link from "next/link";
 import { DashboardShell } from "@/components/shell";
 
@@ -49,35 +42,8 @@ export default async function StudentPage({ params }: { params: { id: string, st
 
   return (
     <DashboardShell>
-      <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-4 py-8 md:px-6">
-      <DropdownMenu >
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="ml-auto hidden h-8 lg:flex"
-        >
-          <MixerHorizontalIcon className="mr-2 size-4" />
-          Options
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[150px]">
-        <DropdownMenuLabel>Options</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem >
-             <Link href={`/student/${student.id}/settings`}>
-              Profile Settings
-             </Link>
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>
-            Option
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>
-            Option
-            </DropdownMenuCheckboxItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-         <div className="flex w-full flex-col items-center justify-between rounded-lg p-6 shadow-md md:flex-row">
+       <div className="flex flex-col space-y-6">
+         <div className="items-center justify-between rounded-lg p-6 shadow-md md:flex-row">
               <div className="flex items-center space-x-4">
                 <Avatar className="size-24">
                   <AvatarImage alt="Student Name" src="/placeholder-avatar.jpg" />

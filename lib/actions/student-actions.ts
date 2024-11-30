@@ -94,7 +94,7 @@ const studentPatchAction = async (formData: StudentPatchInput) => {
   }
 };
 
-const studentGetAction = async (studentId: string) => {
+export const studentGetAction = async (studentId: string) => {
   try {
     const student = await getStudent(studentId);
     if (!student) {

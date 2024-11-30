@@ -1,12 +1,12 @@
 
-//@ts-nocheck
 import prisma from "@/lib/db"
 import { DatabaseError, NotFoundError, ValidationError } from "@/lib/error";
 import { EmployeeCreateInput, EmployeePatchInput } from "@/lib/validations/employee";
 import { SchoolCreateInput, SchoolUpdateInput } from "@/lib/validations/school";
 import { withAuth } from "@/lib/withAuth";
 import { DepartmentEnum } from "@/types/department";
-import { Employee, Prisma, Role, School, YearGradeLevel } from "@prisma/client";
+import { ClassPeriod, Employee, Prisma, Role, School, YearGradeLevel } from "@prisma/client";
+import { string } from "prop-types";
 
 type YearGradeLevelWithStudentCount = {
   id: string;
@@ -20,7 +20,7 @@ type YearGradeLevelWithStudentCount = {
 };
 
 
-export const addGradeLevels = async (
+export const addGradeLevel = async (
   schoolId: string,
   // assuing data coming to service layer should always be type safe
   gradeLevelData: any,
@@ -103,35 +103,35 @@ export const createEmployee = async(
   }
 }
 
-export const updateEmployee = async (
-  id: string,
-  updateData: Omit<EmployeePatchInput, 'id'>
-): Promise<Employee> => {
-  try {
-    if (!employeeId) {
-      throw new Error("Employee ID is required for updating.");
-    }
-    const updatedEmployee = await prisma.employee.update({
-      where: { id: id },
-      data: {
-        ...updateData,
-        updatedAt: new Date(),
-      },
-    });
-    return updatedEmployee;
-  } catch (error) {
-    console.error("Error updating employee: ", error);
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2025") {
-        // P2025 is the record not found error
-        throw new Error("Employee not found.");
-      }
-    }
-    throw new Error(
-      error instanceof Error ? error.message : "An unexpected error occurred while updating the employee."
-    );
-  }
-};
+// export const updateEmployee = async (
+//   id: string,
+//   updateData: Omit<EmployeePatchInput, 'id'>
+// ): Promise<Employee> => {
+//   try {
+//     if (!employeeId) {
+//       throw new Error("Employee ID is required for updating.");
+//     }
+//     const updatedEmployee = await prisma.employee.update({
+//       where: { id: id },
+//       data: {
+//         ...updateData,
+//         updatedAt: new Date(),
+//       },
+//     });
+//     return updatedEmployee;
+//   } catch (error) {
+//     console.error("Error updating employee: ", error);
+//     if (error instanceof Prisma.PrismaClientKnownRequestError) {
+//       if (error.code === "P2025") {
+//         // P2025 is the record not found error
+//         throw new Error("Employee not found.");
+//       }
+//     }
+//     throw new Error(
+//       error instanceof Error ? error.message : "An unexpected error occurred while updating the employee."
+//     );
+//   }
+// };
 
 export const getSchoolDepartments = async (schoolId: string) => {
   try {

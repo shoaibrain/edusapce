@@ -49,12 +49,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     if (fourthSegment === "student" && studentId) {
       return [
         {
-          title: "Academics",
-          url: `/school/${schoolId}/student/${studentId}/academics`,
-          icon: GraduationCap,
-          isActive: segments.includes("academics"),
-        },
-        {
           title: "Settings",
           url: `/school/${schoolId}/student/${studentId}/settings`,
           icon: Settings2,
@@ -102,7 +96,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           isActive: segments.includes("guardians"),
         },
         {
-          title: "Analytics & Reports",
+          title: "Analytics",
           url: `/school/${schoolId}/analytics`,
           icon: BarChart3,
           isActive: segments.includes("analytics"),

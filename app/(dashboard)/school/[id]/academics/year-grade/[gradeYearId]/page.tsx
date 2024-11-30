@@ -1,25 +1,93 @@
 import { Metadata } from "next"
 import { redirect } from "next/navigation"
-import Link from 'next/link'
-import { ChevronRight, Users, Clock, Book, Plus, Edit } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { authOptions } from "@/lib/auth"
 import { getCurrentUser } from "@/lib/session"
 import { getYearGradeLevel } from "@/services/service-academic"
-import { getSchoolDepartments, getSchoolInstructors } from "@/services/service-school"
-
-import { EditGradeDialog } from "@/components/forms/form-school-year-grade-level-edit"
-import ClassPeriodCard from "@/components/class-period-card"
-import { Progress } from "@/components/ui/progress"
-
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { ClassPeriodAddForm } from "@/components/forms/class-period-add"
+import { DashboardShell } from "@/components/shell"
+import { Clock, MapPin, Plus, Users } from "lucide-react"
+import Link from "next/link"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 export const metadata: Metadata = {
   title: "School Year Grade",
   description: "Year Grade Level",
+}
+
+interface ClassPeriod {
+  id: string
+  name: string
+  teacherCount: number
+  studentCount: number
+  schedule: string
+  location: string
+}
+
+interface YearGradeLevel {
+  id: string
+  levelName: string
+  description: string
+  levelCategory: string
+  levelOrder: number
+  capacity: number
+  studentCount: number
+  classPeriods: ClassPeriod[]
+}
+
+// This would come from your API/database
+const mockData: YearGradeLevel = {
+  id: "cm3wfyqxz0001cgesxvvzt4wd",
+  levelName: "Grade One",
+  description: "First year grade level",
+  levelCategory: "elementary",
+  levelOrder: 1,
+  capacity: 150,
+  studentCount: 132,
+  classPeriods: [
+    {
+      id: "cp1",
+      name: "Morning Session A",
+      teacherCount: 3,
+      studentCount: 25,
+      schedule: "8:00 AM - 10:00 AM",
+      location: "Room 101"
+    },
+    {
+      id: "cp2",
+      name: "Afternoon Session B",
+      teacherCount: 2,
+      studentCount: 22,
+      schedule: "1:00 PM - 3:00 PM",
+      location: "Room 102"
+    },
+    {
+      id: "cp3",
+      name: "Science Lab",
+      teacherCount: 1,
+      studentCount: 15,
+      schedule: "10:30 AM - 11:30 AM",
+      location: "Science Lab"
+    },
+    {
+      id: "cp4",
+      name: "Art Class",
+      teacherCount: 1,
+      studentCount: 20,
+      schedule: "2:00 PM - 3:00 PM",
+      location: "Art Room"
+    },
+    {
+      id: "cp5",
+      name: "Physical Education",
+      teacherCount: 2,
+      studentCount: 30,
+      schedule: "11:00 AM - 12:00 PM",
+      location: "Gymnasium"
+    }
+  ]
 }
 
 export default async function YearGradePage({
@@ -30,28 +98,6 @@ export default async function YearGradePage({
     id: string,
   }
 }) {
-  const gradeInfo = {
-    name: "Second Grade",
-    totalStudents: 120,
-    classPeriods: 6,
-    averageAttendance: 95,
-    subjects: [
-      { name: "Math", department: "Science" },
-      { name: "English", department: "Humanities" },
-      { name: "Science", department: "Science" },
-      { name: "Art", department: "Arts" },
-      { name: "Physical Education", department: "Health" },
-      { name: "Music", department: "Arts" }
-    ],
-    instructors: [
-      { name: "Ms. Johnson", subject: "Math" },
-      { name: "Mr. Smith", subject: "English" },
-      { name: "Dr. Brown", subject: "Science" },
-      { name: "Mrs. Davis", subject: "Art" },
-      { name: "Mr. Wilson", subject: "Physical Education" },
-      { name: "Ms. Taylor", subject: "Music" }
-    ]
-  };
 
   const user = await getCurrentUser()
   if (!user) {
@@ -60,112 +106,155 @@ export default async function YearGradePage({
 
   const yearGradeLevelId = decodeURIComponent(params.gradeYearId)
   const schoolId = decodeURIComponent(params.id)
+
   const yearGrade = await getYearGradeLevel(yearGradeLevelId)
-  const existingDepartments = await getSchoolDepartments(schoolId)
-  const instructors = await getSchoolInstructors(schoolId);
-
-  const classPeriods = yearGrade?.classPeriods;
-  const studentCount = yearGrade?.studentCount;
-
+  console.log(yearGrade)
+  if (yearGrade == null) {
+    return (
+      <p>
+        Year grade level not found 🤔
+      </p>
+    )
+  }
   return (
-    <div className="flex h-screen">
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 text-sm">
-            <Link href={`/school/${schoolId}/academics`} className="hover:text-primary">Academics</Link>
-            <ChevronRight className="size-4" />
-            <span className="font-medium text-primary">{yearGrade?.levelName}</span>
+      < DashboardShell >
+      <div className="flex flex-col space-y-6">
+        <div className="flex flex-col gap-6 lg:flex-row-reverse">
+          {/* Right Column - Grade Level Info */}
+          <div className="w-full space-y-6 lg:w-1/2">
+            <Card>
+              <CardHeader>
+                <CardTitle>{mockData.levelName}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium text-muted-foreground">Description</h3>
+                    <p>{mockData.description}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-muted-foreground">Category</h3>
+                    <p className="capitalize">{mockData.levelCategory}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-muted-foreground">Level Order</h3>
+                    <p>{mockData.levelOrder}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <h3 className="font-medium text-muted-foreground">Total Capacity</h3>
+                      <p>{mockData.capacity} students</p>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-muted-foreground">Current Students</h3>
+                      <p>{mockData.studentCount} students</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Stats</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-muted-foreground">Total Class Periods</h3>
+                    <p className="text-2xl font-bold">{mockData.classPeriods.length}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-muted-foreground">Average Class Size</h3>
+                    <p className="text-2xl font-bold">
+                      {Math.round(
+                        mockData.classPeriods.reduce((acc, curr) => acc + curr.studentCount, 0) / mockData.classPeriods.length
+                      )}
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-muted-foreground">Total Teachers</h3>
+                    <p className="text-2xl font-bold">
+                      {mockData.classPeriods.reduce((acc, curr) => acc + curr.teacherCount, 0)}
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-muted-foreground">Capacity Utilization</h3>
+                    <p className="text-2xl font-bold">
+                      {Math.round((mockData.studentCount / mockData.capacity) * 100)}%
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>
-                <Edit className="mr-2 size-4" />
-                Edit Grade Level
-              </Button>
-            </DialogTrigger>
-            <EditGradeDialog gradeInfo={gradeInfo} />
-          </Dialog>
-        </header>
-
-        <main className="flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="container mx-auto px-6 py-8">
-            <h1 className="mb-6 text-3xl font-semibold">{gradeInfo.name}</h1>
-
-            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-                  <Users className="size-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{studentCount}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Class Periods</CardTitle>
-                  <Clock className="size-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{classPeriods?.length}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Average Attendance</CardTitle>
-                  <Users className="size-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{87}%</div>
-                  <Progress value={87} className="mt-2" />
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="flex flex-col gap-6 md:flex-row">
-              <ClassPeriodCard
-              classPeriods={classPeriods}
-              existingDepartments={existingDepartments}
-              yearGradeLevelId={yearGradeLevelId}
-              />
-              <div className="w-full md:w-1/3">
-                <Card className="mb-6">
-                  <CardHeader>
-                    <CardTitle>Quick Actions</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-col space-y-2">
-                    <Button variant="outline" className="w-full justify-start">
-                      <Users className="mr-2 size-4" /> Manage Students
+          {/* Left Column - Class Periods */}
+          <div className="w-full lg:w-1/2">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>{mockData.levelName}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-[500px] pr-4 mb-4">
+                  <div className="space-y-6">
+                    {mockData.classPeriods.map((period) => (
+                      <Link
+                        key={period.id}
+                        href={`/school/cm3gv6n8o00081020tkyjti5x/academics/year-grade/${mockData.id}/period/${period.id}`}
+                      >
+                        <Card className="py-4 transition-colors hover:bg-muted">
+                          <CardHeader>
+                            <CardTitle className="text-lg">{period.name}</CardTitle>
+                          </CardHeader>
+                          <CardContent className="p-4">
+                            <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-muted-foreground">
+                              <div className="flex items-center">
+                                <Users className="mr-2 h-4 w-4" />
+                                {period.studentCount} Students
+                              </div>
+                              <div className="flex items-center">
+                                <Users className="mr-2 h-4 w-4" />
+                                {period.teacherCount} Teachers
+                              </div>
+                              <div className="flex items-center">
+                                <Clock className="mr-2 h-4 w-4" />
+                                {period.schedule}
+                              </div>
+                              <div className="flex items-center">
+                                <MapPin className="mr-2 h-4 w-4" />
+                                {period.location}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                </ScrollArea>
+                <div className="border-t pt-4">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="sm">
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Class Period
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Clock className="mr-2 size-4" /> Adjust Class Schedule
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Book className="mr-2 size-4" /> Curriculum Overview
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Instructors</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {gradeInfo.instructors.map((instructor, index) => (
-                        <li key={index} className="flex items-center">
-                          <Users className="mr-2 size-4 text-muted-foreground" />
-                          <span>{instructor.name} ({instructor.subject})</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[80vw] md:max-w-[60vw]">
+                    <DialogHeader>
+                      <DialogTitle>Add New Class Period</DialogTitle>
+                      <DialogDescription>
+                        Fill out the information for new class period. Click Save when done.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <ClassPeriodAddForm yearGradeLevelId={mockData.id} />
+                  </DialogContent>
+                </Dialog>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </main>
+        </div>
       </div>
-    </div>
-  )
+      </DashboardShell>
+    )
 }

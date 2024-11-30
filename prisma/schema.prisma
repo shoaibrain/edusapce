@@ -152,14 +152,14 @@ model Schedule {
 // RecurringSchedule model for regular, repeating class schedules
 model RecurringSchedule {
   id            String      @id @default(cuid())
-  scheduleId    String
+  scheduleId    String?
   classPeriodId String
-  dayOfWeek     Int
+  daysOfWeek    Int[] // Changed from 'dayOfWeek Int' to 'daysOfWeek Int[]'
   startTime     DateTime
   endTime       DateTime
   startDate     DateTime
   endDate       DateTime
-  schedule      Schedule    @relation(fields: [scheduleId], references: [id])
+  schedule      Schedule?   @relation(fields: [scheduleId], references: [id])
   classPeriod   ClassPeriod @relation(fields: [classPeriodId], references: [id])
 }
 
@@ -177,18 +177,19 @@ model OneTimeSchedule {
 
 // YearGradeLevel model representing different grade levels
 model YearGradeLevel {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   schoolId      String
-  levelName     String    @map("levelName")
+  levelName     String        @map("levelName")
   description   String?
   levelCategory String
   levelOrder    Int
   capacity      Int?
   classRoom     String?
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
-  school        School    @relation(fields: [schoolId], references: [id])
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  school        School        @relation(fields: [schoolId], references: [id])
   students      Student[]
+  classPeriods  ClassPeriod[]
 
   @@index([schoolId, levelOrder])
   @@map("grade_levels")
@@ -196,7 +197,7 @@ model YearGradeLevel {
 
 // Student model representing enrolled students
 model Student {
-  id                 String            @id @default(cuid())
+  id                 String               @id @default(cuid())
   schoolId           String
   firstName          String
   middleName         String?
@@ -204,27 +205,28 @@ model Student {
   birthDate          DateTime
   gender             String
   nationality        String?
-  ssn                String?           @unique
-  email              String?           @unique
+  ssn                String?              @unique
+  email              String?              @unique
   phone              String?
   address            String
-  enrollmentStatus   String?           @default("ADMITTED")
-  role               Role              @default(STUDENT)
+  enrollmentStatus   String?              @default("ADMITTED")
+  role               Role                 @default(STUDENT)
   yearGradeLevelId   String?
   primaryLanguage    String?
   secondaryLanguages String[]
   specialNeeds       String?
   medicalNotes       String?
-  createdAt          DateTime          @default(now()) @map("created_at")
-  updatedAt          DateTime          @updatedAt @map("updated_at")
-  yearGradeLevel     YearGradeLevel?   @relation(fields: [yearGradeLevelId], references: [id])
-  guardians          Guardian[]        @relation("GuardianToStudent")
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @updatedAt @map("updated_at")
+  yearGradeLevel     YearGradeLevel?      @relation(fields: [yearGradeLevelId], references: [id])
+  guardians          Guardian[]           @relation("GuardianToStudent")
   attendances        Attendance[]
   submissions        Submission[]
   emergencyContact   EmergencyContact?
   documents          StudentDocument[]
   groups             StudentGroup[]
   transcripts        Transcript[]
+  classPeriods       StudentClassPeriod[]
 
   @@index([schoolId])
   @@index([yearGradeLevelId])
@@ -232,26 +234,50 @@ model Student {
   @@map("students")
 }
 
-// ClassPeriod model representing individual class sessions
 model ClassPeriod {
-  id                 String              @id @default(cuid())
-  name               String
-  classType          String?
-  description        String?
-  subjectId          String?
-  teacherId          String?
-  createdAt          DateTime            @default(now()) @map("created_at")
-  updatedAt          DateTime            @updatedAt @map("updated_at")
-  subject            Subject?            @relation(fields: [subjectId], references: [id])
-  teacher            Employee?           @relation(fields: [teacherId], references: [id])
+  id               String   @id @default(cuid())
+  name             String
+  classType        String?
+  description      String?
+  subjectId        String?
+  teacherId        String?
+  yearGradeLevelId String // Foreign key to YearGradeLevel
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  subject            Subject?             @relation(fields: [subjectId], references: [id])
+  teacher            Employee?            @relation(fields: [teacherId], references: [id])
+  yearGradeLevel     YearGradeLevel       @relation(fields: [yearGradeLevelId], references: [id])
   recurringSchedules RecurringSchedule[]
   oneTimeSchedules   OneTimeSchedule[]
   attendances        Attendance[]
   assignments        Assignment[]
+  studentEnrollments StudentClassPeriod[]
 
+  // Indexes
   @@index([subjectId])
   @@index([teacherId])
+  @@index([yearGradeLevelId])
   @@map("class_periods")
+}
+
+model StudentClassPeriod {
+  id               String           @id @default(cuid())
+  studentId        String
+  classPeriodId    String
+  enrollmentDate   DateTime         @default(now())
+  unenrollmentDate DateTime?
+  status           EnrollmentStatus @default(ENROLLED)
+
+  // Relations
+  student     Student     @relation(fields: [studentId], references: [id])
+  classPeriod ClassPeriod @relation(fields: [classPeriodId], references: [id])
+
+  // Indexes
+  @@index([studentId])
+  @@index([classPeriodId])
+  @@map("student_class_periods")
 }
 
 // Department model for organizing subjects and teachers

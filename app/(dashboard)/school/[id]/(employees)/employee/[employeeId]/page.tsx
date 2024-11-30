@@ -3,19 +3,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { getEmployee } from "@/services/service-employee"
 import { MixerHorizontalIcon } from "@radix-ui/react-icons"
 import { Metadata } from "next"
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Mail, MessageSquare, Phone, User, Bell } from 'lucide-react'
+import { Calendar, Mail, MessageSquare, Phone, User, Bell, MapPin, Briefcase } from 'lucide-react'
+import { employeeGet } from "@/lib/actions/employee-action"
 
 export const metadata: Metadata = {
   title: "Employee",
@@ -27,12 +25,13 @@ export default async function EmployeePage({ params }: {
 }) {
   const schoolId = params.id
   const employeeId = params.employeeId
+  const employeedata = await employeeGet(employeeId)
 
-    if (!employee) {
-      return <p>No Employee found</p>
-    }
-
-  // Mock data
+  if (!employeedata) {
+    return <p>No Employee found</p>
+  }
+  const employee = employeedata.data;
+  // Mock data (as provided)
   const classPeriods = [
     { id: 1, subject: "Mathematics", class: "10A", time: "09:00 AM - 10:00 AM", room: "Room 101" },
     { id: 2, subject: "Physics", class: "11B", time: "11:00 AM - 12:00 PM", room: "Lab 2" },
@@ -50,189 +49,150 @@ export default async function EmployeePage({ params }: {
   ]
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Employee Details</h1>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="ml-auto hidden h-8 lg:flex"
-            >
-              <MixerHorizontalIcon className="mr-2 size-4" />
-              Options
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[150px]">
-            <DropdownMenuLabel>Options</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem>
-              <Link href={`/school/${schoolId}/employee/${employeeId}/settings`}>
-                Profile Settings
-              </Link>
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>
-              Option
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>
-              Option
-            </DropdownMenuCheckboxItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <div className="min-h-screen">
+    <div className="container py-8">
+      <div className="flex flex-col gap-8">
+        {/* Header Section */}
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-6">
+            <Avatar className="h-24 w-24">
+              <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${employee?.firstName} ${employee?.lastName}`} />
+              <AvatarFallback className="text-2xl">{employee?.firstName[0]}{employee?.lastName[0]}</AvatarFallback>
+            </Avatar>
+            <div className="space-y-1">
+              <h1 className="text-3xl font-bold tracking-tight">{employee?.firstName} {employee?.lastName}</h1>
+              <p className="text-muted-foreground">{employee?.role}</p>
+            </div>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MixerHorizontalIcon className="h-4 w-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Edit Profile</DropdownMenuItem>
+              <DropdownMenuItem>Change Department</DropdownMenuItem>
+              <DropdownMenuItem>Manage Schedule</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Main Content */}
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="bg-muted h-12 w-full justify-start gap-6 px-6">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-background">Overview</TabsTrigger>
+            <TabsTrigger value="schedule" className="data-[state=active]:bg-background">Schedule</TabsTrigger>
+            <TabsTrigger value="communications" className="data-[state=active]:bg-background">Communications</TabsTrigger>
+            <TabsTrigger value="notifications" className="data-[state=active]:bg-background">Notifications</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-6 rounded-lg border p-6">
+                <h2 className="font-semibold text-lg">Contact Information</h2>
+                <div className="grid gap-4">
+                  <div className="flex items-center gap-3">
+                    <Mail className="h-5 w-5 text-muted-foreground" />
+                    <span>{employee?.email}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-5 w-5 text-muted-foreground" />
+                    <span>{employee?.phone}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <MapPin className="h-5 w-5 text-muted-foreground" />
+                    <span>{employee?.address}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-6 rounded-lg border p-6">
+                <h2 className="font-semibold text-lg">Personal Information</h2>
+                <div className="grid gap-4">
+                  <div className="flex items-center gap-3">
+                    <Calendar className="h-5 w-5 text-muted-foreground" />
+                    <span>Birth Date: {new Date(employee?.birthDate).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <User className="h-5 w-5 text-muted-foreground" />
+                    <span>Gender: {employee?.gender}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Briefcase className="h-5 w-5 text-muted-foreground" />
+                    <span>Department: {employee.department || 'Not Assigned'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="schedule">
+            <div className="rounded-lg border">
+              <div className="p-6">
+                <h2 className="font-semibold text-lg mb-6">Class Schedule</h2>
+                <div className="space-y-6">
+                  {classPeriods.map((period) => (
+                    <div key={period.id} className="flex items-center justify-between pb-6 border-b last:border-0 last:pb-0">
+                      <div className="space-y-1">
+                        <p className="font-medium">{period.subject}</p>
+                        <p className="text-sm text-muted-foreground">Class {period.class} • {period.room}</p>
+                      </div>
+                      <div className="text-sm text-muted-foreground">{period.time}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="communications">
+            <div className="rounded-lg border">
+              <div className="p-6">
+                <h2 className="font-semibold text-lg mb-6">Recent Communications</h2>
+                <div className="space-y-6">
+                  {communications.map((comm) => (
+                    <div key={comm.id} className="flex items-center justify-between pb-6 border-b last:border-0 last:pb-0">
+                      <div className="space-y-1">
+                        <p className="font-medium">{comm.subject}</p>
+                        <p className="text-sm text-muted-foreground">From: {comm.from}</p>
+                      </div>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        {comm.type === 'email' ? <Mail className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
+                        <span className="text-sm">{comm.date}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="notifications">
+            <div className="rounded-lg border">
+              <div className="p-6">
+                <h2 className="font-semibold text-lg mb-6">Notifications</h2>
+                <div className="space-y-6">
+                  {notifications.map((notif) => (
+                    <div key={notif.id} className="flex items-center justify-between pb-6 border-b last:border-0 last:pb-0">
+                      <div className="space-y-1">
+                        <p className="font-medium">{notif.message}</p>
+                        <p className="text-sm text-muted-foreground">{notif.date}</p>
+                      </div>
+                      <Bell className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
-
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>Employee Information</CardTitle>
-            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(employee, null, 2)}</code>
-          </pre>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-4 flex items-center space-x-4">
-              <Avatar className="size-20">
-                <AvatarImage src="/placeholder-avatar.jpg" alt={`${employee.firstName} ${employee.lastName}`} />
-                <AvatarFallback>{`${employee.firstName[0]}${employee.lastName[0]}`}</AvatarFallback>
-              </Avatar>
-              <div>
-                <h2 className="text-2xl font-semibold">{`${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`}</h2>
-                <p className="text-muted-foreground">{employee.role}</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="flex items-center space-x-2">
-                <Mail className="size-4 text-muted-foreground" />
-                <span>{employee.email || 'N/A'}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Phone className="size-4 text-muted-foreground" />
-                <span>{employee.phone}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <User className="size-4 text-muted-foreground" />
-                <span>Employee ID: {employee.id}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Calendar className="size-4 text-muted-foreground" />
-                <span>Birth Date: {employee.birthDate ? new Date(employee.birthDate).toLocaleDateString() : 'N/A'}</span>
-              </div>
-            </div>
-            <div className="mt-4">
-              <h3 className="mb-2 font-semibold">Additional Information</h3>
-              <p>Address: {employee.address}</p>
-              <p>Gender: {employee.gender || 'N/A'}</p>
-              <p>Department ID: {employee.departmentId || 'N/A'}</p>
-              <p>School ID: {employee.schoolId}</p>
-              <p>Tenant ID: {employee.tenantId}</p>
-              <p>Created At: {new Date(employee.createdAt).toLocaleString()}</p>
-              <p>Updated At: {new Date(employee.updatedAt).toLocaleString()}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <Button className="w-full justify-start" variant="outline">
-                <Calendar className="mr-2 h-4 w-4" />
-                View Full Schedule
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <MessageSquare className="mr-2 h-4 w-4" />
-                Send Message
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <Mail className="mr-2 h-4 w-4" />
-                Send Email
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="details" className="mt-6">
-        <TabsList>
-          <TabsTrigger value="details">Class Schedule</TabsTrigger>
-          <TabsTrigger value="communications">Communications</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-        </TabsList>
-        <TabsContent value="details">
-          <Card>
-            <CardHeader>
-              <CardTitle>Current Class Schedule</CardTitle>
-              <CardDescription>Ongoing and upcoming classes for today</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {classPeriods.map((period) => (
-                  <div key={period.id} className="flex justify-between items-center p-4 bg-muted rounded-lg">
-                    <div>
-                      <h3 className="font-semibold">{period.subject}</h3>
-                      <p className="text-sm text-muted-foreground">Class: {period.class}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium">{period.time}</p>
-                      <p className="text-sm text-muted-foreground">{period.room}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="communications">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Communications</CardTitle>
-              <CardDescription>Latest messages and emails</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {communications.map((comm) => (
-                  <div key={comm.id} className="flex items-start space-x-4 p-4 bg-muted rounded-lg">
-                    {comm.type === 'email' ? (
-                      <Mail className="h-6 w-6 text-primary" />
-                    ) : (
-                      <MessageSquare className="h-6 w-6 text-primary" />
-                    )}
-                    <div>
-                      <p className="font-medium">{comm.subject}</p>
-                      <p className="text-sm text-muted-foreground">From: {comm.from}</p>
-                      <p className="text-sm text-muted-foreground">Date: {comm.date}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="notifications">
-          <Card>
-            <CardHeader>
-              <CardTitle>Notifications</CardTitle>
-              <CardDescription>Recent alerts and announcements</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {notifications.map((notif) => (
-                  <div key={notif.id} className="flex items-start space-x-4 p-4 bg-muted rounded-lg">
-                    <Bell className="h-6 w-6 text-primary" />
-                    <div>
-                      <p className="font-medium">{notif.message}</p>
-                      <p className="text-sm text-muted-foreground">Date: {notif.date}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
     </div>
+  </div>
   )
 }
+

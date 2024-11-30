@@ -124,7 +124,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           icon: User,
         },
         {
-          name: "Analytics & Reports",
+          name: "Analytics &",
           href: `/school/${schoolId}/analytics`,
           isActive: segments.includes("analytics"),
           icon: BarChart3,

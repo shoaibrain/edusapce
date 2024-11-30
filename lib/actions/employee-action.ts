@@ -3,7 +3,9 @@ import { revalidatePath } from "next/cache";
 import { createEmployeeSchema, EmployeeCreateInput, EmployeePatchInput, employeePatchSchema } from "../validations/employee";
 import { withAuth } from "../withAuth";
 import { z } from "zod";
-import { createEmployee, updateEmployee } from "@/services/service-school";
+import { createEmployee } from "@/services/service-school";
+
+import { getEmployee } from "@/services/service-employee";
 import { Role } from "@prisma/client";
 
 export async function getEmployeeMetricsForSchool(
@@ -41,7 +43,7 @@ interface EmployeeMetrics {
 
 //##########//
 
-export const EmployeeCreate = withAuth(async (formData:EmployeeCreateInput) => {
+const employeeCreateAction = async (formData:EmployeeCreateInput) => {
   try {
     const validatedData = createEmployeeSchema.parse(formData);
     const{tenantId, schoolId, ...employeeData} = validatedData;
@@ -66,34 +68,52 @@ export const EmployeeCreate = withAuth(async (formData:EmployeeCreateInput) => {
       message: error instanceof Error ? error.message : "An unexpected error occurred",
     };
   }
-},[Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);
+}
 
-export const EmployeeUpdate = withAuth(async (formData: EmployeePatchInput) => {
+// const employeeUpdateAction = async (formData: EmployeePatchInput) => {
+//   try {
+//     const validatedData = employeePatchSchema.parse(formData);
+//     const { id, ...updateData } = validatedData;
+//     if (!id) {
+//       throw new Error("Employee ID is required for updating");
+//     }
+//     const updatedEmployee = await updateEmployee(id, updateData);
+//     revalidatePath(`/employees/${id}`);
+//     return {
+//       success: true,
+//       message: "Employee updated successfully",
+//       data: updatedEmployee,
+//     };
+//   } catch (error) {
+//     console.error("Error updating Employee", error);
+//     if (error instanceof z.ZodError) {
+//       return {
+//         success: false,
+//         message: "Validation failed",
+//         errors: error.errors,
+//       };
+//     }
+//     return {
+//       success: false,
+//       message: error instanceof Error ? error.message : "An unexpected error occurred",
+//     };
+//   }
+// }
+
+const employeeGetAction = async(employeeId: string) => {
   try {
-    const validatedData = employeePatchSchema.parse(formData);
-    const { id, ...updateData } = validatedData;
-    if (!id) {
-      throw new Error("Employee ID is required for updating");
+    const employee = await getEmployee(employeeId);
+    if (!employee) {
+      return { success: false, error: 'Employee not found' };
     }
-    const updatedEmployee = await updateEmployee(id, updateData);
-    revalidatePath(`/employees/${id}`);
-    return {
-      success: true,
-      message: "Employee updated successfully",
-      data: updatedEmployee,
-    };
-  } catch (error) {
-    console.error("Error updating Employee", error);
-    if (error instanceof z.ZodError) {
-      return {
-        success: false,
-        message: "Validation failed",
-        errors: error.errors,
-      };
-    }
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : "An unexpected error occurred",
-    };
+    revalidatePath(`/employees/${employeeId}`);
+    return {success: true, data: employee};
+  } catch(error) {
+    console.error('Error fetching employee:', error);
+    return { success: false, error: 'Failed to fetch employee' };
   }
-}, [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);
+}
+
+export const employeeGet = withAuth(employeeGetAction, [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);
+export const employeeCreate = withAuth(employeeCreateAction, [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);
+// export const employeeUpdate = withAuth(employeeUpdateAction, [Role.SUPER_ADMIN, Role.SCHOOL_ADMIN, Role.PRINCIPAL, Role.TENANT_ADMIN]);

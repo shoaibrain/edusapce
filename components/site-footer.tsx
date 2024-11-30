@@ -2,7 +2,6 @@ import * as React from "react"
 
 import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
-import { Icons } from "@/components/icons"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {

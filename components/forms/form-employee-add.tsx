@@ -1,3 +1,4 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -25,13 +26,14 @@ import {
 import React from "react"
 import { Icons } from "../icons"
 import { createEmployeeSchema } from "@/lib/validations/employee"
-import { EmployeeCreate } from "@/lib/actions/employee-action"
+
 import { toast } from "../ui/use-toast"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { Calendar } from "../ui/calendar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
+import { employeeCreate } from "@/lib/actions/employee-action"
 
 
 interface department {
@@ -79,7 +81,7 @@ export function EmployeeAdmissionForm({
     console.log(JSON.stringify(data, null, 2))
     setIsSaving(true);
     try{
-      const response = await EmployeeCreate(data);
+      const response = await employeeCreate(data);
       if(response.success) {
         toast({
           title: "Success",

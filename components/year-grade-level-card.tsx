@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ClassPeriodAdd } from "./forms/form-class-periods-add";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
