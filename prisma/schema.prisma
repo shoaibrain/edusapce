@@ -166,12 +166,12 @@ model RecurringSchedule {
 // OneTimeSchedule model for one-off or special class sessions
 model OneTimeSchedule {
   id            String      @id @default(cuid())
-  scheduleId    String
+  scheduleId    String?
   classPeriodId String
   date          DateTime
   startTime     DateTime
   endTime       DateTime
-  schedule      Schedule    @relation(fields: [scheduleId], references: [id])
+  schedule      Schedule?   @relation(fields: [scheduleId], references: [id])
   classPeriod   ClassPeriod @relation(fields: [classPeriodId], references: [id])
 }
 

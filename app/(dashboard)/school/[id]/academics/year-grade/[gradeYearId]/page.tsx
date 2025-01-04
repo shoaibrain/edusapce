@@ -37,59 +37,6 @@ interface YearGradeLevel {
   classPeriods: ClassPeriod[]
 }
 
-// This would come from your API/database
-const mockData: YearGradeLevel = {
-  id: "cm3wfyqxz0001cgesxvvzt4wd",
-  levelName: "Grade One",
-  description: "First year grade level",
-  levelCategory: "elementary",
-  levelOrder: 1,
-  capacity: 150,
-  studentCount: 132,
-  classPeriods: [
-    {
-      id: "cp1",
-      name: "Morning Session A",
-      teacherCount: 3,
-      studentCount: 25,
-      schedule: "8:00 AM - 10:00 AM",
-      location: "Room 101"
-    },
-    {
-      id: "cp2",
-      name: "Afternoon Session B",
-      teacherCount: 2,
-      studentCount: 22,
-      schedule: "1:00 PM - 3:00 PM",
-      location: "Room 102"
-    },
-    {
-      id: "cp3",
-      name: "Science Lab",
-      teacherCount: 1,
-      studentCount: 15,
-      schedule: "10:30 AM - 11:30 AM",
-      location: "Science Lab"
-    },
-    {
-      id: "cp4",
-      name: "Art Class",
-      teacherCount: 1,
-      studentCount: 20,
-      schedule: "2:00 PM - 3:00 PM",
-      location: "Art Room"
-    },
-    {
-      id: "cp5",
-      name: "Physical Education",
-      teacherCount: 2,
-      studentCount: 30,
-      schedule: "11:00 AM - 12:00 PM",
-      location: "Gymnasium"
-    }
-  ]
-}
-
 export default async function YearGradePage({
   params
 }: {
@@ -105,6 +52,8 @@ export default async function YearGradePage({
   }
 
   const yearGradeLevelId = decodeURIComponent(params.gradeYearId)
+  // get yearGradeLevels by ID
+  const yearGradeLevel = await getYearGradeLevel(yearGradeLevelId);
   const schoolId = decodeURIComponent(params.id)
 
   const yearGrade = await getYearGradeLevel(yearGradeLevelId)

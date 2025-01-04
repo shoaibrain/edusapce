@@ -1,6 +1,6 @@
 import { DepartmentEnum } from "@/types/department";
 import { Description } from "@radix-ui/react-toast";
-
+import { z } from "zod";
 
 export const schoolCreateSchema = z.object({
   tenantId: z.string(),
@@ -35,121 +35,30 @@ export const schoolUpdateSchema = z.object({
 
 export type SchoolUpdateInput = z.infer<typeof schoolUpdateSchema>;
 
-import { z } from "zod";
-
 // Schema for RecurringSchedule
-const recurringScheduleSchema = z
-  .object({
-    daysOfWeek: z
-      .array(
-        z
-          .number()
-          .min(0)
-          .max(6, "Day of week must be between 0 (Sunday) and 6 (Saturday)")
-      )
-      .nonempty("Please select at least one day of the week"),
-    startTime: z.string(), // Time in HH:mm format
-    endTime: z.string(),
-    startDate: z.string(), // Date in YYYY-MM-DD format
-    endDate: z.string(),
-  })
-  .superRefine((data, ctx) => {
-    const startTimeMinutes = parseTimeStringToMinutes(data.startTime);
-    const endTimeMinutes = parseTimeStringToMinutes(data.endTime);
-    const startDate = new Date(data.startDate);
-    const endDate = new Date(data.endDate);
-
-    if (startTimeMinutes === null || endTimeMinutes === null) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Invalid time format",
-        path: ["startTime"],
-      });
-      return;
-    }
-
-    let adjustedEndTimeMinutes = endTimeMinutes;
-
-    // If end time is less than or equal to start time, assume it's on the next day
-    if (endTimeMinutes <= startTimeMinutes) {
-      adjustedEndTimeMinutes += 24 * 60; // Add 24 hours in minutes
-    }
-
-    if (adjustedEndTimeMinutes <= startTimeMinutes) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "End time must be after start time",
-        path: ["endTime"],
-      });
-    }
-
-    if (endDate < startDate) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "End date must be after or equal to start date",
-        path: ["endDate"],
-      });
-    }
-  });
-
+const recurringScheduleSchema = z.object({
+  daysOfWeek: z
+    .array(
+      z
+        .number()
+        .min(0)
+        .max(6, "Day of week must be between 0 (Sunday) and 6 (Saturday)")
+    )
+    .nonempty("Please select at least one day of the week"),
+  startTime: z.string(), // Time in HH:mm format
+  endTime: z.string(),
+  startDate: z.string(), // Date in YYYY-MM-DD format
+  endDate: z.string(),
+});
 
 // Schema for OneTimeSchedule
-const oneTimeScheduleSchema = z
-  .object({
-    date: z.string(), // Date in YYYY-MM-DD format
-    startTime: z.string(),
-    endTime: z.string(),
-  })
-  .superRefine((data, ctx) => {
-    const startTimeMinutes = parseTimeStringToMinutes(data.startTime);
-    const endTimeMinutes = parseTimeStringToMinutes(data.endTime);
+const oneTimeScheduleSchema = z.object({
+  date: z.string(), // Date in YYYY-MM-DD format
+  startTime: z.string(),
+  endTime: z.string(),
+});
 
-    if (startTimeMinutes === null || endTimeMinutes === null) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Invalid time format",
-        path: ["startTime"],
-      });
-      return;
-    }
-
-    let adjustedEndTimeMinutes = endTimeMinutes;
-
-    // If end time is less than or equal to start time, assume it's on the next day
-    if (endTimeMinutes <= startTimeMinutes) {
-      adjustedEndTimeMinutes += 24 * 60; // Add 24 hours in minutes
-    }
-
-    if (adjustedEndTimeMinutes <= startTimeMinutes) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "End time must be after start time",
-        path: ["endTime"],
-      });
-    }
-  });
-
-  function parseTimeStringToMinutes(timeStr: string): number | null {
-    const [hoursStr, minutesStr] = timeStr.split(":");
-    const hours = parseInt(hoursStr, 10);
-    const minutes = parseInt(minutesStr, 10);
-
-    if (
-      Number.isInteger(hours) &&
-      Number.isInteger(minutes) &&
-      hours >= 0 &&
-      hours <= 23 &&
-      minutes >= 0 &&
-      minutes <= 59
-    ) {
-      return hours * 60 + minutes;
-    }
-    return null;
-  }
-
-
-
-
+// Update classPeriodCreateSchema
 export const classPeriodCreateSchema = z
   .object({
     yearGradeLevelId: z.string(),
@@ -182,4 +91,3 @@ export const classPeriodCreateSchema = z
   });
 
 export type ClassPeriodCreateInput = z.infer<typeof classPeriodCreateSchema>;
-

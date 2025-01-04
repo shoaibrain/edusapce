@@ -26,6 +26,10 @@ export const truncate = (str: string, num: number) => {
   return str.slice(0, num) + "...";
 };
 
+function parseTimeStringToDate(timeStr: string): Date {
+  const [hours, minutes] = timeStr.split(":").map(Number);
+  return new Date(1970, 0, 1, hours, minutes, 0);
+}
 export const getBlurDataURL = async (url: string | null) => {
   if (!url) {
     return "data:image/webp;base64,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";

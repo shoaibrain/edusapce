@@ -3,16 +3,40 @@ import { withAuth } from "../withAuth"
 import { z } from "zod";
 import { Role } from "@prisma/client";
 import { classPeriodCreateSchema } from "../validations/school";
+import { createClassPeriod } from "@/services/service-academic";
 
+type ScheduleData =
+  | {
+      type: "recurring";
+      data: RecurringScheduleInput;
+    }
+  | {
+      type: "one-time";
+      data: OneTimeScheduleInput;
+    };
+
+    type RecurringScheduleInput = {
+      daysOfWeek: number[];
+      startTime: string;
+      endTime: string;
+      startDate: string;
+      endDate: string;
+    };
+
+    type OneTimeScheduleInput = {
+      date: string;
+      startTime: string;
+      endTime: string;
+    };
 export const classPeriodCreate = withAuth(
   async (formData: any) => {
     try {
       // Validate the input data
-      console.log("UnValidated Data:", formData);
+      console.log("Unvalidated Data:", formData);
       const validatedData = classPeriodCreateSchema.parse(formData);
       console.log("Validated Data:", validatedData);
 
-      // Destructure the validated data
+      // Extract and prepare data
       const {
         yearGradeLevelId,
         teacherId,
@@ -24,29 +48,41 @@ export const classPeriodCreate = withAuth(
         oneTimeSchedule,
       } = validatedData;
 
-      // For now, just log the data
-      console.log("Creating ClassPeriod with the following data:");
-      console.log({
+      // Prepare the data for the service layer function
+      const classPeriodData = {
         yearGradeLevelId,
         teacherId,
         name,
         classType,
         description,
-        scheduleType,
-        recurringSchedule,
-        oneTimeSchedule,
-      });
+      };
 
-      // Placeholder for actual creation logic
-      // const createdClassPeriod = await createClassPeriod(validatedData);
+      let scheduleData: ScheduleData;
 
-      // Revalidate the path if necessary
-      // revalidatePath("/year-grade");
+      if (scheduleType === "recurring" && recurringSchedule) {
+        scheduleData = {
+          type: "recurring",
+          data: recurringSchedule,
+        };
+      } else if (scheduleType === "one-time" && oneTimeSchedule) {
+        scheduleData = {
+          type: "one-time",
+          data: oneTimeSchedule,
+        };
+      } else {
+        throw new Error("Invalid schedule data");
+      }
+
+      // Call the service layer function
+      const createdClassPeriod = await createClassPeriod(
+        classPeriodData,
+        scheduleData
+      );
 
       return {
         success: true,
         message: "Class period created successfully",
-        // data: createdClassPeriod,
+        data: createdClassPeriod,
       };
     } catch (error) {
       console.error("Error creating ClassPeriod", error);
