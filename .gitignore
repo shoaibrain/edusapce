@@ -37,3 +37,4 @@ tsconfig.tsbuildinfo
 
 .contentlayer
 .env
+.vercel
